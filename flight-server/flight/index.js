@@ -6,7 +6,7 @@ var Flight = mongoose.model('Flights');
 
 
 
-router.get('/flight-search/:id', flight.search);
+router.get('/flight-search/:flight', flight.search);
 
 module.exports = router;
 
