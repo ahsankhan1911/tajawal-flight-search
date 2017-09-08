@@ -9,13 +9,14 @@ exports.search = (req, res, next) => {
           
 
                 Flight.find().or([{'name' : {$regex: search, $options: 'i'}}, {'iata': {$regex: search, $options: 'i'}}]).exec(function(err,data) {
-                    if(err){
-                        res.send(err);
-                    }
-                    else{
-                        console.log("data hit")
-                   res.send(data);
-                }
+                   if(data.length == 0) {
+                    res.status(404).end();
+                   }
+
+                   else {
+                       res.send(data)
+                   }
+                
             })
               
             

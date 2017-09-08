@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
-import { AutoComplete}   from 'material-ui';
-import getMuiTheme        from 'material-ui/styles/getMuiTheme';
-import MuiThemeProvider   from 'material-ui/styles/MuiThemeProvider';
+import React, { Component } from 'react';
+import { AutoComplete } from 'material-ui';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import axios from 'axios'
 
 
@@ -11,59 +11,58 @@ class MaterialUIAutocomplete extends Component {
     super(props);
     this.onUpdateInput = this.onUpdateInput.bind(this);
     this.state = {
-      dataSource : [],
-      inputValue : ''
+      dataSource: [],
+      inputValue: ''
     }
   }
 
   onUpdateInput(inputValue) {
-    const self = this;
+    
     this.setState({
-      inputValue: inputValue
-    }, function() {
-      self.performSearch();
+      inputValue: inputValue,
+    }, function () {
+      this.performSearch();
     });
   }
 
   performSearch() {
-    const
-    self = this;
-
     let url = 'http://localhost:5000/flight/flight-search/' + this.state.inputValue;
-    
-    if(this.state.inputValue.length >= 2) {
+    let retrievedItem;
+     console.log(this.state.inputValue);
+    if (this.state.inputValue.length >= 2) {
 
-    axios.get(url)
-    .then(function (response) {
-      let searchResults, retrievedSearchTerms;
-      console.log(response);
+      axios.get(url)
+        .then((response) => {
+          let searchResults;
+          console.log(response);
 
-      searchResults = response.data;
-      
-            // retrievedSearchTerms = searchResults.map(function(result) {
-            //   return result;
-            // });
-      
-            self.setState({
-              dataSource: searchResults
-            });
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+         retrievedItem =  response.data.map((d) => {
+          
+            searchResults = d.iata + ',' + d.name
+            return searchResults;
+          })
 
-    
-   
+            this.setState({
+              dataSource: retrievedItem
+            })
+
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+
+
+    }
   }
-}
-  
+
 
   render() {
-    return  <MuiThemeProvider muiTheme={getMuiTheme()}>
+    return <MuiThemeProvider muiTheme={getMuiTheme()}>
       <AutoComplete
-        dataSource    = {this.state.dataSource}
-        onUpdateInput = {this.onUpdateInput} />
-      </MuiThemeProvider> 
+        dataSource={this.state.dataSource}
+        onUpdateInput={this.onUpdateInput} filter={AutoComplete.caseInsensitiveFilter}/>
+    </MuiThemeProvider>
   }
 }
 

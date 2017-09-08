@@ -22,16 +22,6 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 app.use('/flight', require('./flight'));
 
-// var allowCrossDomain = function(req, res, next) {
-//     res.header('Access-Control-Allow-Origin', "*");
-//     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//     res.header('Access-Control-Allow-Headers', 'Content-Type');
-//     next();
-// }
-
-
-// app.use(allowCrossDomain)
-
 app.listen(port, () => {
     console.log(`Running server on ${port}`);
 });
