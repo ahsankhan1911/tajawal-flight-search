@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 
-import './App.css'
-import MaterialUIAutocomplete from './MaterialUIAutocomplete'
+
+
+
+import TabsControlled from './TabsControlled';
 
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-       <MaterialUIAutocomplete/>
+      <h1>Tajawal Flights Search</h1>
+       <TabsControlled/>
       </div>
     );
   }
