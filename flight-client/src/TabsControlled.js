@@ -40,29 +40,19 @@ export default class TabsControlled extends React.Component {
       >
         <Tab label="One-way" value="a">
           <div>
-          <MaterialUIAutocomplete/> <DatePicker/>  <SelectField/> <SearchButton/>
+          <MaterialUIAutocomplete/> <DatePicker/> <br/>  <SelectField/> <SearchButton/>
           
            
           </div>
         </Tab>
         <Tab label="Round-trip" value="b">
           <div>
-            <h2 style={styles.headline}>Controllable Tab B</h2>
-            <p>
-              This is another example of a controllable tab. Remember, if you
-              use controllable Tabs, you need to give all of your tabs values or else
-              you wont be able to select them.
-            </p>
+          <MaterialUIAutocomplete/> <DatePicker/> <br/>  <SelectField/> <SearchButton/>
           </div>
         </Tab>
         <Tab label="Multi-city" value="c">
           <div>
-            <h2 style={styles.headline}>Controllable Tab C</h2>
-            <p>
-              This is another example of a controllable tab. Remember, if you
-              use controllable Tabs, you need to give all of your tabs values or else
-              you wont be able to select them.
-            </p>
+          <MaterialUIAutocomplete/> <DatePicker/> <br/>  <SelectField/> <SearchButton/>
           </div>
         </Tab>
       </Tabs>

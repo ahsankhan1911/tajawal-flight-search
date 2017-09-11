@@ -1,18 +1,33 @@
-import React from 'react';
-import DatePicker from 'material-ui/DatePicker';
+import React, { Component } from 'react';
+import { DateRangePicker} from 'react-dates';
+import 'react-dates/lib/css/_datepicker.css';
 
-/**
- * Inline Date Pickers are displayed below the input, rather than as a modal dialog.
- */
 
- let date = new Date().toDateString()
-const DatePickerUI = () => (
 
-  <div>
-    <DatePicker hintText={date} container="dialog" />
-    <DatePicker hintText="Add a return" container="dialog" />
+class DatePicker extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      startDate: '',
+      endDate: '',
+      focusedInput: ''
+    }
+  }
 
-  </div>
-);
 
-export default DatePickerUI;
+
+  render() {
+
+    return ( 
+      <DateRangePicker
+      startDate={this.state.startDate}
+      endDate={this.state.endDate} 
+      onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate })}
+      focusedInput={this.state.focusedInput}
+      onFocusChange={focusedInput => this.setState({ focusedInput })} 
+    />
+    )
+  }
+}
+
+export default DatePicker;
