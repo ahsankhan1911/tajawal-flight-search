@@ -1,8 +1,16 @@
 .input1 {
-display: inline;    
+display: inline;   
+background-color: rgb(0, 188, 212); 
+border: 0;
+border-radius: 10px;
+cursor: pointer;
 }
 
 .divide {
 
     float: right;
+}
+.table1 {
+    /* padding-left: 50px; */
+    
 }
