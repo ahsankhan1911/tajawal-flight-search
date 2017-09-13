@@ -1,11 +1,33 @@
-import { observable, action } from 'mobx';
+import { observable, action, computed} from 'mobx';
 
 class FlightData {
 
-    @obversable value = 1;
+    @observable value = 1;
 
-    @obversable adults = 0;
+    @observable adults = 1;
+    @observable children = 0;
+    @observable infants = 0;
+    @observable totalPassengers =0;
+
+    // @action Increment(val) {
+
+    //     val++;
+    // }
+
+    // @action Decrement(val) {
+        
+    //     val--;
+    //         }
+
+
+    @computed get total () {
+        return this.adults + this.children + this.infants;
+    }
+
+    @action stopper() {
+        if(this.adults <= )
+    }
  }
 
-
-export default FlightData;
+ const store = new FlightData();
+export default store;

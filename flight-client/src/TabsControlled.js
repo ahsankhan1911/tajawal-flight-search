@@ -7,14 +7,6 @@ import DatePicker from './DatePicker'
 import SelectField from './SelectField';
 import SearchButton from './SearchButton'
 
-const styles = {
-  headline: {
-    fontSize: 24,
-    paddingTop: 16,
-    marginBottom: 12,
-    fontWeight: 400,
-  },
-};
 
 export default class TabsControlled extends React.Component {
 
