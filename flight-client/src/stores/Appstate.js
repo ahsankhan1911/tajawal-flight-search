@@ -23,10 +23,6 @@ class FlightData {
     @computed get total () {
         return this.adults + this.children + this.infants;
     }
-
-    @action stopper() {
-        if(this.adults <= )
-    }
  }
 
  const store = new FlightData();
