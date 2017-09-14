@@ -9,15 +9,16 @@ class FlightData {
     @observable infants = 0;
     @observable totalPassengers =0;
 
-    // @action Increment(val) {
+    @action Increment (val)  {
+          
+        val++;
+        console.log(val + " hellloo")
+    }
 
-    //     val++;
-    // }
-
-    // @action Decrement(val) {
+    @action Decrement(val) {
         
-    //     val--;
-    //         }
+        val--;
+            }
 
 
     @computed get total () {
