@@ -4,22 +4,42 @@ class FlightData {
 
     @observable value = 1;
 
-    @observable adults = 1;
+    @observable adults=1;
     @observable children = 0;
     @observable infants = 0;
-    @observable totalPassengers =0;
 
-    @action Increment (val)  {
-          
-        val++;
-        console.log(val + " hellloo")
+
+
+
+    @action AdultsIncrement ()  {
+        
+           this.adults++;
+    }
+    @action ChildIncrement ()  {
+        
+           this.children++;
     }
 
-    @action Decrement(val) {
+    @action InfantsIncrement ()  {
         
-        val--;
+           this.infants++;
+    }
+
+
+    @action AdultsDecrement() {
+        
+        this.adults--;
             }
 
+   @action ChildDecrement(val) {
+                
+    this.children--;
+                    }
+
+   @action InfantsDecrement(val) {
+                        
+    this.infants--;
+                            }
 
     @computed get total () {
         return this.adults + this.children + this.infants;

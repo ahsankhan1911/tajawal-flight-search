@@ -18,24 +18,54 @@ let selectStyle = {
   handleChange = (event, index, value) => {this.setState({value});  console.log(value)};
 
 
-  handleInc  (e)  {
+  handleIncAdults(e)  {
     let {FlightData} = this.props;
-    // if(FlightData.adults <= 8) {FlightData.adults++;} FlightData.adults +1 -1
-    e.preventDefault();
 
-     FlightData.Increment(e.target.value)
+          FlightData.AdultsIncrement();
 
-     console.log(e.target.value + "from handel inc")
+          console.log(FlightData.adults)
+  }
+  handleIncChildren(e)  {
+   
+    let {FlightData} = this.props;
+
+      FlightData.ChildIncrement();
   }
 
-  handleDec(event, index, value) {
+  handleIncInfants(e)  {
     let {FlightData} = this.props;
-    // let {FlightData} = this.props;
-    // if(FlightData.adults >= 2) {FlightData.adults--;} FlightData.adults +1 -1
-        
-     FlightData.Decrement(value)
+
+          FlightData.InfantsIncrement();
+  }
+
+
+  handleDecAdults(event, index, value) {
+   
+    let {FlightData} = this.props;
+
+    FlightData.AdultsDecrement()
+
+ 
+  }
+  handleDecChildren(event, index, value) {
+    
+     let {FlightData} = this.props;
+
+     
+     FlightData.ChildDecrement()
+ 
   
-  }
+   }
+
+
+   handleDecInfants(event, index, value) {
+    
+     let {FlightData} = this.props;
+       
+
+     FlightData.InfantsDecrement()
+  
+   }
 
   
 
@@ -55,12 +85,12 @@ let selectStyle = {
           <tbody>
   <tr>
     <td>Adults(12+)</td>
-    <td><button className="input1" type="button" value={FlightData.adults} onClick={e => this.handleDec()}>-</button>  <span>{FlightData.adults}</span> <button className="input1" type="button" value={FlightData.adults}  onClick={e => this.handleInc(FlightData.adults)}>+</button> </td> 
+    <td><button className="input1" type="button" value={FlightData.adults} onClick={() => this.handleDec()}>-</button>  <span>{FlightData.adults}</span> <button className="input1" type="button"  onClick={() => this.handleIncAdults()}>+</button> </td> 
   </tr>
-  {console.log(FlightData.adults + "from main")}
+  {/* {console.log(FlightData.adults + "from main")} */}
   <tr>
     <td>Children(2- 12)</td>
-    <td><input className="input1" type="button" value="-" onClick={e =>FlightData.children--}/>  <span>{FlightData.children}</span> <input className="input1" type="button" value="+" onClick={e =>FlightData.children++}/></td> 
+    <td><input className="input1" type="button" value="-" onClick={e =>FlightData.children--}/>  <span>{FlightData.children}</span> <input className="input1" type="button" value="+" onClick={() => this.handleIncChildren()}/></td> 
 
   </tr>
   <tr>
