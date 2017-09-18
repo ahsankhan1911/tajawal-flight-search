@@ -15,7 +15,7 @@ let selectStyle = {
 @observer class SelectFieldUI extends Component {
 
        
-  handleChange = (event, index, value) => {this.setState({value});  console.log(value)};
+  handleChange = (event, index, value) => {this.setState({value});};
 
 
   handleIncAdults(e)  {
@@ -23,7 +23,6 @@ let selectStyle = {
 
           FlightData.AdultsIncrement();
 
-          console.log(FlightData.adults)
   }
   handleIncChildren(e)  {
    
@@ -85,17 +84,17 @@ let selectStyle = {
           <tbody>
   <tr>
     <td>Adults(12+)</td>
-    <td><button className="input1" type="button" value={FlightData.adults} onClick={() => this.handleDec()}>-</button>  <span>{FlightData.adults}</span> <button className="input1" type="button"  onClick={() => this.handleIncAdults()}>+</button> </td> 
+    <td><button className="input1" type="button" value={FlightData.adults} onClick={() => this.handleDecAdults()}>-</button>  <span>{FlightData.adults}</span> <button className="input1" type="button"  onClick={() => this.handleIncAdults()}>+</button> </td> 
   </tr>
   {/* {console.log(FlightData.adults + "from main")} */}
   <tr>
     <td>Children(2- 12)</td>
-    <td><input className="input1" type="button" value="-" onClick={e =>FlightData.children--}/>  <span>{FlightData.children}</span> <input className="input1" type="button" value="+" onClick={() => this.handleIncChildren()}/></td> 
+    <td><input className="input1" type="button" value="-" onClick={() => this.handleDecChildren()}/>  <span>{FlightData.children}</span> <input className="input1" type="button" value="+" onClick={() => this.handleIncChildren()}/></td> 
 
   </tr>
   <tr>
     <td>Infant(0-2)</td>
-    <td><input className="input1" type="button" value="-"onClick={e =>FlightData.infants--}/>  <span>{FlightData.infants}</span> <input className="input1" type="button" value="+" onClick={e =>FlightData.infants++}/></td> 
+    <td><input className="input1" type="button" value="-"onClick={() =>this.handleDecInfants()}/>  <span>{FlightData.infants}</span> <input className="input1" type="button" value="+" onClick={() =>this.handleIncInfants()}/></td> 
   </tr>
   </tbody>
 </table>

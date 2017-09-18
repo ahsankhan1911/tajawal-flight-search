@@ -106,3 +106,12 @@ export function unregister() {
     });
   }
 }
+
+
+
+// {showMul1}<br/>{showMul2}<br/>{showAdd}
+
+
+// const showAdd =  FlightData.flag1 ? <div> <AddMulticity/> </div> : null;
+// const showMul1 = FlightData.flag1 ? <div><Multicity/><br/></div> : null;
+// const showMul2 = FlightData.flag2 ? <div><Multicity2/></div> : null;

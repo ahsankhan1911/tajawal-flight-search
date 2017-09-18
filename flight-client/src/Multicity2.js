@@ -2,36 +2,39 @@ import React, { Component } from 'react';
 import { AutoComplete } from 'material-ui';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentClose from 'material-ui/svg-icons/content/clear';
 import axios from 'axios'
-import style from './App.css'
+import './App.css'
+import { inject, observer } from 'mobx-react';
 
 
+@inject('FlightData')
 
-
-class MaterialUIAutocomplete extends Component {
+@observer class Multicity2 extends Component {
   constructor(props) {
     super(props);
     this.onUpdateInput = this.onUpdateInput.bind(this);
     this.state = {
-      dataSource: [],
-      inputValue: ''
+      dataSource3: [],
+      inputValue3: ''
     }
   }
 
   onUpdateInput(inputValue) {
     
     this.setState({
-      inputValue: inputValue,
+      inputValue3: inputValue,
     }, function () {
       this.performSearch();
     });
   }
 
   performSearch() {
-    let url = 'http://localhost:5000/flight/flight-search/' + this.state.inputValue;
+    let url = 'http://localhost:5000/flight/flight-search/' + this.state.inputValue3;
     let retrievedItem;
    
-    if (this.state.inputValue.length >= 2) {
+    if (this.state.inputValue3.length >= 2) {
 
       axios.get(url)
         .then((response) => {
@@ -44,7 +47,7 @@ class MaterialUIAutocomplete extends Component {
           })
 
             this.setState({
-              dataSource: retrievedItem
+              dataSource3: retrievedItem
             })
 
         })
@@ -56,26 +59,32 @@ class MaterialUIAutocomplete extends Component {
 
     }
   }
+   handleClose() {
+      let {FlightData} = this.props;
 
+      FlightData.flag = false;
+
+   }
 
   render() {
 
     return ( 
     <div>
+        <h4>Flight 3</h4>
       <MuiThemeProvider muiTheme={getMuiTheme()}>
-      <AutoComplete
-        dataSource={this.state.dataSource}
-        onUpdateInput={this.onUpdateInput} filter={AutoComplete.caseInsensitiveFilter} hintText="Origin"
+     <div> <AutoComplete
+        dataSource={this.state.dataSource3}
+        onUpdateInput={this.onUpdateInput} filter={AutoComplete.caseInsensitiveFilter}  hintText="Origin"
 
-        />
+        /> <ContentClose onClick={() => this.handleClose()} className="Close"/></div>
   
     </MuiThemeProvider>
     <br/>
     <MuiThemeProvider muiTheme={getMuiTheme()}>
       <AutoComplete
-        dataSource={this.state.dataSource}
-        onUpdateInput={this.onUpdateInput} filter={AutoComplete.caseInsensitiveFilter } hintText="Destination"
-        />
+        dataSource={this.state.dataSource3}
+        onUpdateInput={this.onUpdateInput} filter={AutoComplete.caseInsensitiveFilter }   hintText="Destination"
+        /> 
   
     </MuiThemeProvider>
     </div>
@@ -83,4 +92,4 @@ class MaterialUIAutocomplete extends Component {
   }
 }
 
-export default MaterialUIAutocomplete;
+export default Multicity2;
