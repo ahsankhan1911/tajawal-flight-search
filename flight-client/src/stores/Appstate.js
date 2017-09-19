@@ -8,15 +8,16 @@ class FlightData {
     @observable value = 1;
     @observable adults=1;
     @observable children = 0;
-    @observable infants = 0;
+    @observable infants = 0;    
     @observable flag1 = true;
     @observable flag2 = true;
     @observable flag3 = true;
     @observable flag4 =true;
     @observable flagAdd1 = false;
     @observable flagAdd2 = false;
-   @observable FlightAdd = [Multicity2,Multicity3]
-
+   @observable flightAdd = true;
+   @observable count =1;
+   @observable count2 =1    
 
     @action AdultsIncrement ()  {
         if(this.adults === 9 || this.children + this.adults === 9){

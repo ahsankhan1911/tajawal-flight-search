@@ -1,7 +1,6 @@
 import React from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 import Search from 'material-ui/svg-icons/action/search';
-import FontIcon from 'material-ui/FontIcon';
 
 const styles = {
   button: {

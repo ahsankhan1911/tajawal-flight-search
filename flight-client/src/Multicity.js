@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { AutoComplete } from 'material-ui';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentClear from 'material-ui/svg-icons/content/clear';
 import axios from 'axios'
 import './App.css'
 import { inject, observer } from 'mobx-react';
+import DatePicker2 from 'material-ui/DatePicker';
 
 
 @inject('FlightData')
@@ -62,15 +62,15 @@ import { inject, observer } from 'mobx-react';
    handleClear() {
       let {FlightData} = this.props;
 
-      FlightData.flag = false;
+      FlightData.flag1 = false;
 
    }
 
   render() {
-
+    let {FlightData} = this.props;
     return ( 
     <div>
-        <h4>Flight 2</h4>
+        <h4>Flight {FlightData.count2}</h4>
       <MuiThemeProvider muiTheme={getMuiTheme()}>
      <div> <AutoComplete
         dataSource={this.state.dataSource2}
@@ -86,6 +86,9 @@ import { inject, observer } from 'mobx-react';
         onUpdateInput={this.onUpdateInput} filter={AutoComplete.caseInsensitiveFilter }   hintText="Destination"
         /> 
   
+    </MuiThemeProvider>
+    <MuiThemeProvider muiTheme={getMuiTheme()}>
+    <DatePicker2 container="inline" hintText="Flight Date" mode="landscape"/>
     </MuiThemeProvider>
     </div>
     )

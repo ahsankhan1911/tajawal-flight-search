@@ -12,9 +12,22 @@ import Multicity4 from './Multicity4';
 
     handleAdd() {
     let {FlightData} = this.props;
+            if(FlightData.count === 1) {
+                FlightData.flagAdd1 = true;
+                 return FlightData.count++;
+            }
 
-        FlightData.flagAdd1 = true;
-        FlightData.flagAdd2 = true;
+            if(FlightData.count === 2) {
+                
+                FlightData.flagAdd2 = true;
+              
+            }
+
+            else{
+                console.log("Yahan jara hai beta")
+            }
+            
+        
     }
 
     render () {

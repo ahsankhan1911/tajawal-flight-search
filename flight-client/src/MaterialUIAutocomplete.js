@@ -3,7 +3,7 @@ import { AutoComplete } from 'material-ui';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import axios from 'axios'
-import style from './App.css'
+import './App.css'
 
 
 

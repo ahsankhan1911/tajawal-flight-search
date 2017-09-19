@@ -31,10 +31,15 @@ import { inject, observer } from 'mobx-react';
   handleOneWayActive() {
     let {FlightData} = this.props;
     FlightData.flag1 = true;
+    FlightData.flag2 = true;
+   
   }
 
-  render() {
+  render() {  
     let {FlightData} = this.props
+    let showMul1 = FlightData.flag1?<Multicity/>: null;
+    let showMul2 = FlightData.flag2? <Multicity2/>: null;
+    let showAdd = FlightData.flightAdd? <AddMulticity/> : null;
  
     return (
         <MuiThemeProvider muiTheme={getMuiTheme()}>
@@ -44,8 +49,7 @@ import { inject, observer } from 'mobx-react';
       >
         <Tab label="One-way" value="a" onActive={()=> this.handleOneWayActive()}>
           <div>
-         <p> <MaterialUIAutocomplete /> <DatePicker/> <SelectField/> <SearchButton/></p>
-          
+          <MaterialUIAutocomplete /> <DatePicker/> <SelectField/> <SearchButton/>
            
           </div>
         </Tab>
@@ -56,9 +60,7 @@ import { inject, observer } from 'mobx-react';
         </Tab>
         <Tab label="Multi-city" value="c">
           <div>
-          <MaterialUIAutocomplete/> <DatePicker/> <br/>  <SelectField/> <SearchButton/> {FlightData.FlightAdd.map(d => { 
-            
-            <div>{d}</div>}) } 
+          <MaterialUIAutocomplete/> <DatePicker/> <br/>  <SelectField/> <SearchButton/>{showMul1}<br/>{showMul2}<br/>{showAdd}
           </div>
         </Tab>
       </Tabs>
