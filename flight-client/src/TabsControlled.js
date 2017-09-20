@@ -32,6 +32,8 @@ import { inject, observer } from 'mobx-react';
     let {FlightData} = this.props;
     FlightData.flag1 = true;
     FlightData.flag2 = true;
+    FlightData.flight3 =3
+
    
   }
 

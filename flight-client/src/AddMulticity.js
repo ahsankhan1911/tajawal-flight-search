@@ -23,10 +23,10 @@ import Multicity4 from './Multicity4';
               
             }
 
-            else{
-                console.log("Yahan jara hai beta")
+            if(FlightData.flight3 === 2) {
+
+                FlightData.flight4 =3;
             }
-            
         
     }
 
