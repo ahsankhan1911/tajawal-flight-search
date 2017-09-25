@@ -1,8 +1,5 @@
 import { observable, action, computed } from 'mobx';
-
-import Multicity2 from '../Multicity2';
-import Multicity3 from '../Multicity3';
-
+import axios from 'axios'
 import _ from 'lodash';
 
 
@@ -20,14 +17,16 @@ class FlightData {
     @observable flagAdd2 = false;
     @observable flightAdd = true;
     @observable count = 1;
-    //    @observable flight2 =2;  
-    //    @observable flight3 =3
-    //    @observable flight4 =4;    
-    //    @observable flight5 = 5;    
-
+    @observable count2;
     @observable flightArray = [1,2, 3, 4, 5];
     @observable flightArray2 = [2,3];
     @observable flightArray3;
+    @observable inputvalue = '';
+    @observable inputvalue2 = '';
+    @observable dataSource = [] 
+
+    @observable Flights =  []
+
 
 
     @action AdultsIncrement() {
@@ -121,7 +120,47 @@ class FlightData {
     @computed get total() {
         return this.adults + this.children + this.infants;
     }
+
+
+
+@action onUpdateInput(data) {
+        // if(this.count2 ===1) {
+        //          this.inputvalue = data
+        //       }
+        // if(this.count2 === 2) {
+        //     this.inputvalue2 =data
+        // }
+
+        this.inputvalue = data;
+
+    let url = 'http://localhost:5000/flight/flight-search/' + this.inputvalue;    
+     console.log(url)
+
+    let retrievedItem;
+   
+    if (this.inputvalue.length >= 2) {
+
+      axios.get(url)
+        .then((response) => {
+          let searchResults;
+      
+         retrievedItem =  response.data.map((d) => {
+          
+            searchResults = d.iata + ',' + d.name
+            return searchResults;
+          })
+              this.dataSource = retrievedItem;
+
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+    console.log(this.inputvalue)
+    console.log(this.inputvalue2)
 }
+}
+
 
 const store = new FlightData();
 export default store;
