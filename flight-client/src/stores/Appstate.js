@@ -14,18 +14,22 @@ class FlightData {
     @observable flag3 = true;
     @observable flag4 = true;
     @observable flagAdd1 = false;
-    @observable flagAdd2 = false;
     @observable flightAdd = true;
     @observable count = 1;
-    @observable count2;
+    @observable count2;   
+    @observable flagAdd2 = false;
     @observable flightArray = [1,2, 3, 4, 5];
     @observable flightArray2 = [2,3];
     @observable flightArray3;
     @observable inputvalue = '';
     @observable inputvalue2 = '';
-    @observable dataSource = [] 
+    @observable dataSource = [];
 
-    @observable Flights =  []
+    @observable dates = {to:'', from:''}
+
+    @observable Flights =  [];
+    @observable focusedInput: '';
+
 
 
 
