@@ -1,6 +1,7 @@
 import { observable, action, computed } from 'mobx';
 import axios from 'axios'
 import _ from 'lodash';
+// import Multicity from './Multicity'
 
 
 class FlightData {
@@ -18,9 +19,6 @@ class FlightData {
     @observable count = 1;
     @observable count2;   
     @observable flagAdd2 = false;
-    @observable flightArray = [1,2, 3, 4, 5];
-    @observable flightArray2 = [2,3];
-    @observable flightArray3;
     @observable inputvalue = '';
     @observable inputvalue2 = '';
     @observable dataSource = [];
@@ -28,7 +26,7 @@ class FlightData {
     @observable dates = {to:'', from:''}
 
     @observable Flights =  [];
-    @observable focusedInput: '';
+
 
 
 

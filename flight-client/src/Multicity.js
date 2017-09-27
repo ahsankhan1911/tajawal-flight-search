@@ -8,7 +8,7 @@ import './App.css'
 import { inject, observer } from 'mobx-react';
 import DatePicker2 from 'material-ui/DatePicker';
 
-
+let arrlength;
 @inject('FlightData')
 
 @observer class Multicity extends Component {
@@ -68,9 +68,11 @@ import DatePicker2 from 'material-ui/DatePicker';
 
   render() {
     let {FlightData} = this.props;
+
+    // for(arrlength = 1; arrlength === FlightData.Flights.length; arrlength++)
     return ( 
     <div>
-        <h4>Flight {FlightData.flightArray2[0]}</h4>
+        <h4>Flight {FlightData.Flights}</h4>
       <MuiThemeProvider muiTheme={getMuiTheme()}>
      <div> <AutoComplete
         dataSource={this.state.dataSource2}

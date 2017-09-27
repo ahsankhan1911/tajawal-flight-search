@@ -7,10 +7,10 @@ import DatePicker from './DatePicker'
 import SelectField from './SelectField';
 import SearchButton from './SearchButton'
 import Multicity from './Multicity';
-import Multicity2 from './Multicity2';
 import AddMulticity from './AddMulticity';
-
 import { inject, observer } from 'mobx-react';
+
+let content;
 @inject('FlightData')
 
 @observer class TabsControlled extends React.Component {
@@ -37,10 +37,25 @@ import { inject, observer } from 'mobx-react';
 
   }
 
+  handleMulticityActive() {
+    let { FlightData } = this.props
+
+    FlightData.Flights.push(<Multicity />)
+    FlightData.Flights.push(<Multicity />)
+
+  }
+
+
+
+
   render() {
     let { FlightData } = this.props
-    let showMul1 = FlightData.flag1 ? <Multicity /> : null;
-    let showMul2 = FlightData.flag2 ? <Multicity2 /> : null;
+
+
+    content = FlightData.Flights.map(c => { return c })
+
+
+
     let showAdd = FlightData.flightAdd ? <AddMulticity /> : null;
 
     return (
@@ -60,9 +75,12 @@ import { inject, observer } from 'mobx-react';
               <MaterialUIAutocomplete /> <DatePicker /> <br />  <SelectField /> <SearchButton />
             </div>
           </Tab>
-          <Tab label="Multi-city" value="c">
+          <Tab label="Multi-city" value="c" onActive={() => this.handleMulticityActive()}>
             <div>
-              <MaterialUIAutocomplete /> <DatePicker /> <br />  <SelectField /> <SearchButton />{showMul1}<br />{showMul2}<br />{showAdd}
+              <MaterialUIAutocomplete /> <DatePicker /> <br />  <SelectField /> <SearchButton />
+              {content}
+
+              <br />{showAdd}
             </div>
           </Tab>
         </Tabs>

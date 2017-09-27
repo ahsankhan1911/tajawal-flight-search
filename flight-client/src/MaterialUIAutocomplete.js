@@ -14,6 +14,9 @@ import ContentClear from 'material-ui/svg-icons/content/clear';
 
 
   render() {
+    let {FlightData} = this.props;
+ 
+    FlightData.push()
 
     return (
       <div>
