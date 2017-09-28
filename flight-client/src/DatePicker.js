@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { DateRangePicker} from 'react-dates';
 import 'react-dates/lib/css/_datepicker.css';
 import { inject, observer } from 'mobx-react';
+import test from './testing';
 
 
 @inject('FlightData')
 @observer
-class DatePicker extends Component {
+class DatePicker extends w {
  
   constructor(props) {
     super(props);
@@ -17,6 +18,7 @@ class DatePicker extends Component {
 
 
   render() {
+  test.hello()
     let {FlightData} = this.props
     return ( 
       <DateRangePicker
