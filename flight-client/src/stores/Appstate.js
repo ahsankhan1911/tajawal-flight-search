@@ -1,34 +1,53 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed} from 'mobx';
 import axios from 'axios'
 import _ from 'lodash';
 // import Multicity from './Multicity'
 
 
-class FlightData {
-
-    @observable value = 1;
-    @observable adults = 1;
-    @observable children = 0;
-    @observable infants = 0;
-    @observable flag1 = true;
-    @observable flag2 = true;
-    @observable flag3 = true;
-    @observable flag4 = true;
-    @observable flagAdd1 = false;
-    @observable flightAdd = true;
-    @observable count = 1;
-    @observable count2;   
-    @observable flagAdd2 = false;
-    @observable inputvalue = '';
-    @observable inputvalue2 = '';
-    @observable dataSource = [];
-
-    @observable dates = {to:'', from:''}
-
-    @observable Flights =  [];
 
 
+  class MoreData {   
+    @observable    id;
+    @observable    origin = ''
+    @observable   destination = ''
+    @observable   date = ''
+ 
+   constructor(origin, destination, date) {
+    
+     this.origin = origin
+     this.destination = destination
+     this.date = date
+   }
+}
 
+class  FlightData extends MoreData {
+   @observable adults = 1;
+   @observable children = 0;
+   @observable infants = 0;
+   @observable dates = {to: '', from: ''}
+   @observable value = 1;
+   @observable flag1 = true;
+   @observable flag2 = true;
+   @observable flag3 = true;
+   @observable flag4 = true;
+   @observable flagAdd1 = false;
+   @observable flightAdd = true;
+   @observable count = 1;
+   @observable count2;   
+   @observable flagAdd2 = false;
+   @observable inputvalue = '';
+   @observable inputvalue2 = '';
+   @observable dataSource = [];
+
+  
+
+   @observable Flights =  [];
+
+
+  @action kuchbi() {
+
+    return new FlightData()
+  }
 
 
     @action AdultsIncrement() {
@@ -158,11 +177,13 @@ class FlightData {
           console.log(error);
         });
     }
-    console.log(this.inputvalue)
-    console.log(this.inputvalue2)
-}
+   
 }
 
 
-const store = new FlightData();
+ }
+
+ 
+ const store = new FlightData();
+
 export default store;

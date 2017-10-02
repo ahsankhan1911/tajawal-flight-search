@@ -7,14 +7,14 @@ import DatePicker from './DatePicker'
 import SelectField from './SelectField';
 import SearchButton from './SearchButton'
 import Multicity from './Multicity';
-import AddMulticity from './AddMulticity';
 import { inject, observer } from 'mobx-react';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 
-let content;
+
+let flagC = true;
 @inject('FlightData')
 
 @observer class TabsControlled extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -36,27 +36,35 @@ let content;
 
 
   }
+ 
 
   handleMulticityActive() {
     let { FlightData } = this.props
+    console.log(FlightData.flights)
+    if (flagC === true) {
+      FlightData.Flights.push(<Multicity key={FlightData.id} flights= { FlightData.kuchbi()}/>)
+      FlightData.Flights.push(<Multicity key={FlightData.id} flights= { FlightData.kuchbi()}/>)
 
-    FlightData.Flights.push(<Multicity />)
-    FlightData.Flights.push(<Multicity />)
+    }
+ 
+    flagC = false
 
   }
 
+  handleAdd() {
+    let { FlightData } = this.props
+    FlightData.Flights.push(<Multicity key={FlightData.id} flights= {FlightData.kuchbi()} />)
+    
+    // content = FlightData.Flights.map(c => { console.log(c); return c; })
 
+  }
+
+ 
 
 
   render() {
     let { FlightData } = this.props
 
-
-    content = FlightData.Flights.map(c => { return c })
-
-
-
-    let showAdd = FlightData.flightAdd ? <AddMulticity /> : null;
 
     return (
       <MuiThemeProvider muiTheme={getMuiTheme()}>
@@ -78,9 +86,12 @@ let content;
           <Tab label="Multi-city" value="c" onActive={() => this.handleMulticityActive()}>
             <div>
               <MaterialUIAutocomplete /> <DatePicker /> <br />  <SelectField /> <SearchButton />
-              {content}
+              { FlightData.Flights.map( c => {console.log(c); return <div key={Math.random()}>{c}</div> })}
 
-              <br />{showAdd}
+
+              <br /> <div>
+                <p>Add upto 6 flights <ContentAdd onClick={() => this.handleAdd()} className="Close" /> </p>
+              </div>
             </div>
           </Tab>
         </Tabs>
@@ -88,6 +99,5 @@ let content;
     );
   }
 }
-
 
 export default TabsControlled;

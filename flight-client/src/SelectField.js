@@ -84,7 +84,7 @@ let selectStyle = {
             <tbody>
               <tr>
                 <td>Adults(12+)</td>
-                <td><input className="input1" type="button" value={FlightData.adults} onClick={() => this.handleDecAdults()}/>-  <span>{FlightData.adults}</span> <button className="input1" type="button" onClick={() => this.handleIncAdults()}>+</button> </td>
+                <td><input className="input1" type="button" value="-" onClick={() => this.handleDecAdults()} />  <span>{FlightData.adults}</span> <input className="input1" value="+" type="button" onClick={() => this.handleIncAdults()}/> </td>
               </tr>
               <tr>
                 <td>Children(2- 12)</td>

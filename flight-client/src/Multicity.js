@@ -8,26 +8,28 @@ import './App.css'
 import { inject, observer } from 'mobx-react';
 import DatePicker2 from 'material-ui/DatePicker';
 
-let arrlength;
+
 @inject('FlightData')
 
 @observer class Multicity extends Component {
   constructor(props) {
-    super(props);
-    this.onUpdateInput = this.onUpdateInput.bind(this);
+    super(props)
     this.state = {
       dataSource2: [],
       inputValue2: ''
     }
   }
 
-  onUpdateInput(inputValue) {
-    
-    this.setState({
-      inputValue2: inputValue,
-    }, function () {
-      this.performSearch();
-    });
+  handleOriginChange(value) {
+    let {FlightData} = this.props;
+
+    FlightData.origin = value
+  }
+  
+  handleDestinationChange (value)  {
+    let {FlightData} = this.props;
+    FlightData.destination = value
+     
   }
 
   performSearch() {
@@ -72,12 +74,12 @@ let arrlength;
     // for(arrlength = 1; arrlength === FlightData.Flights.length; arrlength++)
     return ( 
     <div>
-        <h4>Flight {FlightData.Flights}</h4>
+        <h4>Flight</h4>
       <MuiThemeProvider muiTheme={getMuiTheme()}>
      <div> <AutoComplete
         dataSource={this.state.dataSource2}
-        onUpdateInput={this.onUpdateInput} filter={AutoComplete.caseInsensitiveFilter}  hintText="Origin"
-
+        onUpdateInput={(val) => {this.handleOriginChange(val); console.log(FlightData.origin)} } filter={AutoComplete.caseInsensitiveFilter}  hintText="Origin"
+          
         /> <ContentClear onClick={() => this.handleClear()} className="Close"/></div>
   
     </MuiThemeProvider>
@@ -85,7 +87,7 @@ let arrlength;
     <MuiThemeProvider muiTheme={getMuiTheme()}>
       <AutoComplete
         dataSource={this.state.dataSource2}
-        onUpdateInput={this.onUpdateInput} filter={AutoComplete.caseInsensitiveFilter }   hintText="Destination"
+        onUpdateInput={(val) =>  {this.handleDestinationChange(val); console.log(FlightData.destination)}} filter={AutoComplete.caseInsensitiveFilter }   hintText="Destination"
         /> 
   
     </MuiThemeProvider>
