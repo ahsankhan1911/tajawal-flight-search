@@ -12,7 +12,7 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import _ from 'lodash';
 
 
-let flagC = true, MulContent;
+let flagC = true,  flagAdd = true, MulContent, AddContent;
 @inject('FlightData')
 
 @observer class TabsControlled extends React.Component {
@@ -46,6 +46,7 @@ let flagC = true, MulContent;
        FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
        FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
        console.log(FlightData.request.flights)
+      
    
     }
  
@@ -55,6 +56,12 @@ let flagC = true, MulContent;
 
   handleAdd() {
     let { FlightData } = this.props
+
+    if(FlightData.request.flights.length >= 4 ) {
+  
+       flagAdd = false
+    
+    }
  
     FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
     console.log(FlightData.request.flights)
@@ -66,8 +73,11 @@ let flagC = true, MulContent;
 
   render() {
     let { FlightData } = this.props
+    
+    AddContent = flagAdd ?  <div><p>Add upto 6 flights <ContentAdd onClick={() => this.handleAdd()} className="Close" /></p></div> : null
        
-    MulContent = FlightData.request.flights.map( flight => { return <Multicity flight={flight}/>})
+    MulContent = FlightData.request.flights.map( (flight , index) => { return <Multicity key={Math.random()} flight={flight} serialNo={index +2}/>})
+
 
     return (
       <MuiThemeProvider muiTheme={getMuiTheme()}>
@@ -90,9 +100,8 @@ let flagC = true, MulContent;
             <div>
               <MaterialUIAutocomplete /> <DatePicker /> <br />  <SelectField /> <SearchButton />
               {MulContent}
-              <br /> <div>
-                <p>Add upto 6 flights <ContentAdd onClick={() => this.handleAdd()} className="Close" /> </p>
-              </div>
+              {AddContent}
+              <br /> 
             </div>
           </Tab>
         </Tabs>

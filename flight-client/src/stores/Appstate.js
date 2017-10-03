@@ -4,11 +4,6 @@ import _ from 'lodash';
 // import Multicity from './Multicity'
 
 
-
-
-
- 
-
 class  FlightData  {
 
     flight = {
@@ -41,11 +36,6 @@ class  FlightData  {
    @observable flagAdd2 = false;
    @observable dataSource = [];
 
-
-  @action kuchbi() {
-
-    return new FlightData()
-  }
 
 
     @action AdultsIncrement() {
@@ -117,19 +107,6 @@ class  FlightData  {
 
     }
 
-
-    @action handleClear2() {
-
-
-        this.flag1 = false;
-        _.pull(this.flightArray, 2)
-
-       _.map(this.flightArray, (value) =>  {
-         this.flightArray2.push (value - 1); 
-
-      
-        } )
-    }
 
     @computed get total() {
         return this.request.adults + this.request.children + this.request.infants;

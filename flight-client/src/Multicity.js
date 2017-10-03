@@ -68,7 +68,6 @@ import DatePicker from 'material-ui/DatePicker';
    handleClear() {
     let {FlightData} = this.props;
     
-    FlightData.handleClear2();
 
    }
 
@@ -78,7 +77,7 @@ import DatePicker from 'material-ui/DatePicker';
     // for(arrlength = 1; arrlength === FlightData.Flights.length; arrlength++)
     return ( 
     <div>
-        <h4>Flight</h4>
+        <h4>Flight {this.props.serialNo}</h4>
       <MuiThemeProvider muiTheme={getMuiTheme()}>
      <div> <AutoComplete
         dataSource={this.state.dataSource2}

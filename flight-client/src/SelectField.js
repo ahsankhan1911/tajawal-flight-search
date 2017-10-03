@@ -84,16 +84,16 @@ let selectStyle = {
             <tbody>
               <tr>
                 <td>Adults(12+)</td>
-                <td><input className="input1" type="button" value="-" onClick={() => this.handleDecAdults()} />  <span>{FlightData.adults}</span> <input className="input1" value="+" type="button" onClick={() => this.handleIncAdults()}/> </td>
+                <td><input className="input1" type="button" value="-" onClick={() => this.handleDecAdults()} />  <span>{FlightData.request.adults}</span> <input className="input1" value="+" type="button" onClick={() => this.handleIncAdults()}/> </td>
               </tr>
               <tr>
                 <td>Children(2- 12)</td>
-                <td><input className="input1" type="button" value="-" onClick={() => this.handleDecChildren()} />  <span>{FlightData.children}</span> <input className="input1" type="button" value="+" onClick={() => this.handleIncChildren()} /></td>
+                <td><input className="input1" type="button" value="-" onClick={() => this.handleDecChildren()} />  <span>{FlightData.request.children}</span> <input className="input1" type="button" value="+" onClick={() => this.handleIncChildren()} /></td>
 
               </tr>
               <tr>
                 <td>Infant(0-2)</td>
-                <td><input className="input1" type="button" value="-" onClick={() => this.handleDecInfants()} />  <span>{FlightData.infants}</span> <input className="input1" type="button" value="+" onClick={() => this.handleIncInfants()} /></td>
+                <td><input className="input1" type="button" value="-" onClick={() => this.handleDecInfants()} />  <span>{FlightData.request.infants}</span> <input className="input1" type="button" value="+" onClick={() => this.handleIncInfants()} /></td>
               </tr>
             </tbody>
           </table>
