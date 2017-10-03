@@ -6,25 +6,29 @@ import _ from 'lodash';
 
 
 
-  class MoreData {   
-    @observable    id;
-    @observable    origin = ''
-    @observable   destination = ''
-    @observable   date = ''
- 
-   constructor(origin, destination, date) {
-    
-     this.origin = origin
-     this.destination = destination
-     this.date = date
-   }
-}
 
-class  FlightData extends MoreData {
-   @observable adults = 1;
-   @observable children = 0;
-   @observable infants = 0;
-   @observable dates = {to: '', from: ''}
+ 
+
+class  FlightData  {
+
+    flight = {
+        origin: '',
+        destination: '',
+        date: ''
+    }
+
+    @observable request = {
+         origin: '',
+         destination: '',
+         dates: {to: '', from: ''},
+         adults: 1,
+         children: 0,
+         infants: 0,
+         flights: [
+             
+         ]
+    }
+    
    @observable value = 1;
    @observable flag1 = true;
    @observable flag2 = true;
@@ -35,13 +39,7 @@ class  FlightData extends MoreData {
    @observable count = 1;
    @observable count2;   
    @observable flagAdd2 = false;
-   @observable inputvalue = '';
-   @observable inputvalue2 = '';
    @observable dataSource = [];
-
-  
-
-   @observable Flights =  [];
 
 
   @action kuchbi() {
@@ -51,70 +49,70 @@ class  FlightData extends MoreData {
 
 
     @action AdultsIncrement() {
-        if (this.adults === 9 || this.children + this.adults === 9) {
+        if (this.request.adults === 9 || this.request.children + this.request.adults === 9) {
 
-            this.adults + 1 - 1;
+            this.request.adults + 1 - 1;
         }
 
         else {
-            this.adults++;
+            this.request.adults++;
 
 
         }
 
     }
     @action ChildIncrement() {
-        if (this.children === 8 || this.children + this.adults === 9) {
+        if (this.request.children === 8 || this.request.children + this.request.adults === 9) {
 
-            this.children + 1 - 1;
+            this.request.children + 1 - 1;
         }
 
         else {
-            this.children++;
+            this.request.children++;
         }
 
     }
 
     @action InfantsIncrement() {
-        if (this.infants === this.adults) {
-            this.infants + 1 - 1
+        if (this.request.infants === this.request.adults) {
+            this.request.infants + 1 - 1
         }
         else {
-            this.infants++;
+            this.request.infants++;
         }
 
     }
 
 
     @action AdultsDecrement() {
-        if (this.adults <= 1) {
-            this.adults + 1 - 1
+        if (this.request.adults <= 1) {
+            this.request.adults + 1 - 1
         }
         else {
-            this.adults--;
-            this.infants--;
+            this.request.adults--;
+            this.request.infants--;
         }
 
     }
 
     @action ChildDecrement() {
 
-        if (this.children <= 0) {
-            this.children + 1 - 1
+        if (this.request.children <= 0) {
+            this.request.children + 1 - 1
         }
         else {
-            this.children--;
+            this.request.children--;
         }
 
     }
 
     @action InfantsDecrement() {
 
-        if (this.infants <= 0) {
-            this.infants + 1 - 1
+        if (this.request.infants <= 0) {
+            this.request.infants + 1 - 1
         }
         else {
-            this.infants--;
+            this.request.infants--;
         }
 
     }
@@ -131,15 +129,10 @@ class  FlightData extends MoreData {
 
       
         } )
-
-    //  this.flightArray3 =   _.sortedUniq(this.flightArray2);
-
-    //     console.log(this.flightArray3);
-
     }
 
     @computed get total() {
-        return this.adults + this.children + this.infants;
+        return this.request.adults + this.request.children + this.request.infants;
     }
 
 

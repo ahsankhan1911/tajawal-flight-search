@@ -20,9 +20,9 @@ class DatePicker extends Component{
     let {FlightData} = this.props
     return ( 
       <DateRangePicker
-      startDate={FlightData.dates.to}
-      endDate={FlightData.dates.from} 
-      onDatesChange={({ startDate, endDate }) =>{ FlightData.dates.to = startDate; FlightData.dates.from = endDate }
+      startDate={FlightData.request.dates.to}
+      endDate={FlightData.request.dates.from} 
+      onDatesChange={({ startDate, endDate }) =>{ FlightData.request.dates.to = startDate; FlightData.request.dates.from = endDate }
       
       }
       focusedInput={this.state.focusedInput}

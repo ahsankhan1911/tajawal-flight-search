@@ -6,7 +6,7 @@ import ContentClear from 'material-ui/svg-icons/content/clear';
 import axios from 'axios'
 import './App.css'
 import { inject, observer } from 'mobx-react';
-import DatePicker2 from 'material-ui/DatePicker';
+import DatePicker from 'material-ui/DatePicker';
 
 
 @inject('FlightData')
@@ -21,15 +21,19 @@ import DatePicker2 from 'material-ui/DatePicker';
   }
 
   handleOriginChange(value) {
-    let {FlightData} = this.props;
+ 
 
-    FlightData.origin = value
+ this.props.flight.origin = value;
   }
   
   handleDestinationChange (value)  {
-    let {FlightData} = this.props;
-    FlightData.destination = value
+    
+    this.props.flight.destination= value
      
+  }
+  handleDateChange(none, date) {
+    
+    this.props.flight.date= date
   }
 
   performSearch() {
@@ -92,7 +96,7 @@ import DatePicker2 from 'material-ui/DatePicker';
   
     </MuiThemeProvider>
     <MuiThemeProvider muiTheme={getMuiTheme()}>
-    <DatePicker2 container="inline" hintText="Flight Date" mode="landscape"/>
+    <DatePicker container="inline" hintText="Flight Date" mode="landscape" onChange={(none, date) => this.handleDateChange(none, date)}/>
     </MuiThemeProvider>
     </div>
     )

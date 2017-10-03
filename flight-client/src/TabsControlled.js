@@ -9,9 +9,10 @@ import SearchButton from './SearchButton'
 import Multicity from './Multicity';
 import { inject, observer } from 'mobx-react';
 import ContentAdd from 'material-ui/svg-icons/content/add';
+import _ from 'lodash';
 
 
-let flagC = true;
+let flagC = true, MulContent;
 @inject('FlightData')
 
 @observer class TabsControlled extends React.Component {
@@ -40,11 +41,12 @@ let flagC = true;
 
   handleMulticityActive() {
     let { FlightData } = this.props
-    console.log(FlightData.flights)
+  
     if (flagC === true) {
-      FlightData.Flights.push(<Multicity key={FlightData.id} flights= { FlightData.kuchbi()}/>)
-      FlightData.Flights.push(<Multicity key={FlightData.id} flights= { FlightData.kuchbi()}/>)
-
+       FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
+       FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
+       console.log(FlightData.request.flights)
+   
     }
  
     flagC = false
@@ -53,9 +55,9 @@ let flagC = true;
 
   handleAdd() {
     let { FlightData } = this.props
-    FlightData.Flights.push(<Multicity key={FlightData.id} flights= {FlightData.kuchbi()} />)
-    
-    // content = FlightData.Flights.map(c => { console.log(c); return c; })
+ 
+    FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
+    console.log(FlightData.request.flights)
 
   }
 
@@ -64,7 +66,8 @@ let flagC = true;
 
   render() {
     let { FlightData } = this.props
-
+       
+    MulContent = FlightData.request.flights.map( flight => { return <Multicity flight={flight}/>})
 
     return (
       <MuiThemeProvider muiTheme={getMuiTheme()}>
@@ -86,9 +89,7 @@ let flagC = true;
           <Tab label="Multi-city" value="c" onActive={() => this.handleMulticityActive()}>
             <div>
               <MaterialUIAutocomplete /> <DatePicker /> <br />  <SelectField /> <SearchButton />
-              { FlightData.Flights.map( c => {console.log(c); return <div key={Math.random()}>{c}</div> })}
-
-
+              {MulContent}
               <br /> <div>
                 <p>Add upto 6 flights <ContentAdd onClick={() => this.handleAdd()} className="Close" /> </p>
               </div>
