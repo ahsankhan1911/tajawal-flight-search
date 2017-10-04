@@ -7,6 +7,8 @@ import axios from 'axios'
 import './App.css'
 import { inject, observer } from 'mobx-react';
 import DatePicker from 'material-ui/DatePicker';
+import _ from 'lodash'
+ var flagAdd = require('./TabsControlled')
 
 
 @inject('FlightData')
@@ -65,25 +67,26 @@ import DatePicker from 'material-ui/DatePicker';
 
     }
   }
-   handleClear() {
-    let {FlightData} = this.props;
-    
 
+
+
+   handleClear(e) {
+     console.log(flagAdd.flagAdd)
+    let {FlightData} = this.props;
+    return _.pullAt(FlightData.request.flights, this.props.serialNo)
    }
 
   render() {
     let {FlightData} = this.props;
-
-    // for(arrlength = 1; arrlength === FlightData.Flights.length; arrlength++)
     return ( 
     <div>
-        <h4>Flight {this.props.serialNo}</h4>
+        <h4>Flight {this.props.serialNo + 2 }</h4>
       <MuiThemeProvider muiTheme={getMuiTheme()}>
      <div> <AutoComplete
         dataSource={this.state.dataSource2}
         onUpdateInput={(val) => {this.handleOriginChange(val); console.log(FlightData.origin)} } filter={AutoComplete.caseInsensitiveFilter}  hintText="Origin"
           
-        /> <ContentClear onClick={() => this.handleClear()} className="Close"/></div>
+        /> <ContentClear onClick={(e) =>  this.handleClear(e)} className="Close"/></div>
   
     </MuiThemeProvider>
     <br/>

@@ -12,7 +12,8 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import _ from 'lodash';
 
 
-let flagC = true,  flagAdd = true, MulContent, AddContent;
+let flagC = true, flagAdd = true, MulContent, AddContent;
+module.exports = flagAdd;
 @inject('FlightData')
 
 @observer class TabsControlled extends React.Component {
@@ -56,15 +57,17 @@ let flagC = true,  flagAdd = true, MulContent, AddContent;
 
   handleAdd() {
     let { FlightData } = this.props
-
-    if(FlightData.request.flights.length >= 4 ) {
   
-       flagAdd = false
-    
+    if(FlightData.request.flights.length === 4) {
+      flagAdd = false
+     
     }
- 
-    FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
-    console.log(FlightData.request.flights)
+    if(FlightData.request.flights.length === 3) {
+      flagAdd = true
+    }
+
+      FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
+    
 
   }
 
@@ -72,11 +75,12 @@ let flagC = true,  flagAdd = true, MulContent, AddContent;
 
 
   render() {
+    
     let { FlightData } = this.props
     
     AddContent = flagAdd ?  <div><p>Add upto 6 flights <ContentAdd onClick={() => this.handleAdd()} className="Close" /></p></div> : null
        
-    MulContent = FlightData.request.flights.map( (flight , index) => { return <Multicity key={Math.random()} flight={flight} serialNo={index +2}/>})
+    MulContent = FlightData.request.flights.map( (flight , index) => { return <Multicity key={Math.random()} flight={flight} serialNo={index}/>})
 
 
     return (
