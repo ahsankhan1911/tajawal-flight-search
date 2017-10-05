@@ -4,8 +4,6 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import './App.css'
 import { inject, observer } from 'mobx-react';
-import DatePicker2 from 'material-ui/DatePicker';
-import ContentClear from 'material-ui/svg-icons/content/clear';
 
 
 

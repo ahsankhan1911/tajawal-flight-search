@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Tabs, Tab } from 'material-ui/Tabs';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -6,17 +6,18 @@ import MaterialUIAutocomplete from './MaterialUIAutocomplete';
 import DatePicker from './DatePicker'
 import SelectField from './SelectField';
 import SearchButton from './SearchButton'
-import Multicity from './Multicity';
 import { inject, observer } from 'mobx-react';
 import ContentAdd from 'material-ui/svg-icons/content/add';
+import ContentClear from 'material-ui/svg-icons/content/clear';
+import { AutoComplete } from 'material-ui';
+import axios from 'axios'
 import _ from 'lodash';
 
 
-let flagC = true, flagAdd = true, MulContent, AddContent;
-module.exports = flagAdd;
+let flagC = true, flagAdd = true, AddContent;
 @inject('FlightData')
 
-@observer class TabsControlled extends React.Component {
+@observer class TabsControlled extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -80,7 +81,7 @@ module.exports = flagAdd;
     
     AddContent = flagAdd ?  <div><p>Add upto 6 flights <ContentAdd onClick={() => this.handleAdd()} className="Close" /></p></div> : null
        
-    MulContent = FlightData.request.flights.map( (flight , index) => { return <Multicity key={Math.random()} flight={flight} serialNo={index}/>})
+ 
 
 
     return (
@@ -103,7 +104,7 @@ module.exports = flagAdd;
           <Tab label="Multi-city" value="c" onActive={() => this.handleMulticityActive()}>
             <div>
               <MaterialUIAutocomplete /> <DatePicker /> <br />  <SelectField /> <SearchButton />
-              {MulContent}
+              {FlightData.request.flights.map( (flight , index) => { return <Multicity key={index} flight={flight} serialNo={index}/>})}
               {AddContent}
               <br /> 
             </div>
@@ -113,5 +114,100 @@ module.exports = flagAdd;
     );
   }
 }
+
+
+
+@observer class Multicity extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      dataSource2: [],
+      inputValue2: ''
+    }
+  }
+
+  handleOriginChange(value) {
+ 
+
+ this.props.flight.origin = value;
+  }
+  
+  handleDestinationChange (value)  {
+    
+    this.props.flight.destination= value
+     
+  }
+  handleDateChange(none, date) {
+    
+    this.props.flight.date= date
+  }
+
+  performSearch() {
+    let url = 'http://localhost:5000/flight/flight-search/' + this.state.inputValue2;
+    let retrievedItem;
+   
+    if (this.state.inputValue2.length >= 2) {
+
+      axios.get(url)
+        .then((response) => {
+          let searchResults;
+      
+         retrievedItem =  response.data.map((d) => {
+          
+            searchResults = d.iata + ',' + d.name
+            return searchResults;
+          })
+
+            this.setState({
+              dataSource2: retrievedItem
+            })
+
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+
+
+    }
+  }
+
+
+
+   handleClear(e) {
+     console.log(flagAdd.flagAdd)
+    let {FlightData} = this.props;
+    return _.pullAt(FlightData.request.flights, this.props.serialNo)
+   }
+
+  render() {
+    let {FlightData} = this.props;
+    return ( 
+    <div>
+        <h4>Flight {this.props.serialNo + 2 }</h4>
+      <MuiThemeProvider muiTheme={getMuiTheme()}>
+     <div> <AutoComplete
+        dataSource={this.state.dataSource2}
+        onUpdateInput={(val) => {this.handleOriginChange(val); console.log(FlightData.origin)} } filter={AutoComplete.caseInsensitiveFilter}  hintText="Origin"
+          
+        /> <ContentClear onClick={(e) =>  this.handleClear(e)} className="Close"/></div>
+  
+    </MuiThemeProvider>
+    <br/>
+    <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <AutoComplete
+        dataSource={this.state.dataSource2}
+        onUpdateInput={(val) =>  {this.handleDestinationChange(val); console.log(FlightData.destination)}} filter={AutoComplete.caseInsensitiveFilter }   hintText="Destination"
+        /> 
+  
+    </MuiThemeProvider>
+    <MuiThemeProvider muiTheme={getMuiTheme()}>
+    <DatePicker container="inline" hintText="Flight Date" mode="landscape" onChange={(none, date) => this.handleDateChange(none, date)}/>
+    </MuiThemeProvider>
+    </div>
+    )
+  }
+}
+
 
 export default TabsControlled;

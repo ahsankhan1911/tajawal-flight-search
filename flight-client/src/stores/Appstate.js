@@ -1,6 +1,5 @@
 import { observable, action, computed} from 'mobx';
 import axios from 'axios'
-import _ from 'lodash';
 // import Multicity from './Multicity'
 
 
@@ -41,7 +40,7 @@ class  FlightData  {
     @action AdultsIncrement() {
         if (this.request.adults === 9 || this.request.children + this.request.adults === 9) {
 
-            this.request.adults + 1 - 1;
+           return  this.request.adults + 1 - 1;
         }
 
         else {
@@ -54,7 +53,7 @@ class  FlightData  {
     @action ChildIncrement() {
         if (this.request.children === 8 || this.request.children + this.request.adults === 9) {
 
-            this.request.children + 1 - 1;
+          return  this.request.children + 1 - 1;
         }
 
         else {
@@ -65,7 +64,7 @@ class  FlightData  {
 
     @action InfantsIncrement() {
         if (this.request.infants === this.request.adults) {
-            this.request.infants + 1 - 1
+           return this.request.infants + 1 - 1
         }
         else {
             this.request.infants++;
@@ -76,7 +75,7 @@ class  FlightData  {
 
     @action AdultsDecrement() {
         if (this.request.adults <= 1) {
-            this.request.adults + 1 - 1
+            return this.request.adults + 1 - 1
         }
         else {
             this.request.adults--;
@@ -88,7 +87,7 @@ class  FlightData  {
     @action ChildDecrement() {
 
         if (this.request.children <= 0) {
-            this.request.children + 1 - 1
+            return this.request.children + 1 - 1
         }
         else {
             this.request.children--;
@@ -99,7 +98,7 @@ class  FlightData  {
     @action InfantsDecrement() {
 
         if (this.request.infants <= 0) {
-            this.request.infants + 1 - 1
+            return  this.request.infants + 1 - 1
         }
         else {
             this.request.infants--;
