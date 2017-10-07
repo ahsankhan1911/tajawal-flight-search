@@ -4,6 +4,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import MaterialUIAutocomplete from './MaterialUIAutocomplete';
 import DatePicker from './DatePicker'
+import DatePicker2 from 'material-ui/DatePicker';
 import SelectField from './SelectField';
 import SearchButton from './SearchButton'
 import { inject, observer } from 'mobx-react';
@@ -15,14 +16,16 @@ import _ from 'lodash';
 
 
 let flagC = true, flagAdd = true, AddContent;
-@inject('FlightData')
+let ContClear, ContClearFlag = true;
 
+@inject('FlightData')
 @observer class TabsControlled extends Component {
   constructor(props) {
     super(props);
     this.state = {
       value: 'a',
     };
+
   }
 
   handleChange = (value) => {
@@ -31,57 +34,67 @@ let flagC = true, flagAdd = true, AddContent;
     });
   };
 
+
+
   handleOneWayActive() {
     let { FlightData } = this.props;
-    FlightData.flag1 = true;
-    FlightData.flag2 = true;
+
     FlightData.flight3 = 3
+    flagC = true;
+    ContClearFlag = true;
 
 
   }
- 
+
+
+  handleRoundtripActive() {
+  
+
+  }
 
   handleMulticityActive() {
     let { FlightData } = this.props
   
     if (flagC === true) {
-       FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
-       FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
-       console.log(FlightData.request.flights)
-      
-   
+      FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
+      FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
+      console.log(FlightData.request.flights)
+
+
     }
- 
+
     flagC = false
 
   }
 
   handleAdd() {
     let { FlightData } = this.props
-  
-    if(FlightData.request.flights.length === 4) {
+
+    // ContClearFlag = true;
+    if (FlightData.request.flights.length === 4) {
       flagAdd = false
-     
+
     }
-    if(FlightData.request.flights.length === 3) {
+
+    if (FlightData.request.flights.length === 3) {
       flagAdd = true
     }
 
-      FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
-    
+    FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
+
 
   }
 
- 
+
 
 
   render() {
-    
+
     let { FlightData } = this.props
-    
-    AddContent = flagAdd ?  <div><p>Add upto 6 flights <ContentAdd onClick={() => this.handleAdd()} className="Close" /></p></div> : null
-       
- 
+
+    AddContent = flagAdd ? <div><p>Add upto 6 flights <ContentAdd onClick={() => this.handleAdd()} className="Close" /></p></div> : null
+
+
 
 
     return (
@@ -96,7 +109,7 @@ let flagC = true, flagAdd = true, AddContent;
 
             </div>
           </Tab>
-          <Tab label="Round-trip" value="b">
+          <Tab label="Round-trip" value="b"  onActive={() => this.handleRoundtripActive()}>
             <div>
               <MaterialUIAutocomplete /> <DatePicker /> <br />  <SelectField /> <SearchButton />
             </div>
@@ -104,9 +117,9 @@ let flagC = true, flagAdd = true, AddContent;
           <Tab label="Multi-city" value="c" onActive={() => this.handleMulticityActive()}>
             <div>
               <MaterialUIAutocomplete /> <DatePicker /> <br />  <SelectField /> <SearchButton />
-              {FlightData.request.flights.map( (flight , index) => { return <Multicity key={index} flight={flight} serialNo={index}/>})}
+              {FlightData.request.flights.map((flight, index) => { return <Multicity key={index} flight={flight} serialNo={index} /> })}
               {AddContent}
-              <br /> 
+              <br />
             </div>
           </Tab>
         </Tabs>
@@ -115,8 +128,7 @@ let flagC = true, flagAdd = true, AddContent;
   }
 }
 
-
-
+@inject('FlightData')
 @observer class Multicity extends Component {
   constructor(props) {
     super(props)
@@ -127,40 +139,40 @@ let flagC = true, flagAdd = true, AddContent;
   }
 
   handleOriginChange(value) {
- 
 
- this.props.flight.origin = value;
+
+    this.props.flight.origin = value;
   }
-  
-  handleDestinationChange (value)  {
-    
-    this.props.flight.destination= value
-     
+
+  handleDestinationChange(value) {
+
+    this.props.flight.destination = value
+
   }
   handleDateChange(none, date) {
-    
-    this.props.flight.date= date
+
+    this.props.flight.date = date
   }
 
   performSearch() {
     let url = 'http://localhost:5000/flight/flight-search/' + this.state.inputValue2;
     let retrievedItem;
-   
+
     if (this.state.inputValue2.length >= 2) {
 
       axios.get(url)
         .then((response) => {
           let searchResults;
-      
-         retrievedItem =  response.data.map((d) => {
-          
+
+          retrievedItem = response.data.map((d) => {
+
             searchResults = d.iata + ',' + d.name
             return searchResults;
           })
 
-            this.setState({
-              dataSource2: retrievedItem
-            })
+          this.setState({
+            dataSource2: retrievedItem
+          })
 
         })
         .catch((error) => {
@@ -172,42 +184,56 @@ let flagC = true, flagAdd = true, AddContent;
     }
   }
 
+  handleClear() {
+
+    let { FlightData } = this.props;
 
 
-   handleClear(e) {
-     console.log(flagAdd.flagAdd)
-    let {FlightData} = this.props;
-    return _.pullAt(FlightData.request.flights, this.props.serialNo)
-   }
+    _.pullAt(FlightData.request.flights, this.props.serialNo)
+
+
+    if (FlightData.request.flights.length <= 1) {
+      ContClearFlag = false
+      console.log(ContClearFlag)
+    }
+
+
+  }
+
 
   render() {
-    let {FlightData} = this.props;
-    return ( 
-    <div>
-        <h4>Flight {this.props.serialNo + 2 }</h4>
+    let { FlightData } = this.props;
+    ContClear = ContClearFlag ? <ContentClear onClick={() => this.handleClear()} className="Close" /> : null
+    return (<div>
+
+
+      <div><h4>Flight {this.props.serialNo + 2} {ContClear} </h4>  </div>
+
       <MuiThemeProvider muiTheme={getMuiTheme()}>
-     <div> <AutoComplete
-        dataSource={this.state.dataSource2}
-        onUpdateInput={(val) => {this.handleOriginChange(val); console.log(FlightData.origin)} } filter={AutoComplete.caseInsensitiveFilter}  hintText="Origin"
-          
-        /> <ContentClear onClick={(e) =>  this.handleClear(e)} className="Close"/></div>
-  
-    </MuiThemeProvider>
-    <br/>
-    <MuiThemeProvider muiTheme={getMuiTheme()}>
-      <AutoComplete
-        dataSource={this.state.dataSource2}
-        onUpdateInput={(val) =>  {this.handleDestinationChange(val); console.log(FlightData.destination)}} filter={AutoComplete.caseInsensitiveFilter }   hintText="Destination"
-        /> 
-  
-    </MuiThemeProvider>
-    <MuiThemeProvider muiTheme={getMuiTheme()}>
-    <DatePicker container="inline" hintText="Flight Date" mode="landscape" onChange={(none, date) => this.handleDateChange(none, date)}/>
-    </MuiThemeProvider>
+
+        <div>
+          <AutoComplete
+            dataSource={this.state.dataSource2}
+            onUpdateInput={(val) => { this.handleOriginChange(val); console.log(FlightData.origin) }} filter={AutoComplete.caseInsensitiveFilter} hintText="Origin"
+
+          /> </div>
+
+      </MuiThemeProvider>
+      <br />
+      <MuiThemeProvider muiTheme={getMuiTheme()}>
+        <div>  <AutoComplete
+          dataSource={this.state.dataSource2}
+          onUpdateInput={(val) => { this.handleDestinationChange(val); console.log(FlightData.destination) }} filter={AutoComplete.caseInsensitiveFilter} hintText="Destination"
+        /> </div>
+
+      </MuiThemeProvider>
+      <MuiThemeProvider muiTheme={getMuiTheme()}>
+        <div> <DatePicker2 container="inline" hintText="Flight Date" mode="landscape" onChange={(none, date) => this.handleDateChange(none, date)} />
+        </div>
+      </MuiThemeProvider>
     </div>
     )
   }
 }
-
 
 export default TabsControlled;
