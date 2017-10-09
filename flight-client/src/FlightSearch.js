@@ -30,9 +30,13 @@ const styles = {
 };
 let selectStyle = {
 
-  'font-size': '22px',
+  fontSize: '22px',
   color: 'black',
-  'margin-top': '25px'
+  marginTop: '25px'
+}
+
+let menuStyle = {
+  marginTop: '60px'
 }
 
 
@@ -177,7 +181,7 @@ let selectStyle = {
           <MenuItem value={3} label="Business" primaryText="Business" />
           <MenuItem value={4} label="First" primaryText="First" />
         </SelectField><br />
-        <SelectField value={FlightData.value} floatingLabelText={FlightData.total + " Passengers"} floatingLabelStyle={selectStyle}>
+        <SelectField value={FlightData.value} floatingLabelText={FlightData.total + " Passengers"} floatingLabelStyle={selectStyle} menuStyle={menuStyle}>
 
           <table className="table1" cellPadding="15px">
             <tbody>

@@ -24,10 +24,6 @@ class  FlightData  {
     }
     
    @observable value = 1;
-   @observable flag1 = true;
-   @observable flag2 = true;
-   @observable flag3 = true;
-   @observable flag4 = true;
    @observable count = 1;
    @observable count2;   
    @observable flagAdd2 = false;
