@@ -68,19 +68,14 @@ let ContClear, ContClearFlag = true;
   handleAdd() {
     let { FlightData } = this.props
 
-    // ContClearFlag = true;
     if (FlightData.request.flights.length === 4) {
-      flagAdd = false
-
+      flagAdd = false;
     }
 
-    if (FlightData.request.flights.length === 3) {
-      flagAdd = true
-    }
-
-    FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
-
-
+    
+    
+      FlightData.request.flights.push(_.cloneDeep(FlightData.flight))
+  
   }
 
 
@@ -191,20 +186,26 @@ let ContClear, ContClearFlag = true;
   }
 
   handleClear() {
-
-    let { FlightData } = this.props;
-
-
-    _.pullAt(FlightData.request.flights, this.props.serialNo)
-
-
-    if (FlightData.request.flights.length <= 1) {
-      ContClearFlag = false
-      console.log(ContClearFlag)
-    }
-
-
-  }
+    
+        let { FlightData } = this.props;
+    
+    
+        _.pullAt(FlightData.request.flights, this.props.serialNo)
+    
+        switch (FlightData.request.flights.length) {
+    
+          case 3:
+            ContClearFlag = false;
+            ContClear =null;
+          
+          case 4: 
+             flagAdd = true
+            
+          default:
+            ContClearFlag = true;
+        }
+    
+      }
 
 
   render() {
