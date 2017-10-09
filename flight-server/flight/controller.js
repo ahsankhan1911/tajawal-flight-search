@@ -1,5 +1,6 @@
 var mongoose =require('mongoose');
 var Flight = mongoose.model('Flights');
+var hotelData = require('../hotels.json')
 
 
 exports.search = (req, res, next) => {
@@ -23,3 +24,8 @@ exports.search = (req, res, next) => {
     
     
     };
+
+    exports.hotels = (req, res) => {
+     res.send(hotelData.hotel)
+
+    }

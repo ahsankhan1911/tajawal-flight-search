@@ -2,17 +2,15 @@ import React, { Component } from 'react';
 import { Tabs, Tab } from 'material-ui/Tabs';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import MaterialUIAutocomplete from './MaterialUIAutocomplete';
-import DatePicker from './DatePicker'
+import FlightSearch from './FlightSearch';
 import DatePicker2 from 'material-ui/DatePicker';
-import SelectField from './SelectField';
-import SearchButton from './SearchButton'
 import { inject, observer } from 'mobx-react';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentClear from 'material-ui/svg-icons/content/clear';
 import { AutoComplete } from 'material-ui';
-import axios from 'axios'
+import axios from 'axios';
 import _ from 'lodash';
+import './style.css'
 
 
 let flagC = true, flagAdd = true, AddContent;
@@ -98,6 +96,8 @@ let ContClear, ContClearFlag = true;
 
 
     return (
+      <div>
+        <h1>Tajawal Flight Search</h1>
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <Tabs
           value={this.state.value}
@@ -105,18 +105,18 @@ let ContClear, ContClearFlag = true;
         >
           <Tab label="One-way" value="a" onActive={() => this.handleOneWayActive()}>
             <div>
-              <MaterialUIAutocomplete /> <DatePicker /> <SelectField /> <SearchButton />
+              <FlightSearch /> 
 
             </div>
           </Tab>
           <Tab label="Round-trip" value="b"  onActive={() => this.handleRoundtripActive()}>
             <div>
-              <MaterialUIAutocomplete /> <DatePicker /> <br />  <SelectField /> <SearchButton />
+              <FlightSearch />  <br />  
             </div>
           </Tab>
           <Tab label="Multi-city" value="c" onActive={() => this.handleMulticityActive()}>
             <div>
-              <MaterialUIAutocomplete /> <DatePicker /> <br />  <SelectField /> <SearchButton />
+              <FlightSearch />
               {FlightData.request.flights.map((flight, index) => { return <Multicity key={index} flight={flight} serialNo={index} /> })}
               {AddContent}
               <br />
@@ -124,9 +124,15 @@ let ContClear, ContClearFlag = true;
           </Tab>
         </Tabs>
       </MuiThemeProvider>
+      </div>
     );
   }
 }
+
+
+
+
+
 
 @inject('FlightData')
 @observer class Multicity extends Component {

@@ -28,8 +28,6 @@ class  FlightData  {
    @observable flag2 = true;
    @observable flag3 = true;
    @observable flag4 = true;
-   @observable flagAdd1 = false;
-   @observable flightAdd = true;
    @observable count = 1;
    @observable count2;   
    @observable flagAdd2 = false;

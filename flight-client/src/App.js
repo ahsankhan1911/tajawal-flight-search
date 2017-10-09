@@ -1,21 +1,25 @@
-import React, { Component } from 'react';
+import React from 'react';
+import './style.css'
+import {BrowserRouter as Router,Route} from 'react-router-dom';
 
-
-
+import Flights from './Flights'
 import TabsControlled from './TabsControlled';
 
 
-class App extends Component {
+
 
   
-  render() {
-    return (
-      <div className="App">
-      <h1>Tajawal Flights Search</h1>
-       <TabsControlled/>
-      </div>
+const App = () => (
+  <Router>
+    <div>
+  
+    <Route exact path="/" component={TabsControlled} />
+      <Route path="/flight-search" component={Flights}/>
+    </div>
+  </Router>
+
+
     );
-  }
-}
+
 
 export default App;
