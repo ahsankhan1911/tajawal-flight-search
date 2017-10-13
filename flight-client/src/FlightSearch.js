@@ -80,7 +80,7 @@ let menuStyle = {
 
           }
           focusedInput={this.state.focusedInput}
-          onFocusChange={focusedInput => this.setState({ focusedInput })}
+          onFocusChange={focusedInput => this.setState({ focusedInput })} 
         /> <SelectFieldUI />
 
         <Link to="/flight-search">   
