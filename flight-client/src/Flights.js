@@ -4,34 +4,50 @@ import axios from 'axios';
 import Rater from 'react-rater'
 import 'react-rater/lib/react-rater.css'
 import Pagination from 'react-js-pagination';
+import { inject, observer } from 'mobx-react';
 require("bootstrap/less/bootstrap.less");
 
 
-let currentHotels;
-let FlagForFilter = false;
-class Flights extends Component {
+let currentHotels; 
+let indexOfLastHotel;
+let indexOfFirstHotel
+
+@inject('FlightData')
+@observer class Flights extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            Hotels_data: [],
-            Hotels_data2: [],
             activePage: 1,
-            itemsCountPerPage: 40
+            itemsCountPerPage: 40,
+            resources: []
         };
     }
 
+   
     componentDidMount() {
         axios.get("http://localhost:5000/flight/hotels")
             .then((response) => {
-                this.setState({
-                    Hotels_data: response.data,
-                    Hotels_data2: response.data
-                })
+                let { FlightData } = this.props
+
+                 FlightData.HotelData = response.data
+
             }).catch((error) => {
                 console.log(error)
             })
+
+            axios.get("http://localhost:5000/flight/hotels/resources")
+            .then((response) => {
+                this.setState({resources: response.data.filters})
+                console.log(this.state.resources)
+
+            }).catch((error) => {
+                console.log(error)
+            })
+
     }
+
+    
 
     handlePageChange = (pageNumber) => {
 
@@ -41,32 +57,38 @@ class Flights extends Component {
     }
 
     handleSearchClick(event) {
-         FlagForFilter = true
-         console.log(FlagForFilter)
-        let regex = new RegExp(this.refs.searchInput.value, 'g')
-        this.state.Hotels_data2.filter(data => { return regex.test(data.summary.hotelName) });
+        let { FlightData } = this.props
+       
+        let regex = new RegExp(this.refs.searchInput.value, 'i')
+        FlightData.HotelData.filter(data => { return regex.test(data.summary.hotelName) })
+    
 
     }
 
 
     render() {
+        let { FlightData } = this.props
 
-        const indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
-        const indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
-        currentHotels = FlagForFilter?  this.state.Hotels_data2.slice(indexOfFirstHotel, indexOfLastHotel) : this.state.Hotels_data2.slice(indexOfFirstHotel, indexOfLastHotel);
+         indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
+         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
+
+         
+        //  currentHotels = FlightData.HotelData.slice(indexOfFirstHotel, indexOfLastHotel);
+         
+      
 
         return (<div>
 
             <Pagination
                 activePage={this.state.activePage}
                 itemsCountPerPage={this.state.itemsCountPerPage}
-                totalItemsCount={this.state.Hotels_data.length}
+                totalItemsCount={FlightData.HotelData.length}
                 pageRangeDisplayed={5}
                 onChange={this.handlePageChange}
             />
             <form className="col-sm-3 col-md-3" role="search">
                 <div className="form-group input-group">
-                    <input type="text" className="form-control" placeholder="Search.." ref="searchInput" />
+                    <input type="text" className="form-control" placeholder="Search.." ref="searchInput"/>
                     <span className="input-group-btn">
                         <button className="btn btn-primary" type="button" onClick={(e) => { this.handleSearchClick(e) }}>
                             <span className="glyphicon glyphicon-search"></span>
@@ -74,15 +96,15 @@ class Flights extends Component {
                     </span>
                 </div>
             </form>
-            <p> {this.state.Hotels_data.length} properties found </p>
-            {currentHotels.map(data => {
+            <p> {FlightData.HotelData.length} properties found </p>
+            {FlightData.HotelData.map(data => {
                 return (
                     <div className="container-fluid">
                         <div className="row">
                             <div className="col-md-12">
                                 <div className="col-sm-6 col-md-6">
                                     <div className="thumbnail" >
-                                        <img src={data.image.map(img => { return img.url })} className="img-responsive" alt="ahsan ki iamge" />
+                                        <img src={data.image.map(img => { return img.url })} className="img-responsive" alt="Tajawal images" />
 
                                         <div className="caption">
                                             <Rater total={5} rating={data.rating.map(rating => { return rating.value })} interactive={false} />

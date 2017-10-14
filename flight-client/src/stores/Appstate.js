@@ -26,8 +26,8 @@ class  FlightData  {
    @observable value = 1;
    @observable count = 1;
    @observable count2;   
-   @observable flagAdd2 = false;
    @observable dataSource = [];
+   @observable HotelData= []
 
 
 
