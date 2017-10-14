@@ -82,7 +82,7 @@ let ContClear, ContClearFlag = true;
 
 
   render() {
-
+ 
     let { FlightData } = this.props
 
     AddContent = flagAdd ? <div><p>Add upto 6 flights <ContentAdd onClick={() => this.handleAdd()} className="Close" /></p></div> : null
