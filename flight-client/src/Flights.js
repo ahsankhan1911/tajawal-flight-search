@@ -5,6 +5,7 @@ import Rater from 'react-rater'
 import 'react-rater/lib/react-rater.css'
 import Pagination from 'react-js-pagination';
 import './style.css'
+import _ from 'lodash';
 import { inject, observer } from 'mobx-react';
 require("bootstrap/less/bootstrap.less");
 
@@ -13,15 +14,17 @@ let currentHotels;
 let indexOfLastHotel;
 let indexOfFirstHotel
 
-@inject('FlightData')
-@observer class Flights extends Component {
+
+ class Flights extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             activePage: 1,
             itemsCountPerPage: 40,
-            resources: []
+            resources: [],
+            hotel_data: [],
+           
         };
     }
 
@@ -29,9 +32,8 @@ let indexOfFirstHotel
     componentDidMount() {
         axios.get("http://localhost:5000/flight/hotels")
             .then((response) => {
-                let { FlightData } = this.props
-
-                FlightData.HotelData = response.data
+               
+               this.setState({hotel_data: response.data})
 
             }).catch((error) => {
                 console.log(error)
@@ -39,7 +41,7 @@ let indexOfFirstHotel
 
         axios.get("http://localhost:5000/flight/hotels/resources")
             .then((response) => {
-                this.setState({ resources: response.data.filters })
+                this.setState({ resources: response.data })
 
             }).catch((error) => {
                 console.log(error)
@@ -57,30 +59,38 @@ let indexOfFirstHotel
     }
 
     handleSearchClick(event) {
-        let { FlightData } = this.props
+     
 
         let regex = new RegExp(this.refs.searchInput.value, 'i')
-        FlightData.HotelData.filter(data => { return regex.test(data.summary.hotelName) })
+        this.state.hotel_data.filter(data => { return regex.test(data.summary.hotelName) })
+
+     let hello = _.find(this.state.resources , d => {
+
+        return d.type === "district";
+     });
+
+     console.log( hello.value[0])
 
 
     }
 
 
     render() {
-        let { FlightData } = this.props
+        let filterVal = this.state.resources.map(d => {return d.value})
+       
 
         indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
 
 
-        currentHotels = FlightData.HotelData.slice(indexOfFirstHotel, indexOfLastHotel);
+        currentHotels = this.state.hotel_data.slice(indexOfFirstHotel, indexOfLastHotel);
 
 
 
-        return (<div>
-
-
-
+        return (
+            
+        
+        <div>
             <div className="container">
                 <h3>Select Hotel</h3>
 
@@ -98,35 +108,34 @@ let indexOfFirstHotel
                                 </span>
                             </div>
                         </form>
-                        {this.state.resources.map((d , key) => {
-                           return(  
-                              Object.keys(d).value.map((d2) => {
+                        {filterVal.map((d,key) => {
+                
                                 return (
                                 
-                                    <div key={Math.random()}>
+                                    <div key={key}>
                                         <div>
                                             <label>
-                                                <input type="checkbox" value="asdasd" checked readOnly/>
+                                                <input type="checkbox" value="asdasd" checked/>
                                             </label>
 
                                             <label>
-                                                <h4 ref="check">{d2.label}</h4>
+                                                <p>{d.label}</p>
                                             </label>
 
                                         </div>
                                     </div>
-                                );})                           
+                                             
                          );})}
 
                     </div>
 
                     <div className="col-md-9">
-                        <p> {FlightData.HotelData.length} properties found </p>
-                        {currentHotels.map(data => {
+                        <p> {this.state.hotel_data.length} properties found </p>
+                        {currentHotels.map((data , key) => {
                             return (
 
 
-                                <div className="col-sm-6 col-md-6">
+                                <div className="col-sm-6 col-md-6" key={key}>
                                     <div className="thumbnail" >
                                         <img src={data.image.map(img => { return img.url })} className="img-responsive" alt="Tajawal images" />
 
@@ -161,7 +170,7 @@ let indexOfFirstHotel
             <Pagination
                 activePage={this.state.activePage}
                 itemsCountPerPage={this.state.itemsCountPerPage}
-                totalItemsCount={FlightData.HotelData.length}
+                totalItemsCount={this.state.hotel_data.length}
                 pageRangeDisplayed={5}
                 onChange={this.handlePageChange}
             />
