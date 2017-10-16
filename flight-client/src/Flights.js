@@ -4,11 +4,12 @@ import axios from 'axios';
 import Rater from 'react-rater'
 import 'react-rater/lib/react-rater.css'
 import Pagination from 'react-js-pagination';
+import './style.css'
 import { inject, observer } from 'mobx-react';
 require("bootstrap/less/bootstrap.less");
 
 
-let currentHotels; 
+let currentHotels;
 let indexOfLastHotel;
 let indexOfFirstHotel
 
@@ -24,22 +25,21 @@ let indexOfFirstHotel
         };
     }
 
-   
+
     componentDidMount() {
         axios.get("http://localhost:5000/flight/hotels")
             .then((response) => {
                 let { FlightData } = this.props
 
-                 FlightData.HotelData = response.data
+                FlightData.HotelData = response.data
 
             }).catch((error) => {
                 console.log(error)
             })
 
-            axios.get("http://localhost:5000/flight/hotels/resources")
+        axios.get("http://localhost:5000/flight/hotels/resources")
             .then((response) => {
-                this.setState({resources: response.data.filters})
-                console.log(this.state.resources)
+                this.setState({ resources: response.data.filters })
 
             }).catch((error) => {
                 console.log(error)
@@ -47,7 +47,7 @@ let indexOfFirstHotel
 
     }
 
-    
+
 
     handlePageChange = (pageNumber) => {
 
@@ -58,10 +58,10 @@ let indexOfFirstHotel
 
     handleSearchClick(event) {
         let { FlightData } = this.props
-       
+
         let regex = new RegExp(this.refs.searchInput.value, 'i')
         FlightData.HotelData.filter(data => { return regex.test(data.summary.hotelName) })
-    
+
 
     }
 
@@ -69,39 +69,63 @@ let indexOfFirstHotel
     render() {
         let { FlightData } = this.props
 
-         indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
-         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
+        indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
+        indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
 
-         
-        //  currentHotels = FlightData.HotelData.slice(indexOfFirstHotel, indexOfLastHotel);
-         
-      
+
+        currentHotels = FlightData.HotelData.slice(indexOfFirstHotel, indexOfLastHotel);
+
+
 
         return (<div>
 
-            <Pagination
-                activePage={this.state.activePage}
-                itemsCountPerPage={this.state.itemsCountPerPage}
-                totalItemsCount={FlightData.HotelData.length}
-                pageRangeDisplayed={5}
-                onChange={this.handlePageChange}
-            />
-            <form className="col-sm-3 col-md-3" role="search">
-                <div className="form-group input-group">
-                    <input type="text" className="form-control" placeholder="Search.." ref="searchInput"/>
-                    <span className="input-group-btn">
-                        <button className="btn btn-primary" type="button" onClick={(e) => { this.handleSearchClick(e) }}>
-                            <span className="glyphicon glyphicon-search"></span>
-                        </button>
-                    </span>
-                </div>
-            </form>
-            <p> {FlightData.HotelData.length} properties found </p>
-            {FlightData.HotelData.map(data => {
-                return (
-                    <div className="container-fluid">
-                        <div className="row">
-                            <div className="col-md-12">
+
+
+            <div className="container">
+                <h3>Select Hotel</h3>
+
+                <div className="row">
+
+                    <div className="col-md-3">
+                        <h4>Filter</h4>
+                        <form className="col-sm-12 col-md-12" role="search">
+                            <div className="form-group input-group">
+                                <input type="text" className="form-control" placeholder="Search.." ref="searchInput" />
+                                <span className="input-group-btn">
+                                    <button className="btn btn-primary" type="button" onClick={(e) => { this.handleSearchClick(e) }}>
+                                        <span className="glyphicon glyphicon-search"></span>
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                        {this.state.resources.map((d , key) => {
+                           return(  
+                              Object.keys(d).value.map((d2) => {
+                                return (
+                                
+                                    <div key={Math.random()}>
+                                        <div>
+                                            <label>
+                                                <input type="checkbox" value="asdasd" checked readOnly/>
+                                            </label>
+
+                                            <label>
+                                                <h4 ref="check">{d2.label}</h4>
+                                            </label>
+
+                                        </div>
+                                    </div>
+                                );})                           
+                         );})}
+
+                    </div>
+
+                    <div className="col-md-9">
+                        <p> {FlightData.HotelData.length} properties found </p>
+                        {currentHotels.map(data => {
+                            return (
+
+
                                 <div className="col-sm-6 col-md-6">
                                     <div className="thumbnail" >
                                         <img src={data.image.map(img => { return img.url })} className="img-responsive" alt="Tajawal images" />
@@ -129,12 +153,18 @@ let indexOfFirstHotel
                                         </div>
                                     </div>
                                 </div>
-
-                            </div>
-
-                        </div>
-                    </div>)
-            })}
+                            )
+                        })}
+                    </div>
+                </div>
+            </div>
+            <Pagination
+                activePage={this.state.activePage}
+                itemsCountPerPage={this.state.itemsCountPerPage}
+                totalItemsCount={FlightData.HotelData.length}
+                pageRangeDisplayed={5}
+                onChange={this.handlePageChange}
+            />
         </div>
         )
     }

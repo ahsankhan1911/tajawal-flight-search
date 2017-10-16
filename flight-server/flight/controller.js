@@ -31,6 +31,6 @@ exports.search = (req, res, next) => {
     }
 
     exports.resources = (req, res) => {
-        res.send(hotelresources)
+        res.send(hotelresources.filters)
    
        }

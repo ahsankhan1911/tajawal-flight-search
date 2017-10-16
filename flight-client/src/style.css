@@ -2,6 +2,8 @@ body {
     margin: 0;
     padding: 0;
     font-family: sans-serif;
+    background: yellow;
+    color: blue
   }
   
 .input1 {
@@ -26,3 +28,7 @@ font-size: 10px;
 .Close {
     cursor: pointer;
 }
+
+/* .container-fluid {
+    margin-right: 500px;
+} */
