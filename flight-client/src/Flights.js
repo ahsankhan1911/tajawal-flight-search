@@ -6,11 +6,15 @@ import 'react-rater/lib/react-rater.css'
 import Pagination from 'react-js-pagination';
 import './style.css'
 import _ from 'lodash';
+import Rheostat from 'rheostat';
+import 'react-rangeslider/lib/index.css'
+
 require("bootstrap/less/bootstrap.less");
 
 
-let currentHotels,indexOfLastHotel,indexOfFirstHotel;
-let filterDist,filterChain,filterPA,filterRA,filterStar;
+
+let currentHotels, indexOfLastHotel, indexOfFirstHotel;
+let filterDist, filterChain, filterPA, filterRA, filterStar;
 
 
 
@@ -23,6 +27,8 @@ class Flights extends Component {
             itemsCountPerPage: 40,
             resources: [],
             hotel_data: [],
+            min: 1,
+            max:100
 
         };
     }
@@ -64,29 +70,47 @@ class Flights extends Component {
         this.state.hotel_data.filter(data => { return regex.test(data.summary.hotelName) })
 
     }
-     
+
     handleDivHide(e) {
 
         var x = document.getElementById(e);
 
         if (x.style.display === "none") {
             x.style.display = "block";
-            
+
         } else {
             x.style.display = "none";
-          
+
         }
 
-        
+
+    }
+
+    handleDragStart() {
+        this.setState({
+            min: this.state.min +1
+        })
+    }
+
+    handleDragEnd(){
+        this.setState({
+            min: this.state.min +1
+        })
+    }
+
+    handleSliderDragMove() {
+        this.setState({
+            min: this.state.min +1
+        })
     }
 
     render() {
 
-        filterDist = _.filter(this.state.resources, d => {  return d.type === "district";  });
-        filterChain = _.filter(this.state.resources, d => {  return d.type === "chain";  });
-        filterPA = _.filter(this.state.resources, d => {  return d.type === "propertyAmenity";  });
-        filterRA = _.filter(this.state.resources, d => {  return d.type === "roomAmenity";  });
-        filterStar = _.filter(this.state.resources, d => {  return d.type === "starRating";  });
+        filterDist = _.filter(this.state.resources, d => { return d.type === "district"; });
+        filterChain = _.filter(this.state.resources, d => { return d.type === "chain"; });
+        filterPA = _.filter(this.state.resources, d => { return d.type === "propertyAmenity"; });
+        filterRA = _.filter(this.state.resources, d => { return d.type === "roomAmenity"; });
+        filterStar = _.filter(this.state.resources, d => { return d.type === "starRating"; });
 
         indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
@@ -96,12 +120,12 @@ class Flights extends Component {
         return (
             <div>
                 <div className="container">
-                    <h3>Select Hotel</h3>
+                    <h2>Select Hotel</h2>
 
                     <div className="row">
 
                         <div className="col-md-3">
-                            <h4>Filter</h4>
+                            <h3>Filter</h3>
                             <form className="col-sm-12 col-md-12" role="search">
                                 <div className="form-group input-group">
                                     <input type="text" className="form-control" placeholder="Search.." ref="searchInput" />
@@ -112,110 +136,106 @@ class Flights extends Component {
                                     </span>
                                 </div>
                             </form>
-                            <div>     
-                       <h4>Star Rating <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.star.id)}>^</button></span></h4>
-                         </div>
-                            <div id="StarRating"  ref="star"> 
-                           
-                            {filterStar.map((d) => {
+                            <div>
+                                <h4>Price <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.price.id)}>^</button></span></h4>
+                            </div>
+                            <div id="Price" ref="price">
 
-                                return (    
+
+                                <div>
+                                    <Rheostat
+                                        min={this.state.min}
+                                        max={this.state.max}
+                                        values={[1, 100]}
+                                        onSliderDragStart={() => this.handleDragStart()}
+                                        onSliderDragEnd={() => this.handleDragEnd()}
+                                        onSliderDragMove={() => this.handleSliderDragMove()}
+                                        snap
+                                       
+                                    />
+
+                                    <span>{this.state.min}</span> <span>{this.state.max}</span> 
+                                </div>
+
+
+
+                            </div>
+                            <div>
+                                <h4>Star Rating <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.star.id)}>^</button></span></h4>
+                            </div>
+                            <div id="StarRating" ref="star">
+
+                                {filterStar.map((d) => {
+
+                                    return (
                                         <div>
-                                            
+
                                             {d.value.map((v, key) => {
                                                 return (
                                                     <div key={key}>
                                                         <label>
-                                                            <input type="checkbox" value="asdasd" checked={v.selected}  />
-                                    
+                                                            <input type="checkbox" value="asdasd" checked={v.selected} />
+
                                                         </label>
                                                         <label>
-                                                        <Rater total={5} rating={v.code} interactive={false} />
-                                                          
+                                                            <Rater total={5} rating={v.code} interactive={false} />
+
                                                         </label>
                                                         <a href="#"> only </a>
                                                     </div>)
                                             })}
                                         </div>
 
-                                );
-                            })}
+                                    );
+                                })}
                             </div>
-                            
-                            <hr/>
-                            <div>     
-                       <h4>District <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.dist.id)}>^</button></span></h4>
-                         </div>
-                            <div className="filterStyles" id="District"  ref="dist"> 
-                           
-                            {filterDist.map((d) => {
 
-                                return (    
+                            <hr />
+                            <div>
+                                <h4>District <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.dist.id)}>^</button></span></h4>
+                            </div>
+                            <div className="filterStyles" id="District" ref="dist">
+
+                                {filterDist.map((d) => {
+
+                                    return (
                                         <div>
-                                            
+
                                             {d.value.map((v, key) => {
                                                 return (
                                                     <div key={key}>
                                                         <label>
-                                                            <input type="checkbox" value="asdasd" checked={v.selected}  />
-                                    
+                                                            <input type="checkbox" value="asdasd" checked={v.selected} />
+
                                                         </label>
                                                         <label>
                                                             <p>{v.label}</p>
-                                                          
+
                                                         </label>
                                                         <a href="#"> only </a>
                                                     </div>)
                                             })}
                                         </div>
 
-                                );
-                            })}
+                                    );
+                                })}
                             </div>
-                            <hr/>
-                            <div>     
-                       <h4>Chain <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.chain.id)}>^</button></span></h4>
-                         </div>
-                            <div className="filterStyles" id="Chain"  ref="chain"> 
-                           
-                            {filterChain.map((d) => {
+                            <hr />
+                            <div>
+                                <h4>Chain <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.chain.id)}>^</button></span></h4>
+                            </div>
+                            <div className="filterStyles" id="Chain" ref="chain">
 
-                                return (    
+                                {filterChain.map((d) => {
+
+                                    return (
                                         <div>
-                                            
+
                                             {d.value.map((v, key) => {
                                                 return (
                                                     <div key={key}>
                                                         <label>
-                                                            <input type="checkbox" value="asdasd" checked={v.selected}  />
-                                                        </label>
-                                                        <label>
-                                                            <p>{v.label}</p>
-                                                        </label>
-                                                        <a href="#"> only </a>
-                                                    </div>)
-                                            })}
-                                        </div>
-
-                                );
-                            })}
-                            </div>
-                            <hr/>
-                            <div>     
-                       <h4>Property Amenities <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.pa.id)}>^</button></span></h4>
-                         </div>
-                            <div className="filterStyles" id="PropertyAmenities"  ref="pa"> 
-                           
-                            {filterPA.map((d) => {
-
-                                return (    
-                                        <div>
-                                            
-                                            {d.value.map((v, key) => {
-                                                return (
-                                                    <div key={key}>
-                                                        <label>
-                                                            <input type="checkbox" value="asdasd" checked={v.selected}  />
+                                                            <input type="checkbox" value="asdasd" checked={v.selected} />
                                                         </label>
                                                         <label>
                                                             <p>{v.label}</p>
@@ -225,25 +245,25 @@ class Flights extends Component {
                                             })}
                                         </div>
 
-                                );
-                            })}
+                                    );
+                                })}
                             </div>
-                            <hr/>
-                            <div>     
-                       <h4>Room Amenities <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.ra.id)}>^</button></span></h4>
-                         </div>
-                            <div className="filterStyles" id="RoomAmenities"  ref="ra"> 
-                           
-                            {filterRA.map((d) => {
+                            <hr />
+                            <div>
+                                <h4>Property Amenities <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.pa.id)}>^</button></span></h4>
+                            </div>
+                            <div className="filterStyles" id="PropertyAmenities" ref="pa">
 
-                                return (    
+                                {filterPA.map((d) => {
+
+                                    return (
                                         <div>
-                                            
+
                                             {d.value.map((v, key) => {
                                                 return (
                                                     <div key={key}>
                                                         <label>
-                                                            <input type="checkbox" value="asdasd" checked={v.selected}  />
+                                                            <input type="checkbox" value="asdasd" checked={v.selected} />
                                                         </label>
                                                         <label>
                                                             <p>{v.label}</p>
@@ -253,13 +273,41 @@ class Flights extends Component {
                                             })}
                                         </div>
 
-                                );
-                            })}
+                                    );
+                                })}
+                            </div>
+                            <hr />
+                            <div>
+                                <h4>Room Amenities <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.ra.id)}>^</button></span></h4>
+                            </div>
+                            <div className="filterStyles" id="RoomAmenities" ref="ra">
+
+                                {filterRA.map((d) => {
+
+                                    return (
+                                        <div>
+
+                                            {d.value.map((v, key) => {
+                                                return (
+                                                    <div key={key}>
+                                                        <label>
+                                                            <input type="checkbox" value="asdasd" checked={v.selected} />
+                                                        </label>
+                                                        <label>
+                                                            <p>{v.label}</p>
+                                                        </label>
+                                                        <a href="#"> only </a>
+                                                    </div>)
+                                            })}
+                                        </div>
+
+                                    );
+                                })}
                             </div>
                         </div>
 
                         <div className="col-md-9">
-                            <p> {this.state.hotel_data.length} properties found </p>
+                            <span className="properties"> {this.state.hotel_data.length} properties found </span>
                             {currentHotels.map((data, key) => {
                                 return (
 
