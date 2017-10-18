@@ -76,22 +76,17 @@ class Flights extends Component {
           filteredData : this.state.hotel_data.filter((data) =>{
           return data.summary.hotelName.toLowerCase().indexOf(this.refs.searchInput.value.toLowerCase()) !== -1
     })
-})
-
-    console.log("from handel search" , filteredData)
-    console.log("from handel search 2" , this.state.hotel_data)
-   
+  })
 }
 
 
     handleStarCheck(count) {
-
-        //    let  index = filterStar.map(data => {
-        //          return data.value.findIndex(value => { value.count === count
-        //             return value.code 
-        //         })
-        //     })
-
+        
+           let  index = filterStar.map(data => {
+                   data.value.map(value => {
+                     return console.log (value.count == count)
+                   })
+            })
     }
 
     handleDivHide(e) {
@@ -103,10 +98,7 @@ class Flights extends Component {
 
         } else {
             x.style.display = "none";
-
         }
-
-
     }
 
     handleDragStart() {
@@ -375,7 +367,7 @@ class Flights extends Component {
                 <Pagination
                     activePage={this.state.activePage}
                     itemsCountPerPage={this.state.itemsCountPerPage}
-                    totalItemsCount={this.state.hotel_data.length}
+                    totalItemsCount={this.state.filteredData.length}
                     pageRangeDisplayed={5}
                     onChange={this.handlePageChange}
                 />
