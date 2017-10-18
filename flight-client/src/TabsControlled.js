@@ -41,7 +41,11 @@ let ContClear, ContClearFlag = true;
     flagC = true;
     ContClearFlag = true;
 
+    FlightData.arr.filter(d=> {
+      return FlightData.arr = []
 
+    })
+    console.log(FlightData.arr)
   }
 
 
@@ -199,7 +203,7 @@ let ContClear, ContClearFlag = true;
             ContClear =null;
           
           case 4: 
-             flagAdd = true
+             flagAdd = true;
             
           default:
             ContClearFlag = true;

@@ -98,22 +98,6 @@ let menuStyle = {
   }
 }
 
-
-
-
-
-
-
-
-
-
-// const Home = () => (
-//   <div>
-//     <h2>Home</h2>
-//   </div>
-// )
-
-
 @inject('FlightData')
 @observer class SelectFieldUI extends Component {
 

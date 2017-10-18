@@ -29,6 +29,8 @@ class  FlightData  {
    @observable dataSource = [];
    @observable HotelData= []
 
+   @observable arr = [1,2,3,4,5,6,7,8,9,3,6,5,9,5,1,2,7,0,4]
+
 
 
     @action AdultsIncrement() {

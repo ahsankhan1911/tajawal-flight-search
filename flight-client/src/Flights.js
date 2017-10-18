@@ -16,29 +16,35 @@ require("bootstrap/less/bootstrap.less");
 let currentHotels, indexOfLastHotel, indexOfFirstHotel;
 let filterDist, filterChain, filterPA, filterRA, filterStar;
 
+ let   filteredData =  []
 
 
 class Flights extends Component {
 
     constructor(props) {
         super(props);
+
         this.state = {
             activePage: 1,
             itemsCountPerPage: 40,
             resources: [],
             hotel_data: [],
             min: 1,
-            max:100
-
+            max: 100,
+            filterSearInp: '',
+            filteredData: [],
+         
         };
     }
 
 
-    componentDidMount() {
-        axios.get("http://localhost:5000/flight/hotels")
+    async componentDidMount() {
+        await axios.get("http://localhost:5000/flight/hotels")
             .then((response) => {
 
-                this.setState({ hotel_data: response.data })
+                this.setState({
+                    hotel_data: response.data
+                })
 
             }).catch((error) => {
                 console.log(error)
@@ -52,7 +58,9 @@ class Flights extends Component {
                 console.log(error)
             })
 
-
+           this.setState({
+            filteredData : _.clone(this.state.hotel_data)
+           })
     }
 
 
@@ -64,10 +72,25 @@ class Flights extends Component {
     }
 
     handleSearchClick(event) {
+   this.setState({
+          filteredData : this.state.hotel_data.filter((data) =>{
+          return data.summary.hotelName.toLowerCase().indexOf(this.refs.searchInput.value.toLowerCase()) !== -1
+    })
+})
+
+    console.log("from handel search" , filteredData)
+    console.log("from handel search 2" , this.state.hotel_data)
+   
+}
 
 
-        let regex = new RegExp(this.refs.searchInput.value, 'i')
-        this.state.hotel_data.filter(data => { return regex.test(data.summary.hotelName) })
+    handleStarCheck(count) {
+
+        //    let  index = filterStar.map(data => {
+        //          return data.value.findIndex(value => { value.count === count
+        //             return value.code 
+        //         })
+        //     })
 
     }
 
@@ -88,23 +111,25 @@ class Flights extends Component {
 
     handleDragStart() {
         this.setState({
-            min: this.state.min +1
+            min: this.state.min + 1
         })
     }
 
-    handleDragEnd(){
+    handleDragEnd() {
         this.setState({
-            min: this.state.min +1
+            min: this.state.min + 1
         })
     }
 
     handleSliderDragMove() {
         this.setState({
-            min: this.state.min +1
+            min: this.state.min + 1
         })
     }
 
+
     render() {
+
 
         filterDist = _.filter(this.state.resources, d => { return d.type === "district"; });
         filterChain = _.filter(this.state.resources, d => { return d.type === "chain"; });
@@ -115,10 +140,11 @@ class Flights extends Component {
         indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
 
-        currentHotels = this.state.hotel_data.slice(indexOfFirstHotel, indexOfLastHotel);
+        currentHotels = this.state.filteredData.slice(indexOfFirstHotel, indexOfLastHotel);
 
         return (
             <div>
+              
                 <div className="container">
                     <h2>Select Hotel</h2>
 
@@ -128,7 +154,7 @@ class Flights extends Component {
                             <h3>Filter</h3>
                             <form className="col-sm-12 col-md-12" role="search">
                                 <div className="form-group input-group">
-                                    <input type="text" className="form-control" placeholder="Search.." ref="searchInput" />
+                                    <input type="text" className="form-control"  placeholder="Search hotel name..." ref="searchInput" />
                                     <span className="input-group-btn">
                                         <button className="btn btn-primary" type="button" onClick={(e) => { this.handleSearchClick(e) }}>
                                             <span className="glyphicon glyphicon-search"></span>
@@ -151,10 +177,10 @@ class Flights extends Component {
                                         onSliderDragEnd={() => this.handleDragEnd()}
                                         onSliderDragMove={() => this.handleSliderDragMove()}
                                         snap
-                                       
+
                                     />
 
-                                    <span>{this.state.min}</span> <span>{this.state.max}</span> 
+                                    <span>{this.state.min}</span> <span>{this.state.max}</span>
                                 </div>
 
 
@@ -171,17 +197,18 @@ class Flights extends Component {
                                         <div>
 
                                             {d.value.map((v, key) => {
+
                                                 return (
                                                     <div key={key}>
                                                         <label>
-                                                            <input type="checkbox" value="asdasd" checked={v.selected} />
+                                                            <input type="checkbox" defaultChecked={v.selected} ref="starR" onChange={() => this.handleStarCheck(v.count)} />
 
                                                         </label>
                                                         <label>
                                                             <Rater total={5} rating={v.code} interactive={false} />
 
                                                         </label>
-                                                        <a href="#"> only </a>
+                                                        <a> only </a>
                                                     </div>)
                                             })}
                                         </div>
@@ -212,7 +239,7 @@ class Flights extends Component {
                                                             <p>{v.label}</p>
 
                                                         </label>
-                                                        <a href="#"> only </a>
+                                                        <a> only </a>
                                                     </div>)
                                             })}
                                         </div>
@@ -240,7 +267,7 @@ class Flights extends Component {
                                                         <label>
                                                             <p>{v.label}</p>
                                                         </label>
-                                                        <a href="#"> only </a>
+                                                        <a> only </a>
                                                     </div>)
                                             })}
                                         </div>
@@ -268,7 +295,7 @@ class Flights extends Component {
                                                         <label>
                                                             <p>{v.label}</p>
                                                         </label>
-                                                        <a href="#"> only </a>
+                                                        <a> only </a>
                                                     </div>)
                                             })}
                                         </div>
@@ -296,7 +323,7 @@ class Flights extends Component {
                                                         <label>
                                                             <p>{v.label}</p>
                                                         </label>
-                                                        <a href="#"> only </a>
+                                                        <a> only </a>
                                                     </div>)
                                             })}
                                         </div>
@@ -305,17 +332,18 @@ class Flights extends Component {
                                 })}
                             </div>
                         </div>
-
+                        <span className="properties"> {this.state.filteredData.length} properties found </span>
                         <div className="col-md-9">
-                            <span className="properties"> {this.state.hotel_data.length} properties found </span>
+
                             {currentHotels.map((data, key) => {
                                 return (
 
 
                                     <div className="col-sm-6 col-md-6" key={key}>
                                         <div className="thumbnail" >
+                                            <div className="img-div">
                                             <img src={data.image.map(img => { return img.url })} className="img-responsive" alt="Tajawal images" />
-
+                                            </div>
                                             <div className="caption">
                                                 <Rater total={5} rating={data.rating.map(rating => { return rating.value })} interactive={false} />
                                                 <div className="row">
