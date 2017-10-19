@@ -16,7 +16,8 @@ require("bootstrap/less/bootstrap.less");
 let currentHotels, indexOfLastHotel, indexOfFirstHotel;
 let filterDist, filterChain, filterPA, filterRA, filterStar;
 
- let   filteredData =  []
+//  let   filteredData =  []
+let startfilter = []
 
 
 class Flights extends Component {
@@ -33,7 +34,7 @@ class Flights extends Component {
             max: 100,
             filterSearInp: '',
             filteredData: [],
-         
+
         };
     }
 
@@ -58,9 +59,9 @@ class Flights extends Component {
                 console.log(error)
             })
 
-           this.setState({
-            filteredData : _.clone(this.state.hotel_data)
-           })
+        this.setState({
+            filteredData: _.clone(this.state.hotel_data)
+        })
     }
 
 
@@ -72,23 +73,42 @@ class Flights extends Component {
     }
 
     handleSearchClick(event) {
-   this.setState({
-          filteredData : this.state.hotel_data.filter((data) =>{
-          return data.summary.hotelName.toLowerCase().indexOf(this.refs.searchInput.value.toLowerCase()) !== -1
-    })
-  })
-}
-
-
-    handleStarCheck(count) {
-        
-           let  index = filterStar.map(data => {
-                   data.value.map(value => {
-                     return console.log (value.count == count)
-                   })
+        this.setState({
+            filteredData: this.state.hotel_data.filter((data) => {
+                return data.summary.hotelName.toLowerCase().indexOf(this.refs.searchInput.value.toLowerCase()) !== -1;
             })
+        })
     }
 
+
+    handleStarCheck(code) {
+    //  console.log( _.filter(this.state.hotel_data , (d) => {
+    //      return "5" === code;
+    //  }))
+    var ahsan;
+
+
+      this.state.hotel_data.forEach( (value, index, array) => {  
+          
+        value.rating.forEach(
+            d => {
+                console.log(_.filter(value ,  v => {
+                    return d.value !== code;
+                }))
+            }
+        ) })
+
+         console.log(ahsan)
+
+        // console.log(filterA)
+
+        //   this.setState({
+        //       filteredData: _.filter(this.state.hotel_data, (data) => {
+        //           return  filterA !== code;
+        //       })
+        //   })
+    }
+    // return data.summary.hotelName.toLowerCase().indexOf(this.refs.searchInput.value.toLowerCase()) !== -1
     handleDivHide(e) {
 
         var x = document.getElementById(e);
@@ -136,7 +156,7 @@ class Flights extends Component {
 
         return (
             <div>
-              
+
                 <div className="container">
                     <h2>Select Hotel</h2>
 
@@ -146,7 +166,7 @@ class Flights extends Component {
                             <h3>Filter</h3>
                             <form className="col-sm-12 col-md-12" role="search">
                                 <div className="form-group input-group">
-                                    <input type="text" className="form-control"  placeholder="Search hotel name..." ref="searchInput" />
+                                    <input type="text" className="form-control" placeholder="Search hotel name..." ref="searchInput" />
                                     <span className="input-group-btn">
                                         <button className="btn btn-primary" type="button" onClick={(e) => { this.handleSearchClick(e) }}>
                                             <span className="glyphicon glyphicon-search"></span>
@@ -193,7 +213,7 @@ class Flights extends Component {
                                                 return (
                                                     <div key={key}>
                                                         <label>
-                                                            <input type="checkbox" defaultChecked={v.selected} ref="starR" onChange={() => this.handleStarCheck(v.count)} />
+                                                            <input type="checkbox" defaultChecked={v.selected} ref="starR" onChange={() => this.handleStarCheck(v.code)} />
 
                                                         </label>
                                                         <label>
@@ -334,7 +354,7 @@ class Flights extends Component {
                                     <div className="col-sm-6 col-md-6" key={key}>
                                         <div className="thumbnail" >
                                             <div className="img-div">
-                                            <img src={data.image.map(img => { return img.url })} className="img-responsive" alt="Tajawal images" />
+                                                <img src={data.image.map(img => { return img.url })} className="img-responsive" alt="Tajawal images" />
                                             </div>
                                             <div className="caption">
                                                 <Rater total={5} rating={data.rating.map(rating => { return rating.value })} interactive={false} />
