@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import axios from 'axios';
 import Rater from 'react-rater'
@@ -8,6 +7,7 @@ import './style.css'
 import _ from 'lodash';
 import Rheostat from 'rheostat';
 import 'react-rangeslider/lib/index.css'
+import { inject, observer } from 'mobx-react';
 
 require("bootstrap/less/bootstrap.less");
 
@@ -15,15 +15,14 @@ require("bootstrap/less/bootstrap.less");
 
 let currentHotels, indexOfLastHotel, indexOfFirstHotel;
 let filterDist, filterChain, filterPA, filterRA, filterStar;
+let count = false ;
 
-//  let   filteredData =  []
-let startfilter = []
-
-
-class Flights extends Component {
+@inject('Flights')
+@observer class Flights extends Component {
 
     constructor(props) {
         super(props);
+        this.Flights = this.props.Flights; 
 
         this.state = {
             activePage: 1,
@@ -32,8 +31,7 @@ class Flights extends Component {
             hotel_data: [],
             min: 1,
             max: 100,
-            filterSearInp: '',
-            filteredData: [],
+            filterSearInp: ''
 
         };
     }
@@ -59,9 +57,9 @@ class Flights extends Component {
                 console.log(error)
             })
 
-        this.setState({
-            filteredData: _.clone(this.state.hotel_data)
-        })
+      
+           this.Flights.filteredData = _.clone(this.state.hotel_data)
+        
     }
 
 
@@ -73,45 +71,33 @@ class Flights extends Component {
     }
 
     handleSearchClick(event) {
-        this.setState({
-            filteredData: this.state.hotel_data.filter((data) => {
-                return data.summary.hotelName.toLowerCase().indexOf(this.refs.searchInput.value.toLowerCase()) !== -1;
-            })
-        })
+     this.Flights.SearchInput =  this.refs.searchInput.value
+
+    }
+    handleSearchChange(){
+        
     }
 
+    handleStarCheck(code, id) {
 
-    handleStarCheck(code) {
-    //  console.log( _.filter(this.state.hotel_data , (d) => {
-    //      return "5" === code;
-    //  }))
-    var ahsan;
+        filterStar.map(data => {
+          data.value.map(value => {
+            return !value.selected === code
+          })
+        })
+  
+        //    return   _.filter(this.Flights.filteredData, function (data) {
+        //         return _.some((data.rating) , d => {
+        //             return d.value !== code
+        //         })
 
-
-      this.state.hotel_data.forEach( (value, index, array) => {  
-          
-        value.rating.forEach(
-            d => {
-                console.log(_.filter(value ,  v => {
-                    return d.value !== code;
-                }))
-            }
-        ) })
-
-         console.log(ahsan)
-
-        // console.log(filterA)
-
-        //   this.setState({
-        //       filteredData: _.filter(this.state.hotel_data, (data) => {
-        //           return  filterA !== code;
-        //       })
-        //   })
+        // })
+    
     }
     // return data.summary.hotelName.toLowerCase().indexOf(this.refs.searchInput.value.toLowerCase()) !== -1
     handleDivHide(e) {
 
-        var x = document.getElementById(e);
+        var x = document.getElementById(e) ;
 
         if (x.style.display === "none") {
             x.style.display = "block";
@@ -152,7 +138,7 @@ class Flights extends Component {
         indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
 
-        currentHotels = this.state.filteredData.slice(indexOfFirstHotel, indexOfLastHotel);
+        currentHotels =   _.slice(this.Flights.SearchFilter, indexOfFirstHotel, indexOfLastHotel);
 
         return (
             <div>
@@ -165,8 +151,8 @@ class Flights extends Component {
                         <div className="col-md-3">
                             <h3>Filter</h3>
                             <form className="col-sm-12 col-md-12" role="search">
-                                <div className="form-group input-group">
-                                    <input type="text" className="form-control" placeholder="Search hotel name..." ref="searchInput" />
+                                <div className="form-group input-group"> 
+                                    <input type="text" className="form-control" placeholder="Search hotel name..." ref="searchInput" onChange={() => {this.handleSearchChange()}} />
                                     <span className="input-group-btn">
                                         <button className="btn btn-primary" type="button" onClick={(e) => { this.handleSearchClick(e) }}>
                                             <span className="glyphicon glyphicon-search"></span>
@@ -213,7 +199,7 @@ class Flights extends Component {
                                                 return (
                                                     <div key={key}>
                                                         <label>
-                                                            <input type="checkbox" defaultChecked={v.selected} ref="starR" onChange={() => this.handleStarCheck(v.code)} />
+                                                            <input type="checkbox" checked ref="starR" onChange={() => this.handleStarCheck(v.code, this.refs.starR.id)} id="starID" />
 
                                                         </label>
                                                         <label>
@@ -344,8 +330,10 @@ class Flights extends Component {
                                 })}
                             </div>
                         </div>
-                        <span className="properties"> {this.state.filteredData.length} properties found </span>
+                        <span className="properties"> {this.Flights.SearchFilter.length} properties found </span>
                         <div className="col-md-9">
+                     
+                              
 
                             {currentHotels.map((data, key) => {
                                 return (
@@ -387,7 +375,7 @@ class Flights extends Component {
                 <Pagination
                     activePage={this.state.activePage}
                     itemsCountPerPage={this.state.itemsCountPerPage}
-                    totalItemsCount={this.state.filteredData.length}
+                    totalItemsCount={ this.Flights.SearchFilter.length}
                     pageRangeDisplayed={5}
                     onChange={this.handlePageChange}
                 />
