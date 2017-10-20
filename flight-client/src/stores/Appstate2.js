@@ -7,6 +7,7 @@ class  Flights {
 
     @observable filteredData = []
      @observable SearchInput = ''
+     
 
     @computed get SearchFilter (){
         let datas
@@ -19,7 +20,6 @@ class  Flights {
             return this.filteredData = datas
           
     }
-
 
 }
 

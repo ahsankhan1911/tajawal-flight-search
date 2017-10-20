@@ -30,7 +30,8 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
             hotel_data: [],
             min: 1,
             max: 100,
-            filterSearInp: ''
+            filterSearInp: '',
+            
 
         };
     }
@@ -61,8 +62,6 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
         
     }
 
-
-
     handlePageChange = (pageNumber) => {
 
         this.setState({ activePage: pageNumber });
@@ -73,17 +72,11 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
      this.Flights.SearchInput =  this.refs.searchInput.value
 
     }
-    handleSearchChange(){
-        
-    }
+   
 
     handleStarCheck(code) {
 
-        filterStar.map(data => {
-         return _.map(data.value , (value) => {
-           return  value.code 
-          })
-        })
+       console.log(this.refs.starR.defaultChecked)
   
         //    return   _.filter(this.Flights.filteredData, function (data) {
         //         return _.some((data.rating) , d => {
@@ -93,7 +86,7 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
         // })
     
     }
-    // return data.summary.hotelName.toLowerCase().indexOf(this.refs.searchInput.value.toLowerCase()) !== -1
+    
     handleDivHide(e) {
 
         var x = document.getElementById(e) ;
@@ -198,7 +191,7 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                                                 return (
                                                     <div key={key}>
                                                         <label>
-                                                            <input type="checkbox" checked ref="starR" onChange={() => this.handleStarCheck(v.code, this.refs.starR.id)} id="starID" />
+                                                            <input type="checkbox" defaultChecked={v.selected} ref="starR" onChange={() => this.handleStarCheck(v.code)} />
 
                                                         </label>
                                                         <label>
