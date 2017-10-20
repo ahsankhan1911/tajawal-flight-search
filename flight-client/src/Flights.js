@@ -81,7 +81,7 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
 
         filterStar.map(data => {
          return _.map(data.value , (value) => {
-           return  value.code === code 
+           return  value.code 
           })
         })
   
