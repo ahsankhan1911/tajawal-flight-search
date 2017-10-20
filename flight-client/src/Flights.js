@@ -15,7 +15,6 @@ require("bootstrap/less/bootstrap.less");
 
 let currentHotels, indexOfLastHotel, indexOfFirstHotel;
 let filterDist, filterChain, filterPA, filterRA, filterStar;
-let count = false ;
 
 @inject('Flights')
 @observer class Flights extends Component {
@@ -78,11 +77,11 @@ let count = false ;
         
     }
 
-    handleStarCheck(code, id) {
+    handleStarCheck(code) {
 
         filterStar.map(data => {
-          data.value.map(value => {
-            return !value.selected === code
+         return _.map(data.value , (value) => {
+           return  value.code === code 
           })
         })
   
