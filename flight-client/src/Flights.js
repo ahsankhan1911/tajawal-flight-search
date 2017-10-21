@@ -70,20 +70,20 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
 
     handleSearchClick(event) {
      this.Flights.SearchInput =  this.refs.searchInput.value
+     this.Flights.id = this.refs.searchBtn.id;
+
+     this.Flights.SearchFilter();
 
     }
    
 
     handleStarCheck(code) {
 
-       console.log(this.refs.starR.defaultChecked)
+        this.Flights.SearchInput = code;
+     
+       this.Flights.id = this.refs.starR.id;
   
-        //    return   _.filter(this.Flights.filteredData, function (data) {
-        //         return _.some((data.rating) , d => {
-        //             return d.value !== code
-        //         })
-
-        // })
+       this.Flights.SearchFilter();
     
     }
     
@@ -130,7 +130,7 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
         indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
 
-        currentHotels =   _.slice(this.Flights.SearchFilter, indexOfFirstHotel, indexOfLastHotel);
+        currentHotels =   _.slice(this.Flights.filteredData, indexOfFirstHotel, indexOfLastHotel);
 
         return (
             <div>
@@ -144,9 +144,9 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                             <h3>Filter</h3>
                             <form className="col-sm-12 col-md-12" role="search">
                                 <div className="form-group input-group"> 
-                                    <input type="text" className="form-control" placeholder="Search hotel name..." ref="searchInput" onChange={() => {this.handleSearchChange()}} />
+                                    <input type="text" className="form-control" placeholder="Search hotel name..." ref="searchInput" />
                                     <span className="input-group-btn">
-                                        <button className="btn btn-primary" type="button" onClick={(e) => { this.handleSearchClick(e) }}>
+                                        <button className="btn btn-primary" type="button" onClick={(e) => { this.handleSearchClick(e) }} ref="searchBtn" id="searchID">
                                             <span className="glyphicon glyphicon-search"></span>
                                         </button>
                                     </span>
@@ -191,7 +191,8 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                                                 return (
                                                     <div key={key}>
                                                         <label>
-                                                            <input type="checkbox" defaultChecked={v.selected} ref="starR" onChange={() => this.handleStarCheck(v.code)} />
+                                                            <input type="checkbox" defaultChecked={v.selected} ref="starR"
+                                                            onClick={() => this.handleStarCheck(v.code)}  id="starRating"/>
 
                                                         </label>
                                                         <label>
@@ -322,7 +323,7 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                                 })}
                             </div>
                         </div>
-                        <span className="properties"> {this.Flights.SearchFilter.length} properties found </span>
+                        <span className="properties"> {this.Flights.filteredData.length} properties found </span>
                         <div className="col-md-9">
                      
                               
@@ -367,7 +368,7 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                 <Pagination
                     activePage={this.state.activePage}
                     itemsCountPerPage={this.state.itemsCountPerPage}
-                    totalItemsCount={ this.Flights.SearchFilter.length}
+                    totalItemsCount={ this.Flights.filteredData.length}
                     pageRangeDisplayed={5}
                     onChange={this.handlePageChange}
                 />

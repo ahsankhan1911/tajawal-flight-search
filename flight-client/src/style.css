@@ -114,8 +114,8 @@ font-size: 10px;
       margin-left:35px;
   }
 
-  /* .img-div{
+  .img-div{
 
-    height: 100px;
-    width: 120px;
-  } */
+    height: 220px;
+    overflow: hidden
+  }

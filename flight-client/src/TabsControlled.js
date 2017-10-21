@@ -200,13 +200,13 @@ let ContClear, ContClearFlag = true;
     
           case 3:
             ContClearFlag = false;
-            ContClear =null;
+           return  ContClear =null;
           
           case 4: 
-             flagAdd = true;
+            return  flagAdd = true;
             
           default:
-            ContClearFlag = true;
+            return ContClearFlag = true;
         }
     
       }
