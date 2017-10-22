@@ -12,6 +12,7 @@ import { inject, observer } from 'mobx-react';
 require("bootstrap/less/bootstrap.less");
 
 let currentHotels, indexOfLastHotel, indexOfFirstHotel;
+let Seinput;
 
 @inject('Flights')
 @observer class Flights extends Component {
@@ -75,17 +76,65 @@ let currentHotels, indexOfLastHotel, indexOfFirstHotel;
 
     }
 
-    handleSearchClick(input) {
+    filterData () {
+
+        
+
+            var f = _.filter(this.state.hotel_data, (data) => {
+                return data.summary.hotelName.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1;
+        })
 
     
 
-        
+       var codes =  this.state.filterStar.filter(data => {
+                return data.selected === false
+        })
+        var mappedcode = codes.map(value => {return value.code} )
+
+        if(codes.length > 0 ){
+        f = _.filter(f, (data) => {
+            debugger;
+            codes.map((c) => {
+                data.rating.map((r) => {
+                    debugger;
+                    if(r.value !== c.code){
+                        return r;
+                    }
+
+                });
+            });
+        });
+    }
+
+    //    f =  _.filter(f , (data) => {
+    //         return _.some((data.rating), (d) => {
+    //             mappedcode.map( (value) => {
+    //                 return d.value !== value
+    //             })
+                    
+    //         })
+
+    //     })
+
+        this.setState({
+            filteredData : f
+        })
+
+
+
+    }
+
+    handleSearchClick(input) {
+
         this.setState({
             input : input,
-            filteredData : _.filter(this.state.hotel_data, (data) => {
-                return data.summary.hotelName.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1;
+            
+            // filteredData : _.filter(this.state.hotel_data, (data) => {
+            //     return data.summary.hotelName.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1; })
 
-        })
+    
+        }, () => {
+            this.filterData();
         })
         console.log(this.state.filteredData)
     //  this.Flights.SearchInput =  this.refs.searchInput.value
@@ -155,29 +204,30 @@ let currentHotels, indexOfLastHotel, indexOfFirstHotel;
    
     // starRating handel event
     handleStarCheck(code,key) {
-        console.log (code)
 
         var a =   this.state.filterStar
         a[key].selected = !a[key].selected
 
         this.setState({
             filterStar : a
+        }, () => {
+            this.filterData();
         })
         console.log(this.state.filterStar[key].selected)
 
-        if(this.state.filterStar[key].selected ===  false){
+        // if(this.state.filterStar[key].selected ===  false){
 
-            this.setState({
-                filteredData : _.filter(this.state.hotel_data , data => {
-                    return _.some((data.rating), d => {
-                        return d.value !== code;
-                    })
+        //     this.setState({
+        //         filteredData : _.filter(this.state.hotel_data , data => {
+        //             return _.some((data.rating), d => {
+        //                 return d.value !== code;
+        //             })
         
-                })
+        //         })
     
-            })
+        //     })
 
-        }
+        // }
     }
 
     
