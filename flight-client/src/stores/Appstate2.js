@@ -23,10 +23,11 @@ class Flights {
 
                 return _.filter(this.filteredData, (data) => {
                     
-              console.log(this.searchInput)
-                    return data.summary.hotelName.toLowerCase().indexOf(this.searchInput.toLowerCase()) !== -1 ||
-                    _.some((data.rating), d => { return d.value !== this.ratingInput; })
-         
+                   
+                       return  data.summary.hotelName.toLowerCase().indexOf(this.searchInput.toLowerCase()) !== -1  &&
+                          _.some((data.rating), d => { return d.value !== this.ratingInput; })
+
+               
 
 
                 // return  _.filter(this.filteredData, data => {
