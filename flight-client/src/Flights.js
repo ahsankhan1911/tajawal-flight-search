@@ -67,7 +67,7 @@ let Seinput;
                 console.log(error)
             })
 
-        this.state.filteredData = _.clone(this.state.hotel_data)
+        this.Flights.filteredData = _.clone(this.state.hotel_data)
     }
 
     handlePageChange = (pageNumber) => {
@@ -125,18 +125,18 @@ let Seinput;
     }
 
     handleSearchClick(input) {
-
-        this.setState({
-            input : input,
+     this.Flights.searchInput = this.refs.searchInput.value
+        // this.setState({
+        //     input : input,
             
-            // filteredData : _.filter(this.state.hotel_data, (data) => {
-            //     return data.summary.hotelName.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1; })
+        //     filteredData : _.filter(this.state.hotel_data, (data) => {
+        //         return data.summary.hotelName.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1; })
 
     
-        }, () => {
-            this.filterData();
-        })
-        console.log(this.state.filteredData)
+        // }, () => {
+        //     this.filterData();
+        // })
+        // console.log(this.state.filteredData)
     //  this.Flights.SearchInput =  this.refs.searchInput.value
     //  this.Flights.id = this.refs.searchBtn.id;
 
@@ -210,11 +210,9 @@ let Seinput;
 
         this.setState({
             filterStar : a
-        }, () => {
-            this.filterData();
         })
-        console.log(this.state.filterStar[key].selected)
-
+       
+   this.Flights.ratingInput = code;
         // if(this.state.filterStar[key].selected ===  false){
 
         //     this.setState({
@@ -267,7 +265,7 @@ let Seinput;
         indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
 
-        currentHotels =   _.slice(this.state.filteredData, indexOfFirstHotel, indexOfLastHotel);
+        currentHotels =   _.slice(this.Flights.SearchFilter, indexOfFirstHotel, indexOfLastHotel);
 
         return (
             <div>
@@ -430,7 +428,7 @@ let Seinput;
                                         
                             </div>
                         </div>
-                        <span className="properties"> {this.state.filteredData.length} properties found </span>
+                        <span className="properties"> {this.Flights.SearchFilter.length} properties found </span>
                         <div className="col-md-9">
                      
                               
@@ -475,7 +473,7 @@ let Seinput;
                 <Pagination
                     activePage={this.state.activePage}
                     itemsCountPerPage={this.state.itemsCountPerPage}
-                    totalItemsCount={ this.state.filteredData.length}
+                    totalItemsCount={ this.Flights.SearchFilter.length}
                     pageRangeDisplayed={5}
                     onChange={this.handlePageChange}
                 />

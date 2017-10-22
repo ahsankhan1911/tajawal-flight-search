@@ -7,39 +7,40 @@ import _ from 'lodash';
 class Flights {
 
     @observable filteredData = []
-    @observable SearchInput = ''
-    @observable id = '';
+    @observable searchInput = ''
+    @observable ratingInput = ''
+    @observable districtInput = ''
+  
 
 
 
     @computed get SearchFilter() {
-        console.log(this.id)
+    
+        //    return this.filteredData
+       
 
-        if(this.id === " ") {
-           return this.filteredData
-        }
+           
 
-            if(this.id === "searchInput"){
-                console.log ("input hit")
-                return this.filteredData = _.filter(this.filteredData, (data) => {
-                    return data.summary.hotelName.toLowerCase().indexOf(this.SearchInput.toLowerCase()) !== -1;
-                })
-            }
+                return _.filter(this.filteredData, (data) => {
+                    
+              console.log(this.searchInput)
+                    return data.summary.hotelName.toLowerCase().indexOf(this.searchInput.toLowerCase()) !== -1 ||
+                    _.some((data.rating), d => { return d.value !== this.ratingInput; })
+         
 
-            if( this.id === "starRating") {
 
-                return this.filteredData = _.filter(this.filteredData, data => {
-                    return _.some((data.rating), d => {
+                // return  _.filter(this.filteredData, data => {
+                //     return 
+                //     })
 
-                        return d.value !== this.SearchInput;
-                    })
+                // })
+            
 
-                })
-            }
-
-        }
+        })
 
     }
+}
+    
 
 const store = new Flights();
 
