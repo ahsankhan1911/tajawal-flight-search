@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx';
+import { observable, action, computed } from 'mobx';
 
 import _ from 'lodash';
 
@@ -12,17 +12,21 @@ class Flights {
 
 
 
-    @action SearchFilter() {
+    @computed get SearchFilter() {
+        console.log(this.id)
 
-        switch (this.id) {
+        if(this.id === " ") {
+           return this.filteredData
+        }
 
-            case this.id === "searchID":
+            if(this.id === "searchInput"){
+                console.log ("input hit")
                 return this.filteredData = _.filter(this.filteredData, (data) => {
                     return data.summary.hotelName.toLowerCase().indexOf(this.SearchInput.toLowerCase()) !== -1;
                 })
+            }
 
-
-            case this.id === "starRating":
+            if( this.id === "starRating") {
 
                 return this.filteredData = _.filter(this.filteredData, data => {
                     return _.some((data.rating), d => {
@@ -31,14 +35,11 @@ class Flights {
                     })
 
                 })
-
-            default:
-                return this.filteredData;
+            }
 
         }
 
     }
-}
 
 const store = new Flights();
 

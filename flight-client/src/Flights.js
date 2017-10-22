@@ -11,10 +11,7 @@ import { inject, observer } from 'mobx-react';
 
 require("bootstrap/less/bootstrap.less");
 
-
-
 let currentHotels, indexOfLastHotel, indexOfFirstHotel;
-let filterDist, filterChain, filterPA, filterRA, filterStar;
 
 @inject('Flights')
 @observer class Flights extends Component {
@@ -30,9 +27,13 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
             hotel_data: [],
             min: 1,
             max: 100,
-            filterSearInp: '',
-            
-
+            filterStar : [],
+            filterDist : [],
+            filterChain : [],
+            filterPA: [],
+            filterRA : [],
+            filteredData: [],
+            input : ''
         };
     }
 
@@ -51,15 +52,21 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
 
         axios.get("http://localhost:5000/flight/hotels/resources")
             .then((response) => {
-                this.setState({ resources: response.data })
+
+                this.setState({
+                    resources: response.data,
+                    filterStar : response.data[3].value,
+                    filterDist : response.data[1].value,
+                    filterChain : response.data[0].value,
+                    filterPA : response.data[6].value,
+                    filterRA : response.data[5].value
+                })
 
             }).catch((error) => {
                 console.log(error)
             })
 
-      
-           this.Flights.filteredData = _.clone(this.state.hotel_data)
-        
+        this.state.filteredData = _.clone(this.state.hotel_data)
     }
 
     handlePageChange = (pageNumber) => {
@@ -68,24 +75,111 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
 
     }
 
-    handleSearchClick(event) {
-     this.Flights.SearchInput =  this.refs.searchInput.value
-     this.Flights.id = this.refs.searchBtn.id;
+    handleSearchClick(input) {
 
-     this.Flights.SearchFilter();
+    
 
+        
+        this.setState({
+            input : input,
+            filteredData : _.filter(this.state.hotel_data, (data) => {
+                return data.summary.hotelName.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1;
+
+        })
+        })
+        console.log(this.state.filteredData)
+    //  this.Flights.SearchInput =  this.refs.searchInput.value
+    //  this.Flights.id = this.refs.searchBtn.id;
+
+     
+
+    }
+
+    // District handel event
+    handleDistCheck(code,key){
+        console.log(code)
+        
+        var a =   this.state.filterDist
+        a[key].selected = !a[key].selected
+
+        this.setState({
+            filterDist : a
+        })
+
+        if (this.state.filterDist[key].selected === false) {
+
+            this.setState({
+                filteredData: _.filter(this.state.hotel_data, data => {
+                    return data.meta.districtId !== code
+
+                })
+
+            })
+
+        }
+         
+    }
+
+    // Chain handel event
+    handleChainCheck(code,key){
+        var a =   this.state.filterChain
+        a[key].selected = !a[key].selected
+
+        this.setState({
+            filterChain : a
+        })
+         
+    } 
+
+    // Prop Amnities handel event
+    handlePACheck(code,key){
+        var a =   this.state.filterPA
+        a[key].selected = !a[key].selected
+
+        this.setState({
+            filterPA : a
+        })
+         
+    }
+
+    // Room Amnities handel event
+    handleRACheck(code,key){
+        var a =   this.state.filterRA
+        a[key].selected = !a[key].selected
+
+        this.setState({
+            filterRA : a
+        })
+         
     }
    
+    // starRating handel event
+    handleStarCheck(code,key) {
+        console.log (code)
 
-    handleStarCheck(code) {
+        var a =   this.state.filterStar
+        a[key].selected = !a[key].selected
 
-        this.Flights.SearchInput = code;
-     
-       this.Flights.id = this.refs.starR.id;
-  
-       this.Flights.SearchFilter();
+        this.setState({
+            filterStar : a
+        })
+        console.log(this.state.filterStar[key].selected)
+
+        if(this.state.filterStar[key].selected ===  false){
+
+            this.setState({
+                filteredData : _.filter(this.state.hotel_data , data => {
+                    return _.some((data.rating), d => {
+                        return d.value !== code;
+                    })
+        
+                })
     
+            })
+
+        }
     }
+
     
     handleDivHide(e) {
 
@@ -120,17 +214,10 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
 
     render() {
 
-
-        filterDist = _.filter(this.state.resources, d => { return d.type === "district"; });
-        filterChain = _.filter(this.state.resources, d => { return d.type === "chain"; });
-        filterPA = _.filter(this.state.resources, d => { return d.type === "propertyAmenity"; });
-        filterRA = _.filter(this.state.resources, d => { return d.type === "roomAmenity"; });
-        filterStar = _.filter(this.state.resources, d => { return d.type === "starRating"; });
-
         indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
 
-        currentHotels =   _.slice(this.Flights.filteredData, indexOfFirstHotel, indexOfLastHotel);
+        currentHotels =   _.slice(this.state.filteredData, indexOfFirstHotel, indexOfLastHotel);
 
         return (
             <div>
@@ -146,7 +233,7 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                                 <div className="form-group input-group"> 
                                     <input type="text" className="form-control" placeholder="Search hotel name..." ref="searchInput" />
                                     <span className="input-group-btn">
-                                        <button className="btn btn-primary" type="button" onClick={(e) => { this.handleSearchClick(e) }} ref="searchBtn" id="searchID">
+                                        <button className="btn btn-primary" type="button" onClick={() => { this.handleSearchClick(this.refs.searchInput.value) }} ref="searchBtn" id="searchID">
                                             <span className="glyphicon glyphicon-search"></span>
                                         </button>
                                     </span>
@@ -180,19 +267,15 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                                 <h4>Star Rating <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.star.id)}>^</button></span></h4>
                             </div>
                             <div id="StarRating" ref="star">
-
-                                {filterStar.map((d) => {
-
-                                    return (
-                                        <div>
-
-                                            {d.value.map((v, key) => {
+                                              
+                                            {this.state.filterStar.map((v, key) => {
+                                               
 
                                                 return (
                                                     <div key={key}>
                                                         <label>
-                                                            <input type="checkbox" defaultChecked={v.selected} ref="starR"
-                                                            onClick={() => this.handleStarCheck(v.code)}  id="starRating"/>
+                                                            <input type="checkbox" checked={v.selected} ref ="starR"
+                                                            onClick={() => this.handleStarCheck(v.code,key)} id="starRating" />
 
                                                         </label>
                                                         <label>
@@ -202,10 +285,7 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                                                         <a> only </a>
                                                     </div>)
                                             })}
-                                        </div>
-
-                                    );
-                                })}
+                                
                             </div>
 
                             <hr />
@@ -214,16 +294,12 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                             </div>
                             <div className="filterStyles" id="District" ref="dist">
 
-                                {filterDist.map((d) => {
-
-                                    return (
-                                        <div>
-
-                                            {d.value.map((v, key) => {
+                                            {this.state.filterDist.map((v, key) => {
                                                 return (
                                                     <div key={key}>
                                                         <label>
-                                                            <input type="checkbox" value="asdasd" checked={v.selected} />
+                                                            <input type="checkbox" checked={v.selected} 
+                                                            onClick={() => this.handleDistCheck(v.code,key)}/>
 
                                                         </label>
                                                         <label>
@@ -233,10 +309,7 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                                                         <a> only </a>
                                                     </div>)
                                             })}
-                                        </div>
-
-                                    );
-                                })}
+                                        
                             </div>
                             <hr />
                             <div>
@@ -244,16 +317,13 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                             </div>
                             <div className="filterStyles" id="Chain" ref="chain">
 
-                                {filterChain.map((d) => {
-
-                                    return (
-                                        <div>
-
-                                            {d.value.map((v, key) => {
+            
+                                            {this.state.filterChain.map((v, key) => {
                                                 return (
                                                     <div key={key}>
                                                         <label>
-                                                            <input type="checkbox" value="asdasd" checked={v.selected} />
+                                                        <input type="checkbox" checked={v.selected}
+                                                            onClick={() => this.handleChainCheck(v.code,key)} /> 
                                                         </label>
                                                         <label>
                                                             <p>{v.label}</p>
@@ -261,10 +331,7 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                                                         <a> only </a>
                                                     </div>)
                                             })}
-                                        </div>
-
-                                    );
-                                })}
+                                        
                             </div>
                             <hr />
                             <div>
@@ -272,16 +339,14 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                             </div>
                             <div className="filterStyles" id="PropertyAmenities" ref="pa">
 
-                                {filterPA.map((d) => {
+                                
 
-                                    return (
-                                        <div>
-
-                                            {d.value.map((v, key) => {
+                                            {this.state.filterPA.map((v, key) => {
                                                 return (
                                                     <div key={key}>
                                                         <label>
-                                                            <input type="checkbox" value="asdasd" checked={v.selected} />
+                                                            <input type="checkbox" value="asdasd" checked={v.selected}
+                                                            onClick={() => this.handlePACheck(v.code,key)} />
                                                         </label>
                                                         <label>
                                                             <p>{v.label}</p>
@@ -289,10 +354,7 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                                                         <a> only </a>
                                                     </div>)
                                             })}
-                                        </div>
-
-                                    );
-                                })}
+                                       
                             </div>
                             <hr />
                             <div>
@@ -300,16 +362,14 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                             </div>
                             <div className="filterStyles" id="RoomAmenities" ref="ra">
 
-                                {filterRA.map((d) => {
+                                
 
-                                    return (
-                                        <div>
-
-                                            {d.value.map((v, key) => {
+                                            {this.state.filterRA.map((v, key) => {
                                                 return (
                                                     <div key={key}>
                                                         <label>
-                                                            <input type="checkbox" value="asdasd" checked={v.selected} />
+                                                            <input type="checkbox" value="asdasd" checked={v.selected} 
+                                                            onClick={() => this.handleRACheck(v.code,key)}/>
                                                         </label>
                                                         <label>
                                                             <p>{v.label}</p>
@@ -317,13 +377,10 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                                                         <a> only </a>
                                                     </div>)
                                             })}
-                                        </div>
-
-                                    );
-                                })}
+                                        
                             </div>
                         </div>
-                        <span className="properties"> {this.Flights.filteredData.length} properties found </span>
+                        <span className="properties"> {this.state.filteredData.length} properties found </span>
                         <div className="col-md-9">
                      
                               
@@ -368,7 +425,7 @@ let filterDist, filterChain, filterPA, filterRA, filterStar;
                 <Pagination
                     activePage={this.state.activePage}
                     itemsCountPerPage={this.state.itemsCountPerPage}
-                    totalItemsCount={ this.Flights.filteredData.length}
+                    totalItemsCount={ this.state.filteredData.length}
                     pageRangeDisplayed={5}
                     onChange={this.handlePageChange}
                 />

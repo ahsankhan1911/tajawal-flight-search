@@ -16,13 +16,9 @@ exports.search = (req, res, next) => {
 
                    else {
                        res.send(data)
-                   }
-                
-            })
-              
-            
-    
-    
+                   }        
+          })
+
     };
 
     exports.hotels = (req, res) => {
