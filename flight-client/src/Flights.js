@@ -39,14 +39,15 @@ let Seinput;
     }
 
 
-    async componentDidMount() {
+   async  componentDidMount() {
         await axios.get("http://localhost:5000/flight/hotels")
             .then((response) => {
 
                 this.setState({
                     hotel_data: response.data
                 })
-
+                this.Flights.filteredData = _.clone(this.state.hotel_data)
+                
             }).catch((error) => {
                 console.log(error)
             })
@@ -67,7 +68,7 @@ let Seinput;
                 console.log(error)
             })
 
-        this.Flights.filteredData = _.clone(this.state.hotel_data)
+    
     }
 
     handlePageChange = (pageNumber) => {
@@ -76,77 +77,18 @@ let Seinput;
 
     }
 
-    filterData () {
 
-        
-
-            var f = _.filter(this.state.hotel_data, (data) => {
-                return data.summary.hotelName.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1;
-        })
-
-    
-
-       var codes =  this.state.filterStar.filter(data => {
-                return data.selected === false
-        })
-        var mappedcode = codes.map(value => {return value.code} )
-
-        if(codes.length > 0 ){
-        f = _.filter(f, (data) => {
-            debugger;
-            codes.map((c) => {
-                data.rating.map((r) => {
-                    debugger;
-                    if(r.value !== c.code){
-                        return r;
-                    }
-
-                });
-            });
-        });
-    }
-
-    //    f =  _.filter(f , (data) => {
-    //         return _.some((data.rating), (d) => {
-    //             mappedcode.map( (value) => {
-    //                 return d.value !== value
-    //             })
-                    
-    //         })
-
-    //     })
-
-        this.setState({
-            filteredData : f
-        })
-
-
-
-    }
 
     handleSearchClick(input) {
      this.Flights.searchInput = this.refs.searchInput.value
-        // this.setState({
-        //     input : input,
-            
-        //     filteredData : _.filter(this.state.hotel_data, (data) => {
-        //         return data.summary.hotelName.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1; })
-
+      
     
-        // }, () => {
-        //     this.filterData();
-        // })
-        // console.log(this.state.filteredData)
-    //  this.Flights.SearchInput =  this.refs.searchInput.value
-    //  this.Flights.id = this.refs.searchBtn.id;
-
-     
-
     }
+
 
     // District handel event
     handleDistCheck(code,key){
-        console.log(code)
+    
         
         var a =   this.state.filterDist
         a[key].selected = !a[key].selected
@@ -157,14 +99,13 @@ let Seinput;
 
         if (this.state.filterDist[key].selected === false) {
 
-            this.setState({
-                filteredData: _.filter(this.state.hotel_data, data => {
-                    return data.meta.districtId !== code
-
-                })
-
-            })
-
+              this.Flights.districtInput.push(code)
+        }
+        else {
+            _.remove(this.Flights.districtInput , (f) => {
+                return   f === code;
+              } )
+      
         }
          
     }
@@ -177,6 +118,17 @@ let Seinput;
         this.setState({
             filterChain : a
         })
+
+        if (a[key].selected === false) {
+            
+                          this.Flights.chainInput.push(code)
+                    }
+                    else {
+                        _.remove(this.Flights.chainInput , (f) => {
+                            return   f === code;
+                          } )
+                  
+                    }
          
     } 
 
@@ -188,6 +140,19 @@ let Seinput;
         this.setState({
             filterPA : a
         })
+
+
+        if (a[key].selected === false) {
+            
+                          this.Flights.PAInput.push(code)
+                    }
+                    else {
+                        _.remove(this.Flights.PAInput , (f) => {
+                            return   f === code;
+                          } )
+                  
+                    }
+
          
     }
 
@@ -203,16 +168,32 @@ let Seinput;
     }
    
     // starRating handel event
-    handleStarCheck(code,key) {
-
+    handleStarCheck(starObj,key) {
+     console.log(starObj)
         var a =   this.state.filterStar
         a[key].selected = !a[key].selected
 
         this.setState({
             filterStar : a
         })
-       
-   this.Flights.ratingInput = code;
+   
+        // this.Flights.ratingInput = '';
+
+      if (a[key].selected === false) {
+        this.Flights.ratingInput.push(starObj);
+      }
+      else {
+        _.remove(this.Flights.ratingInput , (f) => {
+          return   f === starObj;
+        } )
+
+
+      }
+
+   
+
+        console.log(_.find(this.Flights.ratingInput, d => {return d < 6}))
+        console.log(this.Flights.ratingInput)
         // if(this.state.filterStar[key].selected ===  false){
 
         //     this.setState({
@@ -258,7 +239,22 @@ let Seinput;
             min: this.state.min + 1
         })
     }
+   
+    handleOnly(value){
+        this.setState({
+            filterStar: _.forEach (this.state.filterStar, d => {
+                d.selected = false;
+            })
+        })
+        value.selected = true;
 
+        // this.setState({
+        //     filterStar: _.remove(this.state.filterStar, f => {
+
+        //         return f.selected ===false;
+        //     })
+        // })
+    }
 
     render() {
 
@@ -323,14 +319,14 @@ let Seinput;
                                                     <div key={key}>
                                                         <label>
                                                             <input type="checkbox" checked={v.selected} ref ="starR"
-                                                            onClick={() => this.handleStarCheck(v.code,key)} id="starRating" />
+                                                            onClick={() => this.handleStarCheck({code: v.code, selected: v.selected},key)} id="starRating" />
 
                                                         </label>
                                                         <label>
                                                             <Rater total={5} rating={v.code} interactive={false} />
 
                                                         </label>
-                                                        <a> only </a>
+                                                        <a onClick={()=> {this.handleOnly(v)}}> only </a>
                                                     </div>)
                                             })}
                                 
@@ -440,7 +436,7 @@ let Seinput;
                                     <div className="col-sm-6 col-md-6" key={key}>
                                         <div className="thumbnail" >
                                             <div className="img-div">
-                                                <img src={data.image.map(img => { return img.url })} className="img-responsive" alt="Tajawal images" />
+                                                <img src={data.image.map(img => {return img.url;} )} className="img-responsive" alt="Tajawal images" />
                                             </div>
                                             <div className="caption">
                                                 <Rater total={5} rating={data.rating.map(rating => { return rating.value })} interactive={false} />
