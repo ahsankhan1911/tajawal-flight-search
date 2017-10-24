@@ -119,3 +119,22 @@ font-size: 10px;
     height: 220px;
     overflow: hidden
   }
+
+  .hotelName-div {
+    white-space: nowrap; 
+    overflow: hidden;
+  width: 10px;
+  text-overflow: ellipsis; 
+  }
+
+  .address-div {
+    white-space: nowrap; 
+    overflow: hidden;
+  width: 300px;
+  text-overflow: ellipsis; 
+  }
+
+
+  .price-max {
+    padding-left: 50%;
+  }  

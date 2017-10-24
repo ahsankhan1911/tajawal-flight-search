@@ -26,21 +26,21 @@ let Seinput;
             itemsCountPerPage: 40,
             resources: [],
             hotel_data: [],
-            min: 1,
-            max: 100,
+            min: 0,
+            max: 0,
             filterStar : [],
             filterDist : [],
             filterChain : [],
             filterPA: [],
             filterRA : [],
-            filteredData: [],
+            filterPrice : [],
             input : ''
         };
     }
 
 
-   async  componentDidMount() {
-        await axios.get("http://localhost:5000/flight/hotels")
+     async componentDidMount() {
+       await axios.get("http://localhost:5000/flight/hotels")
             .then((response) => {
 
                 this.setState({
@@ -61,15 +61,20 @@ let Seinput;
                     filterDist : response.data[1].value,
                     filterChain : response.data[0].value,
                     filterPA : response.data[6].value,
-                    filterRA : response.data[5].value
+                    filterRA : response.data[5].value,
+                    filterPrice:  response.data[2].value,
+                    min:  response.data[2].value.min,
+                    max : response.data[2].value.max
                 })
 
             }).catch((error) => {
                 console.log(error)
-            })
+              })
 
     
-    }
+            }
+
+
 
     handlePageChange = (pageNumber) => {
 
@@ -180,33 +185,17 @@ let Seinput;
         // this.Flights.ratingInput = '';
 
       if (a[key].selected === false) {
-        this.Flights.ratingInput.push(starObj);
+        this.Flights.ratingInput.push(starObj.code);
       }
       else {
         _.remove(this.Flights.ratingInput , (f) => {
-          return   f === starObj;
+          return   f === starObj.code;
         } )
 
 
       }
 
-   
 
-        console.log(_.find(this.Flights.ratingInput, d => {return d < 6}))
-        console.log(this.Flights.ratingInput)
-        // if(this.state.filterStar[key].selected ===  false){
-
-        //     this.setState({
-        //         filteredData : _.filter(this.state.hotel_data , data => {
-        //             return _.some((data.rating), d => {
-        //                 return d.value !== code;
-        //             })
-        
-        //         })
-    
-        //     })
-
-        // }
     }
 
     
@@ -222,24 +211,34 @@ let Seinput;
         }
     }
 
-    handleDragStart() {
-        this.setState({
-            min: this.state.min + 1
-        })
+
+    // Rheostate functionalities
+
+    // handleDragStart() {
+    //     this.setState({
+    //         min: this.state.min + 1
+    //     })
+    // }
+
+    handleDragEnd(e) {
+    //    console.log("I am from drag end")
     }
 
-    handleDragEnd() {
-        this.setState({
-            min: this.state.min + 1
-        })
-    }
+    handleSliderDragMove(e) {
 
-    handleSliderDragMove() {
-        this.setState({
-            min: this.state.min + 1
-        })
+            
+            //  this.setState({
+            //      min: this.state.min + this.state.filterPrice.step,
+            //      max : this.state.max - this.state.filterPrice.step
+            //  })
     }
-   
+    handleValuesUpdated(e){
+      return this.state.min++;
+
+    }
+    // Rheostate ends
+
+    
     handleOnly(value){
         this.setState({
             filterStar: _.forEach (this.state.filterStar, d => {
@@ -293,15 +292,14 @@ let Seinput;
                                     <Rheostat
                                         min={this.state.min}
                                         max={this.state.max}
-                                        values={[1, 100]}
-                                        onSliderDragStart={() => this.handleDragStart()}
-                                        onSliderDragEnd={() => this.handleDragEnd()}
-                                        onSliderDragMove={() => this.handleSliderDragMove()}
-                                        snap
-
+                                        values={[this.state.min, this.state.max]}
+                                       onSliderDragMove={(e) => this.handleSliderDragMove(e)}
+                                       onValuesUpdated ={(e) => this.handleValuesUpdated(e)}
+                                     
+                                       
                                     />
 
-                                    <span>{this.state.min}</span> <span>{this.state.max}</span>
+                                    <span>SAR {Math.floor(this.state.min)}</span> <span className="price-max"> SAR {Math.floor(this.state.max)}</span>
                                 </div>
 
 
@@ -441,14 +439,16 @@ let Seinput;
                                             <div className="caption">
                                                 <Rater total={5} rating={data.rating.map(rating => { return rating.value })} interactive={false} />
                                                 <div className="row">
-                                                    <div className="col-md-6 col-xs-6">
-                                                        <h3>{data.summary.hotelName}</h3>
+                                                    <div className="col-md-6 col-xs-6 hotelName-div">
+                                                        <h4>{data.summary.hotelName}</h4>
                                                     </div>
                                                     <div className="col-md-6 col-xs-6 price">
 
                                                     </div>
                                                 </div>
+                                                <div className="address-div">
                                                 <p>{data.location.address}</p>
+                                                </div>
                                                 <div className="row">
                                                     <div className="col-md-6">
                                                         <h3> <label>{Math.floor(data.summary.lowRate)}</label> SAR</h3>
