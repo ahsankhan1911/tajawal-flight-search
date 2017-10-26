@@ -45,6 +45,7 @@
     "react-dates": "^12.6.0",
     "react-dev-utils": "^4.0.1",
     "react-dom": "^15.6.1",
+    "react-input-range": "^1.2.1",
     "react-js-pagination": "^3.0.0",
     "react-rangeslider": "^2.2.0",
     "react-rater": "^0.4.5",

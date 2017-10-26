@@ -6,20 +6,21 @@ import Pagination from 'react-js-pagination';
 import './style.css'
 import _ from 'lodash';
 import Rheostat from 'rheostat';
-import 'react-rangeslider/lib/index.css'
 import { inject, observer } from 'mobx-react';
 
 require("bootstrap/less/bootstrap.less");
 
 let currentHotels, indexOfLastHotel, indexOfFirstHotel;
-let Seinput;
+let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButtonRA;
+
+
 
 @inject('Flights')
 @observer class Flights extends Component {
 
     constructor(props) {
         super(props);
-        this.Flights = this.props.Flights; 
+        this.Flights = this.props.Flights;
 
         this.state = {
             activePage: 1,
@@ -28,26 +29,31 @@ let Seinput;
             hotel_data: [],
             min: 0,
             max: 0,
-            filterStar : [],
-            filterDist : [],
-            filterChain : [],
+            filterStar: [],
+            filterDist: [],
+            filterChain: [],
             filterPA: [],
-            filterRA : [],
-            filterPrice : [],
-            input : ''
+            filterRA: [],
+            filterPrice: [],
+            input: '',
+            value: {
+                min: 0,
+                max: 100,
+            },
+
         };
     }
 
 
-     async componentDidMount() {
-       await axios.get("http://localhost:5000/flight/hotels")
+    async componentDidMount() {
+        await axios.get("http://localhost:5000/flight/hotels")
             .then((response) => {
 
                 this.setState({
                     hotel_data: response.data
                 })
                 this.Flights.filteredData = _.clone(this.state.hotel_data)
-                
+
             }).catch((error) => {
                 console.log(error)
             })
@@ -57,22 +63,23 @@ let Seinput;
 
                 this.setState({
                     resources: response.data,
-                    filterStar : response.data[3].value,
-                    filterDist : response.data[1].value,
-                    filterChain : response.data[0].value,
-                    filterPA : response.data[6].value,
-                    filterRA : response.data[5].value,
-                    filterPrice:  response.data[2].value,
-                    min:  response.data[2].value.min,
-                    max : response.data[2].value.max
+                    filterStar: response.data[3].value,
+                    filterDist: response.data[1].value,
+                    filterChain: response.data[0].value,
+                    filterPA: response.data[6].value,
+                    filterRA: response.data[5].value,
+                    filterPrice: response.data[2].value,
+                    value: { min: response.data[2].value.min, max: response.data[2].value.max },
+                    min: response.data[2].value.min,
+                    max: response.data[2].value.max
                 })
 
             }).catch((error) => {
                 console.log(error)
-              })
+            })
 
-    
-            }
+
+    }
 
 
 
@@ -80,128 +87,139 @@ let Seinput;
 
         this.setState({ activePage: pageNumber });
 
+        window.scrollTo(4, 5);
+
     }
 
 
-
+    // hotelName handel event
     handleSearchClick(input) {
-     this.Flights.searchInput = this.refs.searchInput.value
+        this.Flights.searchInput = this.refs.searchInput.value
+
+    }
+
+
+    // starRating handel event
+    handleStarCheck(starObj, key) {
+        resetButtonStr = <button  ref="star"  className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
+        onClick={() => this.handleReset(this.state.filterStar, this.Flights.ratingInput, resetButtonStr.ref )}>reset</button>
       
-    
+        var a = this.state.filterStar
+        a[key].selected = !a[key].selected
+
+        this.setState({
+            filterStar: a
+        })
+
+        if (a[key].selected === false) {
+            this.Flights.ratingInput.push(starObj.code);
+        }
+        else {
+            _.remove(this.Flights.ratingInput, (f) => {
+                return f === starObj.code;
+            })
+
+
+        }
+
+
     }
 
 
     // District handel event
-    handleDistCheck(code,key){
-    
-        
-        var a =   this.state.filterDist
+    handleDistCheck(code, key) {
+        resetButtonDist = <button ref="distRes" name="dist" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
+            onClick={() => this.handleReset(this.state.filterDist, this.Flights.districtInput, this.refs.distRes.name)}>reset</button>
+        var a = this.state.filterDist
         a[key].selected = !a[key].selected
 
         this.setState({
-            filterDist : a
+            filterDist: a
         })
 
         if (this.state.filterDist[key].selected === false) {
 
-              this.Flights.districtInput.push(code)
+            this.Flights.districtInput.push(code)
         }
         else {
-            _.remove(this.Flights.districtInput , (f) => {
-                return   f === code;
-              } )
-      
+            _.remove(this.Flights.districtInput, (f) => {
+                return f === code;
+            })
+
         }
-         
+
     }
 
     // Chain handel event
-    handleChainCheck(code,key){
-        var a =   this.state.filterChain
+    handleChainCheck(code, key) {
+        resetButtonChain = <button className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }} 
+        onClick={() => this.handleReset(this.state.filterChain, this.Flights.chainInput)}>reset</button>
+        var a = this.state.filterChain
         a[key].selected = !a[key].selected
 
         this.setState({
-            filterChain : a
+            filterChain: a
         })
 
         if (a[key].selected === false) {
-            
-                          this.Flights.chainInput.push(code)
-                    }
-                    else {
-                        _.remove(this.Flights.chainInput , (f) => {
-                            return   f === code;
-                          } )
-                  
-                    }
-         
-    } 
+
+            this.Flights.chainInput.push(code)
+        }
+        else {
+            _.remove(this.Flights.chainInput, (f) => {
+                return f === code;
+            })
+
+        }
+
+    }
 
     // Prop Amnities handel event
-    handlePACheck(code,key){
-        var a =   this.state.filterPA
+    handlePACheck(code, key) {
+
+        resetButtonPA = <button ref="PARes" name="PA" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
+            onClick={() => this.handleReset(this.state.filterPA, this.Flights.PAInput, this.refs.PARes.name)}>reset</button>
+        var a = this.state.filterPA
         a[key].selected = !a[key].selected
 
         this.setState({
-            filterPA : a
+            filterPA: a
         })
 
 
         if (a[key].selected === false) {
-            
-                          this.Flights.PAInput.push(code)
-                    }
-                    else {
-                        _.remove(this.Flights.PAInput , (f) => {
-                            return   f === code;
-                          } )
-                  
-                    }
 
-         
+            this.Flights.PAInput.push(code)
+        }
+        else {
+            _.remove(this.Flights.PAInput, (f) => {
+                return f === code;
+            })
+
+        }
+
+
     }
 
     // Room Amnities handel event
-    handleRACheck(code,key){
-        var a =   this.state.filterRA
+    handleRACheck(code, key) {
+
+        resetButtonRA = <button ref="RARes" name="RA" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
+            onClick={() => this.handleReset(this.state.filterRA, this.refs.RARes.name)}>reset</button>
+        var a = this.state.filterRA
         a[key].selected = !a[key].selected
 
         this.setState({
-            filterRA : a
+            filterRA: a
         })
-         
-    }
-   
-    // starRating handel event
-    handleStarCheck(starObj,key) {
-     console.log(starObj)
-        var a =   this.state.filterStar
-        a[key].selected = !a[key].selected
-
-        this.setState({
-            filterStar : a
-        })
-   
-        // this.Flights.ratingInput = '';
-
-      if (a[key].selected === false) {
-        this.Flights.ratingInput.push(starObj.code);
-      }
-      else {
-        _.remove(this.Flights.ratingInput , (f) => {
-          return   f === starObj.code;
-        } )
-
-
-      }
-
 
     }
 
-    
+
+
     handleDivHide(e) {
 
-        var x = document.getElementById(e) ;
+        var x = document.getElementById(e);
 
         if (x.style.display === "none") {
             x.style.display = "block";
@@ -221,38 +239,75 @@ let Seinput;
     // }
 
     handleDragEnd(e) {
-    //    console.log("I am from drag end")
+        //    console.log("I am from drag end")
     }
 
     handleSliderDragMove(e) {
 
-            
-            //  this.setState({
-            //      min: this.state.min + this.state.filterPrice.step,
-            //      max : this.state.max - this.state.filterPrice.step
-            //  })
-    }
-    handleValuesUpdated(e){
-      return this.state.min++;
 
+        this.setState({
+            from: this.state.from + this.state.filterPrice.step,
+            to: this.state.to - this.state.filterPrice.step
+
+        })
+    }
+    handleValuesUpdated(e) {
+        //   console.log(e)
+
+    }
+
+    handleRheoChange(e) {
+        console.log(e)
     }
     // Rheostate ends
 
-    
-    handleOnly(value){
+
+    handleOnly(value, filter, Input) {
+        _.remove(Input)
         this.setState({
-            filterStar: _.forEach (this.state.filterStar, d => {
+            filter: _.forEach(filter, d => {
                 d.selected = false;
+                if (d.code === value.code) {
+                    d.selected = true
+                }
+
+                if (d.selected === false) {
+                    Input.push(d.code);
+                }
             })
         })
-        value.selected = true;
+    }
 
-        // this.setState({
-        //     filterStar: _.remove(this.state.filterStar, f => {
 
-        //         return f.selected ===false;
-        //     })
-        // })
+    //filter Reset 
+    handleReset(filterData, filterInput, btnRef) {
+        console.log(btnRef)
+
+        this.setState({
+            filter: _.forEach(filterData, d => {
+                d.selected = true;
+            })
+        })
+        _.remove(filterInput)
+
+        switch (btnRef) {
+            case "star":
+                resetButtonStr = null;
+                break;
+            case "dist":
+                resetButtonDist = null;
+                break;
+            case "chain":
+                resetButtonChain = null;
+                break;
+            case "RA":
+                resetButtonChain = null;
+                break;
+            default:
+                console.log("No refs")
+        }
+
+
     }
 
     render() {
@@ -260,7 +315,7 @@ let Seinput;
         indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
 
-        currentHotels =   _.slice(this.Flights.SearchFilter, indexOfFirstHotel, indexOfLastHotel);
+        currentHotels = _.slice(this.Flights.SearchFilter, indexOfFirstHotel, indexOfLastHotel);
 
         return (
             <div>
@@ -273,8 +328,8 @@ let Seinput;
                         <div className="col-md-3">
                             <h3>Filter</h3>
                             <form className="col-sm-12 col-md-12" role="search">
-                                <div className="form-group input-group"> 
-                                    <input type="text" className="form-control" placeholder="Search hotel name..." ref="searchInput" />
+                                <div className="form-group input-group">
+                                    <input type="text" className="form-control" placeholder="Search hotel name..." ref="searchInput" onKeyDown={(e) => e.preventDefault()} />
                                     <span className="input-group-btn">
                                         <button className="btn btn-primary" type="button" onClick={() => { this.handleSearchClick(this.refs.searchInput.value) }} ref="searchBtn" id="searchID">
                                             <span className="glyphicon glyphicon-search"></span>
@@ -282,150 +337,152 @@ let Seinput;
                                     </span>
                                 </div>
                             </form>
+
+
                             <div>
                                 <h4>Price <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.price.id)}>^</button></span></h4>
                             </div>
                             <div id="Price" ref="price">
 
-
-                                <div>
+                                <form className="form">
                                     <Rheostat
+
                                         min={this.state.min}
                                         max={this.state.max}
                                         values={[this.state.min, this.state.max]}
-                                       onSliderDragMove={(e) => this.handleSliderDragMove(e)}
-                                       onValuesUpdated ={(e) => this.handleValuesUpdated(e)}
-                                     
-                                       
+                                        onSliderDragMove={(e) => this.handleSliderDragMove(e)}
+                                        onValuesUpdated={(e) => this.handleValuesUpdated(e)}
+
+
                                     />
 
                                     <span>SAR {Math.floor(this.state.min)}</span> <span className="price-max"> SAR {Math.floor(this.state.max)}</span>
-                                </div>
+                                </form>
 
 
 
                             </div>
                             <div>
-                                <h4>Star Rating <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.star.id)}>^</button></span></h4>
+                                <h4>Star Rating <span>{resetButtonStr}</span> <span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.star.id)}>^</button></span></h4>
                             </div>
                             <div id="StarRating" ref="star">
-                                              
-                                            {this.state.filterStar.map((v, key) => {
-                                               
 
-                                                return (
-                                                    <div key={key}>
-                                                        <label>
-                                                            <input type="checkbox" checked={v.selected} ref ="starR"
-                                                            onClick={() => this.handleStarCheck({code: v.code, selected: v.selected},key)} id="starRating" />
+                                {this.state.filterStar.map((v, key) => {
 
-                                                        </label>
-                                                        <label>
-                                                            <Rater total={5} rating={v.code} interactive={false} />
 
-                                                        </label>
-                                                        <a onClick={()=> {this.handleOnly(v)}}> only </a>
-                                                    </div>)
-                                            })}
-                                
+                                    return (
+                                        <div key={key}>
+                                            <label>
+                                                <input type="checkbox" checked={v.selected} ref="starR"
+                                                    onClick={() => this.handleStarCheck({ code: v.code, selected: v.selected }, key)} id="starRating" />
+
+                                            </label>
+                                            <label>
+                                                <Rater total={5} rating={v.code} interactive={false} />
+
+                                            </label>
+                                            <a onClick={() => { this.handleOnly(v, this.state.filterStar, this.Flights.ratingInput) }}> only </a>
+                                        </div>)
+                                })}
+
                             </div>
 
                             <hr />
                             <div>
-                                <h4>District <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.dist.id)}>^</button></span></h4>
+                                <h4>District <span>{resetButtonDist}</span><span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.dist.id)}>^</button></span></h4>
                             </div>
                             <div className="filterStyles" id="District" ref="dist">
 
-                                            {this.state.filterDist.map((v, key) => {
-                                                return (
-                                                    <div key={key}>
-                                                        <label>
-                                                            <input type="checkbox" checked={v.selected} 
-                                                            onClick={() => this.handleDistCheck(v.code,key)}/>
+                                {this.state.filterDist.map((v, key) => {
+                                    return (
+                                        <div key={key}>
+                                            <label>
+                                                <input type="checkbox" checked={v.selected}
+                                                    onClick={() => this.handleDistCheck(v.code, key)} />
 
-                                                        </label>
-                                                        <label>
-                                                            <p>{v.label}</p>
+                                            </label>
+                                            <label>
+                                                <p>{v.label}</p>
 
-                                                        </label>
-                                                        <a> only </a>
-                                                    </div>)
-                                            })}
-                                        
+                                            </label>
+                                            <a> only </a>
+                                        </div>)
+                                })}
+
                             </div>
                             <hr />
                             <div>
-                                <h4>Chain <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.chain.id)}>^</button></span></h4>
+                                <h4>Chain     <span>{resetButtonChain}</span> <span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.chain.id)}>^</button></span></h4>
                             </div>
                             <div className="filterStyles" id="Chain" ref="chain">
 
-            
-                                            {this.state.filterChain.map((v, key) => {
-                                                return (
-                                                    <div key={key}>
-                                                        <label>
-                                                        <input type="checkbox" checked={v.selected}
-                                                            onClick={() => this.handleChainCheck(v.code,key)} /> 
-                                                        </label>
-                                                        <label>
-                                                            <p>{v.label}</p>
-                                                        </label>
-                                                        <a> only </a>
-                                                    </div>)
-                                            })}
-                                        
+
+                                {this.state.filterChain.map((v, key) => {
+                                    return (
+                                        <div key={key}>
+                                            <label>
+                                                <input type="checkbox" checked={v.selected}
+                                                    onClick={() => this.handleChainCheck(v.code, key)} />
+                                            </label>
+                                            <label>
+                                                <p>{v.label}</p>
+                                            </label>
+                                            <a> only </a>
+                                        </div>)
+                                })}
+
                             </div>
                             <hr />
                             <div>
-                                <h4>Property Amenities <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.pa.id)}>^</button></span></h4>
+                                <h4>Property Amenities <span>{resetButtonPA}</span><span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.pa.id)}>^</button></span></h4>
                             </div>
                             <div className="filterStyles" id="PropertyAmenities" ref="pa">
 
-                                
 
-                                            {this.state.filterPA.map((v, key) => {
-                                                return (
-                                                    <div key={key}>
-                                                        <label>
-                                                            <input type="checkbox" value="asdasd" checked={v.selected}
-                                                            onClick={() => this.handlePACheck(v.code,key)} />
-                                                        </label>
-                                                        <label>
-                                                            <p>{v.label}</p>
-                                                        </label>
-                                                        <a> only </a>
-                                                    </div>)
-                                            })}
-                                       
+
+                                {this.state.filterPA.map((v, key) => {
+                                    return (
+                                        <div key={key}>
+                                            <label>
+                                                <input type="checkbox" value="asdasd" checked={v.selected}
+                                                    onClick={() => this.handlePACheck(v.code, key)} />
+                                            </label>
+                                            <label>
+                                                <p>{v.label}</p>
+                                            </label>
+                                            <a> only </a>
+                                        </div>)
+                                })}
+
                             </div>
                             <hr />
                             <div>
-                                <h4>Room Amenities <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.ra.id)}>^</button></span></h4>
+                                <h4>Room Amenities <span>{resetButtonRA}</span><span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.ra.id)}>^</button></span></h4>
                             </div>
                             <div className="filterStyles" id="RoomAmenities" ref="ra">
 
-                                
 
-                                            {this.state.filterRA.map((v, key) => {
-                                                return (
-                                                    <div key={key}>
-                                                        <label>
-                                                            <input type="checkbox" value="asdasd" checked={v.selected} 
-                                                            onClick={() => this.handleRACheck(v.code,key)}/>
-                                                        </label>
-                                                        <label>
-                                                            <p>{v.label}</p>
-                                                        </label>
-                                                        <a> only </a>
-                                                    </div>)
-                                            })}
-                                        
+
+                                {this.state.filterRA.map((v, key) => {
+                                    return (
+                                        <div key={key}>
+                                            <label>
+                                                <input type="checkbox" value="asdasd" checked={v.selected}
+                                                    onClick={() => this.handleRACheck(v.code, key)} />
+                                            </label>
+                                            <label>
+                                                <p>{v.label}</p>
+                                            </label>
+                                            <a> only </a>
+                                        </div>)
+                                })}
+
                             </div>
                         </div>
                         <span className="properties"> {this.Flights.SearchFilter.length} properties found </span>
                         <div className="col-md-9">
-                     
-                              
+
+
 
                             {currentHotels.map((data, key) => {
                                 return (
@@ -434,7 +491,7 @@ let Seinput;
                                     <div className="col-sm-6 col-md-6" key={key}>
                                         <div className="thumbnail" >
                                             <div className="img-div">
-                                                <img src={data.image.map(img => {return img.url;} )} className="img-responsive" alt="Tajawal images" />
+                                                <img src={data.image.map(img => { return img.url; })} className="img-responsive" alt="Tajawal images" />
                                             </div>
                                             <div className="caption">
                                                 <Rater total={5} rating={data.rating.map(rating => { return rating.value })} interactive={false} />
@@ -447,7 +504,7 @@ let Seinput;
                                                     </div>
                                                 </div>
                                                 <div className="address-div">
-                                                <p>{data.location.address}</p>
+                                                    <p>{data.location.address}</p>
                                                 </div>
                                                 <div className="row">
                                                     <div className="col-md-6">
@@ -469,7 +526,7 @@ let Seinput;
                 <Pagination
                     activePage={this.state.activePage}
                     itemsCountPerPage={this.state.itemsCountPerPage}
-                    totalItemsCount={ this.Flights.SearchFilter.length}
+                    totalItemsCount={this.Flights.SearchFilter.length}
                     pageRangeDisplayed={5}
                     onChange={this.handlePageChange}
                 />
