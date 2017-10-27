@@ -12,6 +12,7 @@ require("bootstrap/less/bootstrap.less");
 
 let currentHotels, indexOfLastHotel, indexOfFirstHotel;
 let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButtonRA;
+let resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg = false, resetButtonPAFlg = false, resetButtonRAFlg = false;
 
 
 
@@ -87,7 +88,7 @@ let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButto
 
         this.setState({ activePage: pageNumber });
 
-        window.scrollTo(4, 5);
+        window.scrollTo(-4, -5);
 
     }
 
@@ -101,9 +102,9 @@ let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButto
 
     // starRating handel event
     handleStarCheck(starObj, key) {
-        resetButtonStr = <button  ref="star"  className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
-        onClick={() => this.handleReset(this.state.filterStar, this.Flights.ratingInput, resetButtonStr.ref )}>reset</button>
-      
+
+        resetButtonStrFlg = true;
+
         var a = this.state.filterStar
         a[key].selected = !a[key].selected
 
@@ -128,8 +129,8 @@ let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButto
 
     // District handel event
     handleDistCheck(code, key) {
-        resetButtonDist = <button ref="distRes" name="dist" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
-            onClick={() => this.handleReset(this.state.filterDist, this.Flights.districtInput, this.refs.distRes.name)}>reset</button>
+        resetButtonDistFlg = true;
+
         var a = this.state.filterDist
         a[key].selected = !a[key].selected
 
@@ -152,8 +153,9 @@ let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButto
 
     // Chain handel event
     handleChainCheck(code, key) {
-        resetButtonChain = <button className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }} 
-        onClick={() => this.handleReset(this.state.filterChain, this.Flights.chainInput)}>reset</button>
+
+        resetButtonChainFlg = true;
+
         var a = this.state.filterChain
         a[key].selected = !a[key].selected
 
@@ -177,8 +179,8 @@ let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButto
     // Prop Amnities handel event
     handlePACheck(code, key) {
 
-        resetButtonPA = <button ref="PARes" name="PA" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
-            onClick={() => this.handleReset(this.state.filterPA, this.Flights.PAInput, this.refs.PARes.name)}>reset</button>
+        resetButtonPAFlg = true
+
         var a = this.state.filterPA
         a[key].selected = !a[key].selected
 
@@ -203,9 +205,8 @@ let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButto
 
     // Room Amnities handel event
     handleRACheck(code, key) {
+        resetButtonRAFlg = true;
 
-        resetButtonRA = <button ref="RARes" name="RA" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
-            onClick={() => this.handleReset(this.state.filterRA, this.refs.RARes.name)}>reset</button>
         var a = this.state.filterRA
         a[key].selected = !a[key].selected
 
@@ -262,6 +263,8 @@ let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButto
     // Rheostate ends
 
 
+
+
     handleOnly(value, filter, Input) {
         _.remove(Input)
         this.setState({
@@ -281,8 +284,6 @@ let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButto
 
     //filter Reset 
     handleReset(filterData, filterInput, btnRef) {
-        console.log(btnRef)
-
         this.setState({
             filter: _.forEach(filterData, d => {
                 d.selected = true;
@@ -292,16 +293,16 @@ let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButto
 
         switch (btnRef) {
             case "star":
-                resetButtonStr = null;
+                resetButtonStrFlg = false;
                 break;
             case "dist":
-                resetButtonDist = null;
+                resetButtonDistFlg = false;
                 break;
             case "chain":
-                resetButtonChain = null;
+                resetButtonChainFlg = false;
                 break;
             case "RA":
-                resetButtonChain = null;
+                resetButtonChainFlg = false;
                 break;
             default:
                 console.log("No refs")
@@ -363,7 +364,8 @@ let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButto
 
                             </div>
                             <div>
-                                <h4>Star Rating <span>{resetButtonStr}</span> <span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.star.id)}>^</button></span></h4>
+                                <h4>Star Rating <span>{resetButtonStr = resetButtonStrFlg ? <button ref="starR" name="starRating" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
+                                    onClick={() => this.handleReset(this.state.filterStar, this.Flights.ratingInput, this.refs.starR.name)}>reset</button> : null}</span> <span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.star.id)}>^</button></span></h4>
                             </div>
                             <div id="StarRating" ref="star">
 
@@ -389,7 +391,8 @@ let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButto
 
                             <hr />
                             <div>
-                                <h4>District <span>{resetButtonDist}</span><span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.dist.id)}>^</button></span></h4>
+                                <h4>District <span>{resetButtonDist = resetButtonDistFlg ? <button ref="distRes" name="dist" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
+                                    onClick={() => this.handleReset(this.state.filterDist, this.Flights.districtInput, this.refs.distRes.name)}>reset</button> : null}</span><span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.dist.id)}>^</button></span></h4>
                             </div>
                             <div className="filterStyles" id="District" ref="dist">
 
@@ -405,14 +408,15 @@ let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButto
                                                 <p>{v.label}</p>
 
                                             </label>
-                                            <a> only </a>
+                                            <a onClick={() => { this.handleOnly(v, this.state.filterDist, this.Flights.districtInput) }}> only </a>
                                         </div>)
                                 })}
 
                             </div>
                             <hr />
                             <div>
-                                <h4>Chain     <span>{resetButtonChain}</span> <span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.chain.id)}>^</button></span></h4>
+                                <h4>Chain     <span>{resetButtonChain = resetButtonChainFlg ? <button className="btn btn-primary" ref="chainRes" name="chain" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
+                                    onClick={() => this.handleReset(this.state.filterChain, this.Flights.chainInput, this.refs.chainRes.name)}>reset</button> : null}</span> <span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.chain.id)}>^</button></span></h4>
                             </div>
                             <div className="filterStyles" id="Chain" ref="chain">
 
@@ -427,14 +431,15 @@ let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButto
                                             <label>
                                                 <p>{v.label}</p>
                                             </label>
-                                            <a> only </a>
+                                            <a onClick={() => { this.handleOnly(v, this.state.filterChain, this.Flights.chainInput) }}> only </a>
                                         </div>)
                                 })}
 
                             </div>
                             <hr />
                             <div>
-                                <h4>Property Amenities <span>{resetButtonPA}</span><span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.pa.id)}>^</button></span></h4>
+                                <h4>Property Amenities <span>{resetButtonPA = resetButtonPAFlg ? <button ref="PARes" name="PA" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
+                                    onClick={() => this.handleReset(this.state.filterPA, this.Flights.PAInput, this.refs.PARes.name)}>reset</button> : null}</span><span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.pa.id)}>^</button></span></h4>
                             </div>
                             <div className="filterStyles" id="PropertyAmenities" ref="pa">
 
@@ -450,14 +455,15 @@ let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButto
                                             <label>
                                                 <p>{v.label}</p>
                                             </label>
-                                            <a> only </a>
+                                            <a onClick={() => { this.handleOnly(v, this.state.filterPA, this.Flights.PAInput) }}> only </a>
                                         </div>)
                                 })}
 
                             </div>
                             <hr />
                             <div>
-                                <h4>Room Amenities <span>{resetButtonRA}</span><span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.ra.id)}>^</button></span></h4>
+                                <h4>Room Amenities <span>{resetButtonRA = resetButtonRAFlg ? <button ref="RARes" name="RA" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
+                                    onClick={() => this.handleReset(this.state.filterRA, this.Flights.RAInput, this.refs.RARes.name)}>reset</button> : null}</span><span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.ra.id)}>^</button></span></h4>
                             </div>
                             <div className="filterStyles" id="RoomAmenities" ref="ra">
 
@@ -473,15 +479,25 @@ let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButto
                                             <label>
                                                 <p>{v.label}</p>
                                             </label>
-                                            <a> only </a>
+                                            <a onClick={() => { this.handleOnly(v, this.state.filterRA, this.Flights.RAInput) }}> only </a>
                                         </div>)
                                 })}
 
                             </div>
                         </div>
-                        <span className="properties"> {this.Flights.SearchFilter.length} properties found </span>
-                        <div className="col-md-9">
 
+
+
+
+                        <div className="col-md-9">
+                            <ul className="nav nav-pills">
+                                <li className="active"><a>Popular</a></li>
+                                <li><a >Price</a></li>
+                                <li><a >Distance</a></li>
+                                <li><a >Name</a></li>
+                                <li><a >Rating</a></li>
+                                <span className="properties"> {this.Flights.SearchFilter.length} properties found </span>
+                            </ul>
 
 
                             {currentHotels.map((data, key) => {
