@@ -20,7 +20,7 @@ class Flights {
     @computed get SearchFilter() {
 
 
-        return _.filter(this.filteredData, (data) => {
+        return   _.filter(this.filteredData, (data) => {
 
 
             return data.summary.hotelName.toLowerCase().indexOf(this.searchInput.toLowerCase()) !== -1 

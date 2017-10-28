@@ -311,6 +311,14 @@ let resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg =
 
     }
 
+
+    handleSort(){   
+
+    
+
+      
+    }
+
     render() {
 
         indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
@@ -492,7 +500,7 @@ let resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg =
                         <div className="col-md-9">
                             <ul className="nav nav-pills">
                                 <li className="active"><a>Popular</a></li>
-                                <li><a >Price</a></li>
+                                <li><a onClick={() => this.handleSort()}>Price</a></li>
                                 <li><a >Distance</a></li>
                                 <li><a >Name</a></li>
                                 <li><a >Rating</a></li>
