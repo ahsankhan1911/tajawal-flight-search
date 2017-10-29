@@ -13,6 +13,7 @@ require("bootstrap/less/bootstrap.less");
 let currentHotels, indexOfLastHotel, indexOfFirstHotel;
 let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButtonRA;
 let resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg = false, resetButtonPAFlg = false, resetButtonRAFlg = false;
+let SortingOrder = "asc"
 
 
 
@@ -37,10 +38,7 @@ let resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg =
             filterRA: [],
             filterPrice: [],
             input: '',
-            value: {
-                min: 0,
-                max: 100,
-            },
+            values: [],
 
         };
     }
@@ -70,7 +68,7 @@ let resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg =
                     filterPA: response.data[6].value,
                     filterRA: response.data[5].value,
                     filterPrice: response.data[2].value,
-                    value: { min: response.data[2].value.min, max: response.data[2].value.max },
+                    values: [response.data[2].value.from, response.data[2].value.to],
                     min: response.data[2].value.min,
                     max: response.data[2].value.max
                 })
@@ -233,33 +231,19 @@ let resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg =
 
     // Rheostate functionalities
 
-    // handleDragStart() {
-    //     this.setState({
-    //         min: this.state.min + 1
-    //     })
-    // }
-
-    handleDragEnd(e) {
-        //    console.log("I am from drag end")
-    }
-
-    handleSliderDragMove(e) {
-
-
-        this.setState({
-            from: this.state.from + this.state.filterPrice.step,
-            to: this.state.to - this.state.filterPrice.step
-
-        })
-    }
-    handleValuesUpdated(e) {
-        //   console.log(e)
-
-    }
-
-    handleRheoChange(e) {
-        console.log(e)
-    }
+       //Price ranger handler
+       updatePriceRanger(sliderState) {
+        
+                _.remove(this.Flights.PriceInput)
+        
+                this.setState({
+                    values: sliderState.values,
+                });
+        
+                _.forEach(sliderState.values, (d) => {
+                    this.Flights.PriceInput.push(d)
+                })
+            }
     // Rheostate ends
 
 
@@ -312,12 +296,67 @@ let resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg =
     }
 
 
-    handleSort(){   
 
-    
-
-      
+    //Sorting Functionality
+    OnSortPrice(KeyWord) {
+        this.Flights.Sort = KeyWord
+     
+        if (SortingOrder === "asc") {
+            SortingOrder = "desc"
+            return console.log("from asc")
+        }
+        if (SortingOrder === "desc") {
+            SortingOrder = "asc"
+            return console.log("from desc")
+        }
     }
+
+    OnSortDistance(KeyWord) {
+        this.Flights.Sort = KeyWord
+        
+
+        if (SortingOrder === "asc") {
+        
+            SortingOrder = "desc"
+            return console.log("from asc")
+        }
+        if (SortingOrder === "desc") {
+            SortingOrder = "asc"
+            return console.log("from desc")
+        }
+    }
+
+    OnSortName(KeyWord) {
+        this.Flights.Sort = KeyWord
+     
+
+        if (SortingOrder === "asc") {
+      
+            SortingOrder = "desc"
+            return console.log("from asc")
+        }
+        if (SortingOrder === "desc") {
+            SortingOrder = "asc"
+            return console.log("from desc")
+        }
+    }
+
+    OnSortRating(KeyWord) {
+        this.Flights.Sort = KeyWord
+     
+        if (SortingOrder === "asc") {
+           
+            SortingOrder = "desc"
+            return console.log("from asc")
+        }
+        if (SortingOrder === "desc") {
+            SortingOrder = "asc"
+            return console.log("from desc")
+        }
+    }
+// Sorting Ends
+
+
 
     render() {
 
@@ -354,18 +393,16 @@ let resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg =
                             <div id="Price" ref="price">
 
                                 <form className="form">
-                                    <Rheostat
+                                <Rheostat
+                                min={this.state.min}
+                                max={this.state.max}
+                                onValuesUpdated={(sliderState) => this.updatePriceRanger(sliderState)}
 
-                                        min={this.state.min}
-                                        max={this.state.max}
-                                        values={[this.state.min, this.state.max]}
-                                        onSliderDragMove={(e) => this.handleSliderDragMove(e)}
-                                        onValuesUpdated={(e) => this.handleValuesUpdated(e)}
+                                values={this.state.values}
 
+                            />
 
-                                    />
-
-                                    <span>SAR {Math.floor(this.state.min)}</span> <span className="price-max"> SAR {Math.floor(this.state.max)}</span>
+                            <span>SAR {this.state.values[0]}</span> <span>SAR {this.state.values[1]}</span>
                                 </form>
 
 
@@ -499,11 +536,11 @@ let resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg =
 
                         <div className="col-md-9">
                             <ul className="nav nav-pills">
-                                <li className="active"><a>Popular</a></li>
-                                <li><a onClick={() => this.handleSort()}>Price</a></li>
-                                <li><a >Distance</a></li>
-                                <li><a >Name</a></li>
-                                <li><a >Rating</a></li>
+                                <li className="active"><a onClick={() => this.OnSort(this.refs.Popular.id)} id="Popular" ref="Popular">Popular</a></li>
+                                <li><a onClick={() => this.OnSortPrice(this.refs.Price.id)} id="Price" ref="Price">Price</a></li>
+                                <li><a onClick={() => this.OnSortDistance(this.refs.Distance.id)} id="Distance" ref="Distance" >Distance</a></li>
+                                <li><a onClick={() => this.OnSortName(this.refs.Name.id)} id="Name" ref="Name">Name</a></li>
+                                <li><a onClick={() => this.OnSortRating(this.refs.Rating.id)} id="Rating" ref="Rating">Rating</a></li>
                                 <span className="properties"> {this.Flights.SearchFilter.length} properties found </span>
                             </ul>
 
