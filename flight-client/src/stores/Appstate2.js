@@ -15,35 +15,39 @@ class Flights {
     @observable RAInput = [];
     @observable PriceInput = [];
     @observable Sort = '';
+    @observable SortDir = '';
 
 
 
     @computed get SearchFilter() {
         let SortedData = _.sortBy(this.filteredData, (a) => {
             
-                        switch (this.Sort) {
-                            case "Price":
-                                {
-                                    return a.summary.lowRate
-                                }
-                            case "Distance":
-                                {
-                                    return a.summary.distance
-                                }
-                            case "Name":
-                                {
-                                    return a.summary.hotelName
-                                    
-                                }
-                            case "Rating":
-                                {
-                                    return a.rating.map( d => {
-                                       return d.value
-                                    })
-                                }
-                        }
-            
-                    })
+            switch (this.Sort) {
+                case "priceID":
+                    {
+                        return a.summary.lowRate
+                    }
+                case "distID":
+                    {
+                        return a.summary.distance
+                    }
+                case "nameID":
+                    {
+                        return a.summary.hotelName
+                        
+                    }
+                case "ratingID":
+                    {
+                        return a.rating.map( d => {
+                           return d.value
+                        })
+                    }
+            }
+
+        })
+
+        if(this.SortDir === 'DESC') {
+            _.reverse(SortedData) }
 
         return   _.filter(SortedData, (data) => {
 

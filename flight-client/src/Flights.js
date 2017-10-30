@@ -7,15 +7,17 @@ import './style.css'
 import _ from 'lodash';
 import Rheostat from 'rheostat';
 import { inject, observer } from 'mobx-react';
+import $ from 'jquery';
+import createHistory from 'history/createBrowserHistory'
+import {BrowserRouter as Router,Route} from 'react-router-dom';
 
-require("bootstrap/less/bootstrap.less");
+require("bootstrap/less/bootstrap.less");   
 
 let currentHotels, indexOfLastHotel, indexOfFirstHotel;
 let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButtonRA;
 let resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg = false, resetButtonPAFlg = false, resetButtonRAFlg = false;
-let SortingOrder = "asc"
 
-
+const history = createHistory()
 
 @inject('Flights')
 @observer class Flights extends Component {
@@ -93,13 +95,21 @@ let SortingOrder = "asc"
 
     // hotelName handel event
     handleSearchClick(input) {
+        console.log(history);
         this.Flights.searchInput = this.refs.searchInput.value
+       
 
+          console.log(history.location.pathname);
     }
 
 
     // starRating handel event
     handleStarCheck(starObj, key) {
+     console.log(history)
+        history.push({
+            pathname: history.location.pathname,
+            search: 'star=5'
+          })
 
         resetButtonStrFlg = true;
 
@@ -131,6 +141,11 @@ let SortingOrder = "asc"
 
         var a = this.state.filterDist
         a[key].selected = !a[key].selected
+
+        history.push({
+            pathname: history.location.pathname,
+            search: 'dist=5'
+          })
 
         this.setState({
             filterDist: a
@@ -298,60 +313,20 @@ let SortingOrder = "asc"
 
 
     //Sorting Functionality
-    OnSortPrice(KeyWord) {
-        this.Flights.Sort = KeyWord
-     
-        if (SortingOrder === "asc") {
-            SortingOrder = "desc"
-            return console.log("from asc")
+    OnSort(LI,Anchor,Span) {
+        this.Flights.Sort = Anchor
+    
+        if (document.getElementById(Span).className === "" || document.getElementById(Span).className === "glyphicon glyphicon-arrow-down") {
+            this.Flights.SortDir = null
+            $(".nav li").removeClass("active");
+            $(".nav li span").removeClass("glyphicon glyphicon-arrow-up");
+            document.getElementById(Span).className = "glyphicon glyphicon-arrow-up";
+            document.getElementById(LI).className = "active";
         }
-        if (SortingOrder === "desc") {
-            SortingOrder = "asc"
-            return console.log("from desc")
-        }
-    }
 
-    OnSortDistance(KeyWord) {
-        this.Flights.Sort = KeyWord
-        
-
-        if (SortingOrder === "asc") {
-        
-            SortingOrder = "desc"
-            return console.log("from asc")
-        }
-        if (SortingOrder === "desc") {
-            SortingOrder = "asc"
-            return console.log("from desc")
-        }
-    }
-
-    OnSortName(KeyWord) {
-        this.Flights.Sort = KeyWord
-     
-
-        if (SortingOrder === "asc") {
-      
-            SortingOrder = "desc"
-            return console.log("from asc")
-        }
-        if (SortingOrder === "desc") {
-            SortingOrder = "asc"
-            return console.log("from desc")
-        }
-    }
-
-    OnSortRating(KeyWord) {
-        this.Flights.Sort = KeyWord
-     
-        if (SortingOrder === "asc") {
-           
-            SortingOrder = "desc"
-            return console.log("from asc")
-        }
-        if (SortingOrder === "desc") {
-            SortingOrder = "asc"
-            return console.log("from desc")
+        else {  
+             document.getElementById(Span).className = "glyphicon glyphicon-arrow-down";
+             this.Flights.SortDir = 'DESC'
         }
     }
 // Sorting Ends
@@ -535,15 +510,14 @@ let SortingOrder = "asc"
 
 
                         <div className="col-md-9">
-                            <ul className="nav nav-pills">
-                                <li className="active"><a onClick={() => this.OnSort(this.refs.Popular.id)} id="Popular" ref="Popular">Popular</a></li>
-                                <li><a onClick={() => this.OnSortPrice(this.refs.Price.id)} id="Price" ref="Price">Price</a></li>
-                                <li><a onClick={() => this.OnSortDistance(this.refs.Distance.id)} id="Distance" ref="Distance" >Distance</a></li>
-                                <li><a onClick={() => this.OnSortName(this.refs.Name.id)} id="Name" ref="Name">Name</a></li>
-                                <li><a onClick={() => this.OnSortRating(this.refs.Rating.id)} id="Rating" ref="Rating">Rating</a></li>
-                                <span className="properties"> {this.Flights.SearchFilter.length} properties found </span>
-                            </ul>
-
+                        <ul className="nav nav-pills" ref="ul">
+                        <li id="popularLi" ref="popularLiRef" className="active"><a onClick={() => this.OnSort(this.refs.popularLiRef.id , this.refs.popularAnchor.id , this.refs.popularArrowRef.id)} id="popularID" ref="popularAnchor" >Popular <span id="popularArrow" ref="popularArrowRef" className="glyphicon glyphicon-arrow-up" ></span></a></li>
+                            <li id="priceLi" ref="priceLiRef"><a onClick={() => this.OnSort(this.refs.priceLiRef.id , this.refs.priceAnchor.id , this.refs.priceArrowRef.id)} id="priceID" ref="priceAnchor" >Price <span id="priceArrow" ref="priceArrowRef" ></span></a></li>
+                            <li id="distLi" ref="distLiRef" ><a onClick={() => this.OnSort(this.refs.distLiRef.id , this.refs.distAnchor.id , this.refs.distArrowRef.id)} id="distID"  ref="distAnchor"  >Distance <span id="distArrow" ref="distArrowRef"></span></a></li>
+                            <li id="nameLi" ref="nameLiRef"><a onClick={() => this.OnSort(this.refs.nameLiRef.id , this.refs.nameAnchor.id , this.refs.nameArrowRef.id)} id="nameID" ref="nameAnchor"  >Name <span id="nameArrow" ref="nameArrowRef"></span></a></li>
+                            <li id="ratingLi" ref="ratingLiRef"> <a onClick={() => this.OnSort(this.refs.ratingLiRef.id , this.refs.ratingAnchor.id , this.refs.ratingArrowRef.id)} id="ratingID"  ref="ratingAnchor"  >Rating <span id="ratingArrow" ref="ratingArrowRef" ></span></a></li>
+                            <span className="properties"> {this.Flights.SearchFilter.length} properties found </span>
+                        </ul>
 
                             {currentHotels.map((data, key) => {
                                 return (
