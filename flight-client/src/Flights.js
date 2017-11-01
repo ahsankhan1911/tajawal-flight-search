@@ -142,10 +142,7 @@ const history = createHistory()
         var a = this.state.filterDist
         a[key].selected = !a[key].selected
 
-        history.push({
-            pathname: history.location.pathname,
-            search: 'dist=5'
-          })
+  
 
         this.setState({
             filterDist: a
@@ -290,8 +287,11 @@ const history = createHistory()
         })
         _.remove(filterInput)
 
+
+        console.log(btnRef)
+
         switch (btnRef) {
-            case "star":
+            case "starRating":
                 resetButtonStrFlg = false;
                 break;
             case "dist":
@@ -300,8 +300,11 @@ const history = createHistory()
             case "chain":
                 resetButtonChainFlg = false;
                 break;
+            case "PA":
+                resetButtonPAFlg = false;
+                break;
             case "RA":
-                resetButtonChainFlg = false;
+                resetButtonRAFlg = false;
                 break;
             default:
                 console.log("No refs")
