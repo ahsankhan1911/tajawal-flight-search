@@ -9,15 +9,17 @@ import Rheostat from 'rheostat';
 import { inject, observer } from 'mobx-react';
 import $ from 'jquery';
 import createHistory from 'history/createBrowserHistory'
-import {BrowserRouter as Router,Route} from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import queryString from 'query-string';
 
-require("bootstrap/less/bootstrap.less");   
+require("bootstrap/less/bootstrap.less");
 
 let currentHotels, indexOfLastHotel, indexOfFirstHotel;
 let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButtonRA;
 let resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg = false, resetButtonPAFlg = false, resetButtonRAFlg = false;
 
-const history = createHistory()
+
+let queries = {}
 
 @inject('Flights')
 @observer class Flights extends Component {
@@ -95,21 +97,40 @@ const history = createHistory()
 
     // hotelName handel event
     handleSearchClick(input) {
-        console.log(history);
-        this.Flights.searchInput = this.refs.searchInput.value
-       
+        let query
 
-          console.log(history.location.pathname);
+        this.Flights.searchInput = this.refs.searchInput.value
+
+
+        if (this.refs.searchInput.value.length === 0) {
+            delete queries['h'];
+            query = queryString.stringify(queries)
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
+        }
+        else {
+
+            queries.h = this.refs.searchInput.value
+            query = queryString.stringify(queries)
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
+        }
+
+
+
+
     }
 
 
     // starRating handel event
     handleStarCheck(starObj, key) {
-     console.log(history)
-        history.push({
-            pathname: history.location.pathname,
-            search: 'star=5'
-          })
+    console.log(this.state.filterStar)
+
+        let query;
 
         resetButtonStrFlg = true;
 
@@ -122,6 +143,8 @@ const history = createHistory()
 
         if (a[key].selected === false) {
             this.Flights.ratingInput.push(starObj.code);
+
+
         }
         else {
             _.remove(this.Flights.ratingInput, (f) => {
@@ -132,17 +155,39 @@ const history = createHistory()
         }
 
 
+        //condition for querystring
+        if (this.Flights.ratingInput.length === 0) {
+            delete queries['s'];
+            query = queryString.stringify(queries)
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
+        }
+        else {
+            let filterStar = _.filter(this.state.filterStar, d => {return d.selected === true ? d.code : null}
+  )
+                 queries.s = filterStar
+            query = queryString.stringify(queries)
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
+        }
+
     }
 
 
     // District handel event
     handleDistCheck(code, key) {
-        resetButtonDistFlg = true;
+        let query;
 
+
+        resetButtonDistFlg = true;
         var a = this.state.filterDist
         a[key].selected = !a[key].selected
 
-  
+
 
         this.setState({
             filterDist: a
@@ -158,6 +203,25 @@ const history = createHistory()
             })
 
         }
+
+        if (this.Flights.districtInput.length === 0) {
+            delete queries['d'];
+            query = queryString.stringify(queries)
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
+        }
+        else {
+
+            queries.d = this.Flights.districtInput
+            query = queryString.stringify(queries)
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
+        }
+
 
     }
 
@@ -243,19 +307,19 @@ const history = createHistory()
 
     // Rheostate functionalities
 
-       //Price ranger handler
-       updatePriceRanger(sliderState) {
-        
-                _.remove(this.Flights.PriceInput)
-        
-                this.setState({
-                    values: sliderState.values,
-                });
-        
-                _.forEach(sliderState.values, (d) => {
-                    this.Flights.PriceInput.push(d)
-                })
-            }
+    //Price ranger handler
+    updatePriceRanger(sliderState) {
+
+        _.remove(this.Flights.PriceInput)
+
+        this.setState({
+            values: sliderState.values,
+        });
+
+        _.forEach(sliderState.values, (d) => {
+            this.Flights.PriceInput.push(d)
+        })
+    }
     // Rheostate ends
 
 
@@ -316,9 +380,9 @@ const history = createHistory()
 
 
     //Sorting Functionality
-    OnSort(LI,Anchor,Span) {
+    OnSort(LI, Anchor, Span) {
         this.Flights.Sort = Anchor
-    
+
         if (document.getElementById(Span).className === "" || document.getElementById(Span).className === "glyphicon glyphicon-arrow-down") {
             this.Flights.SortDir = null
             $(".nav li").removeClass("active");
@@ -327,12 +391,12 @@ const history = createHistory()
             document.getElementById(LI).className = "active";
         }
 
-        else {  
-             document.getElementById(Span).className = "glyphicon glyphicon-arrow-down";
-             this.Flights.SortDir = 'DESC'
+        else {
+            document.getElementById(Span).className = "glyphicon glyphicon-arrow-down";
+            this.Flights.SortDir = 'DESC'
         }
     }
-// Sorting Ends
+    // Sorting Ends
 
 
 
@@ -355,7 +419,7 @@ const history = createHistory()
                             <h3>Filter</h3>
                             <form className="col-sm-12 col-md-12" role="search">
                                 <div className="form-group input-group">
-                                    <input type="text" className="form-control" placeholder="Search hotel name..." ref="searchInput" onKeyDown={(e) => e.preventDefault()} />
+                                    <input type="text" className="form-control" placeholder="Search hotel name..." ref="searchInput" />
                                     <span className="input-group-btn">
                                         <button className="btn btn-primary" type="button" onClick={() => { this.handleSearchClick(this.refs.searchInput.value) }} ref="searchBtn" id="searchID">
                                             <span className="glyphicon glyphicon-search"></span>
@@ -371,16 +435,16 @@ const history = createHistory()
                             <div id="Price" ref="price">
 
                                 <form className="form">
-                                <Rheostat
-                                min={this.state.min}
-                                max={this.state.max}
-                                onValuesUpdated={(sliderState) => this.updatePriceRanger(sliderState)}
+                                    <Rheostat
+                                        min={this.state.min}
+                                        max={this.state.max}
+                                        onValuesUpdated={(sliderState) => this.updatePriceRanger(sliderState)}
 
-                                values={this.state.values}
+                                        values={this.state.values}
 
-                            />
+                                    />
 
-                            <span>SAR {this.state.values[0]}</span> <span>SAR {this.state.values[1]}</span>
+                                    <span>SAR {this.state.values[0]}</span> <span>SAR {this.state.values[1]}</span>
                                 </form>
 
 
@@ -513,14 +577,14 @@ const history = createHistory()
 
 
                         <div className="col-md-9">
-                        <ul className="nav nav-pills" ref="ul">
-                        <li id="popularLi" ref="popularLiRef" className="active"><a onClick={() => this.OnSort(this.refs.popularLiRef.id , this.refs.popularAnchor.id , this.refs.popularArrowRef.id)} id="popularID" ref="popularAnchor" >Popular <span id="popularArrow" ref="popularArrowRef" className="glyphicon glyphicon-arrow-up" ></span></a></li>
-                            <li id="priceLi" ref="priceLiRef"><a onClick={() => this.OnSort(this.refs.priceLiRef.id , this.refs.priceAnchor.id , this.refs.priceArrowRef.id)} id="priceID" ref="priceAnchor" >Price <span id="priceArrow" ref="priceArrowRef" ></span></a></li>
-                            <li id="distLi" ref="distLiRef" ><a onClick={() => this.OnSort(this.refs.distLiRef.id , this.refs.distAnchor.id , this.refs.distArrowRef.id)} id="distID"  ref="distAnchor"  >Distance <span id="distArrow" ref="distArrowRef"></span></a></li>
-                            <li id="nameLi" ref="nameLiRef"><a onClick={() => this.OnSort(this.refs.nameLiRef.id , this.refs.nameAnchor.id , this.refs.nameArrowRef.id)} id="nameID" ref="nameAnchor"  >Name <span id="nameArrow" ref="nameArrowRef"></span></a></li>
-                            <li id="ratingLi" ref="ratingLiRef"> <a onClick={() => this.OnSort(this.refs.ratingLiRef.id , this.refs.ratingAnchor.id , this.refs.ratingArrowRef.id)} id="ratingID"  ref="ratingAnchor"  >Rating <span id="ratingArrow" ref="ratingArrowRef" ></span></a></li>
-                            <span className="properties"> {this.Flights.SearchFilter.length} properties found </span>
-                        </ul>
+                            <ul className="nav nav-pills" ref="ul">
+                                <li id="popularLi" ref="popularLiRef" className="active"><a onClick={() => this.OnSort(this.refs.popularLiRef.id, this.refs.popularAnchor.id, this.refs.popularArrowRef.id)} id="popularID" ref="popularAnchor" >Popular <span id="popularArrow" ref="popularArrowRef" className="glyphicon glyphicon-arrow-up" ></span></a></li>
+                                <li id="priceLi" ref="priceLiRef"><a onClick={() => this.OnSort(this.refs.priceLiRef.id, this.refs.priceAnchor.id, this.refs.priceArrowRef.id)} id="priceID" ref="priceAnchor" >Price <span id="priceArrow" ref="priceArrowRef" ></span></a></li>
+                                <li id="distLi" ref="distLiRef" ><a onClick={() => this.OnSort(this.refs.distLiRef.id, this.refs.distAnchor.id, this.refs.distArrowRef.id)} id="distID" ref="distAnchor"  >Distance <span id="distArrow" ref="distArrowRef"></span></a></li>
+                                <li id="nameLi" ref="nameLiRef"><a onClick={() => this.OnSort(this.refs.nameLiRef.id, this.refs.nameAnchor.id, this.refs.nameArrowRef.id)} id="nameID" ref="nameAnchor"  >Name <span id="nameArrow" ref="nameArrowRef"></span></a></li>
+                                <li id="ratingLi" ref="ratingLiRef"> <a onClick={() => this.OnSort(this.refs.ratingLiRef.id, this.refs.ratingAnchor.id, this.refs.ratingArrowRef.id)} id="ratingID" ref="ratingAnchor"  >Rating <span id="ratingArrow" ref="ratingArrowRef" ></span></a></li>
+                                <span className="properties"> {this.Flights.SearchFilter.length} properties found </span>
+                            </ul>
 
                             {currentHotels.map((data, key) => {
                                 return (
