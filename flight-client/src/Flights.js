@@ -128,7 +128,6 @@ let queries = {}
 
     // starRating handel event
     handleStarCheck(starObj, key) {
-    console.log(this.state.filterStar)
 
         let query;
 
@@ -156,24 +155,26 @@ let queries = {}
 
 
         //condition for querystring
-        if (this.Flights.ratingInput.length === 0) {
-            delete queries['s'];
+        // if (this.Flights.ratingInput.length === 0) {
+        //     delete queries['s'];
+        //     query = queryString.stringify(queries)
+        //     this.props.history.push({
+        //         pathname: '/flight-search',
+        //         search: query
+        //     })
+        // }
+      
+         queries.s = _.map(this.state.filterStar, (d)=> {
+                return d.code
+            })
+    
             query = queryString.stringify(queries)
+        
             this.props.history.push({
                 pathname: '/flight-search',
                 search: query
             })
-        }
-        else {
-            let filterStar = _.filter(this.state.filterStar, d => {return d.selected === true ? d.code : null}
-  )
-                 queries.s = filterStar
-            query = queryString.stringify(queries)
-            this.props.history.push({
-                pathname: '/flight-search',
-                search: query
-            })
-        }
+        
 
     }
 
