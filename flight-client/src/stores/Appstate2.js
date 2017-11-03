@@ -60,15 +60,16 @@ class Flights {
                 &&
 
                 this.ratingInput.every((c) => {
-
+    
                     return _.some((data.rating), d => {
-                        console.log(c)
-                        return d.value === c;
+                        
+                        return d.value !== c ;
                     })
                 }) 
                 &&
 
                 this.districtInput.every((c, i) => {
+                    
                     return data.meta.districtId !== c
 
                 })

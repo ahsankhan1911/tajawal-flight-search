@@ -134,16 +134,17 @@ let queries = {}
         })
 
         if (a[key].selected === false) {
-            this.Flights.ratingInput = []
-            this.state.filterStar.forEach(d => {
-                 if(d.selected === true) {
-                     this.Flights.ratingInput.push(d.code);
-                 }
-            })
+            
+            this.Flights.ratingInput.push(starObj.code);
 
-          
-           
+            // this.state.filterStar.map(d => {
+            //      if(d.selected === true) {
+            //          this.Flights.ratingInput.push(d.code);
+            //      }
+            // })
         }
+
+        
         else {
             _.remove(this.Flights.ratingInput, (f) => {
                 return f === starObj.code;
@@ -159,15 +160,19 @@ let queries = {}
         //         search: query
         //     })
         // }
+        queries.s = []
+         this.state.filterStar.map(d => {
+                 if(d.selected === true) {
+                    queries.s.push(d.code);
+                 }
+            })
 
-
-        queries.s = this.Flights.ratingInput
-        query = queryString.stringify(queries)
+        // query = queryString.stringify(queries)
 
 
         this.props.history.push({
             pathname: '/flight-search',
-            search: query
+            search: queries
         })
 
 
@@ -192,7 +197,10 @@ let queries = {}
         if (this.state.filterDist[key].selected === false) {
 
             this.Flights.districtInput.push(code)
+            
         }
+        
+
         else {
             _.remove(this.Flights.districtInput, (f) => {
                 return f === code;
