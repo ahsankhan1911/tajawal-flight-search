@@ -13,6 +13,7 @@ import queryString from 'query-string';
 require("bootstrap/less/bootstrap.less");
 
 let currentHotels, indexOfLastHotel, indexOfFirstHotel;
+// eslint-disable-next-line
 let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButtonRA;
 let resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg = false, resetButtonPAFlg = false, resetButtonRAFlg = false;
 let queries = {}
@@ -138,6 +139,8 @@ let queries = {}
             this.state.filterStar.forEach(d => {
                  if(d.selected === true) {
                      this.Flights.ratingInput.push(d.code);
+
+            
                  }
             })
 
@@ -145,22 +148,26 @@ let queries = {}
            
         }
         else {
-            _.remove(this.Flights.ratingInput, (f) => {
-                return f === starObj.code;
-            })
+            // _.remove(this.Flights.ratingInput, (f) => {
+            //     return f === starObj.code;
+            // })
+            this.Flights.ratingInput = [5,4,3,2,1,0]
+            
+            console.log(this.Flights.ratingInput.length)
+
         }
 
         //condition for querystring
-        // if (this.Flights.ratingInput.length === 0) {
-        //     delete queries['s'];
-        //     query = queryString.stringify(queries)
-        //     this.props.history.push({
-        //         pathname: '/flight-search',
-        //         search: query
-        //     })
-        // }
+        if (this.Flights.ratingInput.length === 6) {
+            queries = _.omit(queries, 's')
+            query = queryString.stringify(queries)
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
+        }
 
-
+        else {
         queries.s = this.Flights.ratingInput
         query = queryString.stringify(queries)
 
@@ -170,7 +177,7 @@ let queries = {}
             search: query
         })
 
-
+    }
     }
 
 

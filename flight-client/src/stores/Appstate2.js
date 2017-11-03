@@ -8,7 +8,7 @@ class Flights {
 
     @observable filteredData = [];
     @observable searchInput = ''
-    @observable ratingInput = [];
+    @observable ratingInput = [5,4,3,2,1,0];
     @observable districtInput = [];
     @observable chainInput = [];
     @observable PAInput = [];
@@ -55,16 +55,21 @@ class Flights {
 
         return _.filter(SortedData, (data) => {
 
-
+   
             return data.summary.hotelName.toLowerCase().indexOf(this.searchInput.toLowerCase()) !== -1
                 &&
+    
+                this.ratingInput.some((c, i , a) => {
 
-                this.ratingInput.every((c) => {
-
-                    return _.some((data.rating), d => {
-                        console.log(c)
-                        return d.value === c;
+                    // if(this.ratingInput.length === 0) {
+                    //     console.log("hellooo 0")
+                    // }
+                
+                    return data.rating.some(d => {
+                       // eslint-disable-next-line
+                        return d.value == c;
                     })
+                
                 }) 
                 &&
 
