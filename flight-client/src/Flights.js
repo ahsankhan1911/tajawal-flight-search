@@ -8,8 +8,6 @@ import _ from 'lodash';
 import Rheostat from 'rheostat';
 import { inject, observer } from 'mobx-react';
 import $ from 'jquery';
-import createHistory from 'history/createBrowserHistory'
-import { BrowserRouter as Router, Route } from 'react-router-dom';
 import queryString from 'query-string';
 
 require("bootstrap/less/bootstrap.less");
@@ -17,8 +15,6 @@ require("bootstrap/less/bootstrap.less");
 let currentHotels, indexOfLastHotel, indexOfFirstHotel;
 let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButtonRA;
 let resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg = false, resetButtonPAFlg = false, resetButtonRAFlg = false;
-
-
 let queries = {}
 
 @inject('Flights')
@@ -43,6 +39,7 @@ let queries = {}
             filterPrice: [],
             input: '',
             values: [],
+       
 
         };
     }
@@ -103,7 +100,8 @@ let queries = {}
 
 
         if (this.refs.searchInput.value.length === 0) {
-            delete queries['h'];
+                 delete queries['h']
+            
             query = queryString.stringify(queries)
             this.props.history.push({
                 pathname: '/flight-search',
@@ -113,24 +111,19 @@ let queries = {}
         else {
 
             queries.h = this.refs.searchInput.value
+            console.log(this.Flights.queries)
             query = queryString.stringify(queries)
             this.props.history.push({
                 pathname: '/flight-search',
                 search: query
             })
         }
-
-
-
-
     }
 
 
     // starRating handel event
     handleStarCheck(starObj, key) {
-
-        let query;
-
+  let query;
         resetButtonStrFlg = true;
 
         var a = this.state.filterStar
@@ -141,18 +134,21 @@ let queries = {}
         })
 
         if (a[key].selected === false) {
-            this.Flights.ratingInput.push(starObj.code);
+            this.Flights.ratingInput = []
+            this.state.filterStar.forEach(d => {
+                 if(d.selected === true) {
+                     this.Flights.ratingInput.push(d.code);
+                 }
+            })
 
-
+          
+           
         }
         else {
             _.remove(this.Flights.ratingInput, (f) => {
                 return f === starObj.code;
             })
-
-
         }
-
 
         //condition for querystring
         // if (this.Flights.ratingInput.length === 0) {
@@ -163,25 +159,24 @@ let queries = {}
         //         search: query
         //     })
         // }
-      
-         queries.s = _.map(this.state.filterStar, (d)=> {
-                return d.code
-            })
-    
-            query = queryString.stringify(queries)
-        
-            this.props.history.push({
-                pathname: '/flight-search',
-                search: query
-            })
-        
+
+
+        queries.s = this.Flights.ratingInput
+        query = queryString.stringify(queries)
+
+
+        this.props.history.push({
+            pathname: '/flight-search',
+            search: query
+        })
+
 
     }
 
 
     // District handel event
     handleDistCheck(code, key) {
-        let query;
+
 
 
         resetButtonDistFlg = true;
@@ -204,25 +199,6 @@ let queries = {}
             })
 
         }
-
-        if (this.Flights.districtInput.length === 0) {
-            delete queries['d'];
-            query = queryString.stringify(queries)
-            this.props.history.push({
-                pathname: '/flight-search',
-                search: query
-            })
-        }
-        else {
-
-            queries.d = this.Flights.districtInput
-            query = queryString.stringify(queries)
-            this.props.history.push({
-                pathname: '/flight-search',
-                search: query
-            })
-        }
-
 
     }
 

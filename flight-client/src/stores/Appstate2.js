@@ -20,8 +20,10 @@ class Flights {
 
 
     @computed get SearchFilter() {
+
+
         let SortedData = _.sortBy(this.filteredData, (a) => {
-            
+
             switch (this.Sort) {
                 case "priceID":
                     {
@@ -34,34 +36,37 @@ class Flights {
                 case "nameID":
                     {
                         return a.summary.hotelName
-                        
+
                     }
                 case "ratingID":
                     {
-                        return a.rating.map( d => {
-                           return d.value
+                        return a.rating.map(d => {
+                            return d.value
                         })
                     }
+                default:
             }
 
         })
 
-        if(this.SortDir === 'DESC') {
-            _.reverse(SortedData) }
+        if (this.SortDir === 'DESC') {
+            _.reverse(SortedData)
+        }
 
-        return   _.filter(SortedData, (data) => {
+        return _.filter(SortedData, (data) => {
 
 
-            return data.summary.hotelName.toLowerCase().indexOf(this.searchInput.toLowerCase()) !== -1 
-               &&
+            return data.summary.hotelName.toLowerCase().indexOf(this.searchInput.toLowerCase()) !== -1
+                &&
 
-                this.ratingInput.every((c, i) => {
+                this.ratingInput.every((c) => {
 
                     return _.some((data.rating), d => {
-
-                        return d.value !== c;
+                        console.log(c)
+                        return d.value === c;
                     })
-                }) &&
+                }) 
+                &&
 
                 this.districtInput.every((c, i) => {
                     return data.meta.districtId !== c
@@ -76,17 +81,13 @@ class Flights {
 
                 &&
                 this.PAInput.every((c, i) => {
-                    
-                                        return _.some((data.meta.amenities.propertyAmenity), d => {
-                    
-                                            return d.code !== c;
-                                        })
-                                    })
+
+                    return _.some((data.meta.amenities.propertyAmenity), d => {
+
+                        return d.code !== c;
+                    })
+                })
         })
-
-    
-
-
     }
 
 
