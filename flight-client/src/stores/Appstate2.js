@@ -58,25 +58,12 @@ class Flights {
    
             return data.summary.hotelName.toLowerCase().indexOf(this.searchInput.toLowerCase()) !== -1
                 &&
-<<<<<<< HEAD
     
                 this.ratingInput.some((c, i , a) => {
 
-                    // if(this.ratingInput.length === 0) {
-                    //     console.log("hellooo 0")
-                    // }
-                
                     return data.rating.some(d => {
                        // eslint-disable-next-line
                         return d.value == c;
-=======
-
-                this.ratingInput.every((c) => {
-    
-                    return _.some((data.rating), d => {
-                        
-                        return d.value !== c ;
->>>>>>> 6e0649789bf145a2a53333047e63a02580e9ca7a
                     })
                 
                 }) 

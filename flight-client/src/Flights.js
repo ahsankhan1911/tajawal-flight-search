@@ -135,7 +135,6 @@ let queries = {}
         })
 
         if (a[key].selected === false) {
-<<<<<<< HEAD
             this.Flights.ratingInput = []
             this.state.filterStar.forEach(d => {
                  if(d.selected === true) {
@@ -144,23 +143,10 @@ let queries = {}
             
                  }
             })
-=======
-            
-            this.Flights.ratingInput.push(starObj.code);
->>>>>>> 6e0649789bf145a2a53333047e63a02580e9ca7a
 
-            // this.state.filterStar.map(d => {
-            //      if(d.selected === true) {
-            //          this.Flights.ratingInput.push(d.code);
-            //      }
-            // })
         }
-
-        
         else {
-            // _.remove(this.Flights.ratingInput, (f) => {
-            //     return f === starObj.code;
-            // })
+        
             this.Flights.ratingInput = [5,4,3,2,1,0]
             
             console.log(this.Flights.ratingInput.length)
@@ -178,7 +164,9 @@ let queries = {}
         }
 
         else {
-        queries.s = this.Flights.ratingInput
+    
+        queries.s = this.Flights.ratingInput;
+        console.log(queries)
         query = queryString.stringify(queries)
 
 
