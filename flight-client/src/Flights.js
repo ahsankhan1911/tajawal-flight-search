@@ -172,7 +172,7 @@ let queries = {}
 
         this.props.history.push({
             pathname: '/flight-search',
-            search: queries
+            search: query
         })
 
     }
