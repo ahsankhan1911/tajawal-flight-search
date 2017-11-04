@@ -40,20 +40,36 @@ let queries = {}
             filterPrice: [],
             input: '',
             values: [],
-       
-
         };
+
+
     }
 
+    
 
-    async componentDidMount() {
-        await axios.get("http://localhost:5000/flight/hotels")
+  componentDidMount() {
+         axios.get("http://localhost:5000/flight/hotels")
             .then((response) => {
 
                 this.setState({
                     hotel_data: response.data
                 })
                 this.Flights.filteredData = _.clone(this.state.hotel_data)
+                
+
+                // this.Flights.filteredData.forEach(d => {
+
+                //     this.Flights.districtInput.push(d.meta.districtId);
+                 
+                // })
+
+                this.state.filterStar.forEach(d => {
+                   
+                        this.Flights.ratingInput.push(d.code);
+                   
+                })
+
+             
 
             }).catch((error) => {
                 console.log(error)
@@ -78,10 +94,7 @@ let queries = {}
             }).catch((error) => {
                 console.log(error)
             })
-
-
     }
-
 
 
     handlePageChange = (pageNumber) => {
@@ -101,8 +114,8 @@ let queries = {}
 
 
         if (this.refs.searchInput.value.length === 0) {
-                 delete queries['h']
-            
+            delete queries['h']
+
             query = queryString.stringify(queries)
             this.props.history.push({
                 pathname: '/flight-search',
@@ -114,6 +127,7 @@ let queries = {}
             queries.h = this.refs.searchInput.value
             console.log(this.Flights.queries)
             query = queryString.stringify(queries)
+            query = query.replace(/%2C/g, ",")
             this.props.history.push({
                 pathname: '/flight-search',
                 search: query
@@ -124,7 +138,7 @@ let queries = {}
 
     // starRating handel event
     handleStarCheck(starObj, key) {
-  let query;
+        let query;
         resetButtonStrFlg = true;
 
         var a = this.state.filterStar
@@ -134,29 +148,20 @@ let queries = {}
             filterStar: a
         })
 
-        if (a[key].selected === false) {
-            this.Flights.ratingInput = []
-            this.state.filterStar.forEach(d => {
-                 if(d.selected === true) {
-                     this.Flights.ratingInput.push(d.code);
 
-            
-                 }
-            })
-
-        }
-        else {
-        
-            this.Flights.ratingInput = [5,4,3,2,1,0]
-            
-            console.log(this.Flights.ratingInput.length)
-
-        }
+        this.Flights.ratingInput = []
+        this.state.filterStar.forEach(d => {
+            if (d.selected === true) {
+                this.Flights.ratingInput.push(d.code);
+            }
+        })
 
         //condition for querystring
-        if (this.Flights.ratingInput.length === 6) {
+        if (this.Flights.ratingInput.length === 6 || this.Flights.ratingInput.length === 0) {
             queries = _.omit(queries, 's')
             query = queryString.stringify(queries)
+
+
             this.props.history.push({
                 pathname: '/flight-search',
                 search: query
@@ -164,18 +169,19 @@ let queries = {}
         }
 
         else {
-    
-        queries.s = this.Flights.ratingInput;
-        console.log(queries)
-        query = queryString.stringify(queries)
 
+            queries.s = this.Flights.ratingInput;
+            console.log(queries)
+            query = queryString.stringify(queries)
 
-        this.props.history.push({
-            pathname: '/flight-search',
-            search: query
-        })
+            query = query.replace(/%2C/g, ",")
 
-    }
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
+
+        }
     }
 
 
@@ -197,9 +203,9 @@ let queries = {}
         if (this.state.filterDist[key].selected === false) {
 
             this.Flights.districtInput.push(code)
-            
+
         }
-        
+
 
         else {
             _.remove(this.Flights.districtInput, (f) => {
@@ -207,6 +213,8 @@ let queries = {}
             })
 
         }
+
+
 
     }
 
@@ -383,6 +391,12 @@ let queries = {}
     }
     // Sorting Ends
 
+    Values() {
+
+
+
+    }
+
 
 
     render() {
@@ -391,7 +405,6 @@ let queries = {}
         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
 
         currentHotels = _.slice(this.Flights.SearchFilter, indexOfFirstHotel, indexOfLastHotel);
-
         return (
             <div>
 

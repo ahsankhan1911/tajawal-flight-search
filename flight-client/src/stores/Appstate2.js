@@ -8,7 +8,7 @@ class Flights {
 
     @observable filteredData = [];
     @observable searchInput = ''
-    @observable ratingInput = [5,4,3,2,1,0];
+    @observable ratingInput = [];
     @observable districtInput = [];
     @observable chainInput = [];
     @observable PAInput = [];
@@ -20,8 +20,7 @@ class Flights {
 
 
     @computed get SearchFilter() {
-
-
+        
         let SortedData = _.sortBy(this.filteredData, (a) => {
 
             switch (this.Sort) {
@@ -59,7 +58,7 @@ class Flights {
             return data.summary.hotelName.toLowerCase().indexOf(this.searchInput.toLowerCase()) !== -1
                 &&
     
-                this.ratingInput.some((c, i , a) => {
+                this.ratingInput.some((c) => {
 
                     return data.rating.some(d => {
                        // eslint-disable-next-line
@@ -70,7 +69,7 @@ class Flights {
                 &&
 
                 this.districtInput.every((c, i) => {
-                    
+                        // eslint-disable-next-line
                     return data.meta.districtId !== c
 
                 })
