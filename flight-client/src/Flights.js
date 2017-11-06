@@ -38,7 +38,6 @@ let queries = {}
             filterPA: [],
             filterRA: [],
             filterPrice: [],
-            input: '',
             values: [],
         };
 
@@ -48,7 +47,7 @@ let queries = {}
     
 
   componentDidMount() {
-         axios.get("http://localhost:5000/flight/hotels")
+         axios.get("http://192.168.10.5:5000/flight/hotels")
             .then((response) => {
 
                 this.setState({
@@ -57,11 +56,18 @@ let queries = {}
                 this.Flights.filteredData = _.clone(this.state.hotel_data)
                 
 
-                // this.Flights.filteredData.forEach(d => {
+                this.state.hotel_data.forEach(d => {
 
-                //     this.Flights.districtInput.push(d.meta.districtId);
+                    this.Flights.districtInput.push(d.meta.districtId);
+                    this.Flights.chainInput.push(d.meta.chainId)
+                      d.meta.amenities.roomAmenity.forEach( d2 => {
+                        this.Flights.RAInput.push(d2.code)
+                     
+
+                      })
                  
-                // })
+                })
+                
 
                 this.state.filterStar.forEach(d => {
                    
@@ -69,13 +75,19 @@ let queries = {}
                    
                 })
 
+
+
+
+               
+              
+
              
 
             }).catch((error) => {
                 console.log(error)
             })
 
-        axios.get("http://localhost:5000/flight/hotels/resources")
+        axios.get("http://192.168.10.5:5000/flight/hotels/resources")
             .then((response) => {
 
                 this.setState({
@@ -94,6 +106,8 @@ let queries = {}
             }).catch((error) => {
                 console.log(error)
             })
+
+            this.Flights.searchInput = new URLSearchParams(this.props.location.search).get('h');
     }
 
 
@@ -110,6 +124,8 @@ let queries = {}
     handleSearchClick(input) {
         let query
 
+
+
         this.Flights.searchInput = this.refs.searchInput.value
 
 
@@ -125,7 +141,7 @@ let queries = {}
         else {
 
             queries.h = this.refs.searchInput.value
-            console.log(this.Flights.queries)
+
             query = queryString.stringify(queries)
             query = query.replace(/%2C/g, ",")
             this.props.history.push({
@@ -133,6 +149,10 @@ let queries = {}
                 search: query
             })
         }
+
+
+
+                console.log(this.props.location.search)
     }
 
 
@@ -148,16 +168,18 @@ let queries = {}
             filterStar: a
         })
 
-
+        //Conditon to push data to Appstate
         this.Flights.ratingInput = []
         this.state.filterStar.forEach(d => {
             if (d.selected === true) {
                 this.Flights.ratingInput.push(d.code);
+             
             }
         })
-
+    
+       
         //condition for querystring
-        if (this.Flights.ratingInput.length === 6 || this.Flights.ratingInput.length === 0) {
+        if (this.Flights.ratingInput.length === this.state.filterStar.length || this.Flights.ratingInput.length === 0) {
             queries = _.omit(queries, 's')
             query = queryString.stringify(queries)
 
@@ -171,7 +193,7 @@ let queries = {}
         else {
 
             queries.s = this.Flights.ratingInput;
-            console.log(queries)
+
             query = queryString.stringify(queries)
 
             query = query.replace(/%2C/g, ",")
@@ -188,7 +210,7 @@ let queries = {}
     // District handel event
     handleDistCheck(code, key) {
 
-
+        let query;
 
         resetButtonDistFlg = true;
         var a = this.state.filterDist
@@ -200,27 +222,46 @@ let queries = {}
             filterDist: a
         })
 
-        if (this.state.filterDist[key].selected === false) {
+        //Conditon to push data to Appstate
+        this.Flights.districtInput = []
+        this.state.filterDist.forEach(d => {
+            if (d.selected === true) {
+               return this.Flights.districtInput.push(d.code);
+            }
+        })
 
-            this.Flights.districtInput.push(code)
+         //condition for querystring
+         if (this.Flights.districtInput.length === this.state.filterDist.length || this.Flights.districtInput.length === 0) {
+            queries = _.omit(queries, 'd')
+            query = queryString.stringify(queries)
 
+
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
         }
 
-
         else {
-            _.remove(this.Flights.districtInput, (f) => {
-                return f === code;
+
+            queries.d = this.Flights.districtInput;
+   
+            query = queryString.stringify(queries)
+
+            query = query.replace(/%2C/g, ",")
+
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
             })
 
         }
-
-
 
     }
 
     // Chain handel event
     handleChainCheck(code, key) {
-
+        let query;
         resetButtonChainFlg = true;
 
         var a = this.state.filterChain
@@ -230,22 +271,48 @@ let queries = {}
             filterChain: a
         })
 
-        if (a[key].selected === false) {
+         //Conditon to push data to Appstate
+         this.Flights.chainInput = []
+         this.state.filterChain.forEach(d => {
+             if (d.selected === true) {
+                return this.Flights.chainInput.push(d.code);
+             }
+         })
 
-            this.Flights.chainInput.push(code)
+          //condition for querystring
+          if (this.Flights.chainInput.length === this.state.filterChain.length || this.Flights.chainInput.length === 0) {
+            queries = _.omit(queries, 'c')
+            query = queryString.stringify(queries)
+
+
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
         }
+
         else {
-            _.remove(this.Flights.chainInput, (f) => {
-                return f === code;
+
+            queries.c = this.Flights.chainInput;
+   
+            query = queryString.stringify(queries)
+
+            query = query.replace(/%2C/g, ",")
+
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
             })
 
         }
+
+     
 
     }
 
     // Prop Amnities handel event
     handlePACheck(code, key) {
-
+        let query;
         resetButtonPAFlg = true
 
         var a = this.state.filterPA
@@ -256,13 +323,37 @@ let queries = {}
         })
 
 
-        if (a[key].selected === false) {
+        //Conditon to push data to Appstate
+        this.Flights.RAInput = []
+        this.state.filterRA.forEach(d => {
+            if (d.selected === true) {
+               return this.Flights.RAInput.push(d.code);
+            }
+        })  
 
-            this.Flights.PAInput.push(code)
+         //condition for querystring
+         if (this.Flights.PAInput.length === this.state.filterPA.length || this.Flights.PAInput.length === 0) {
+            queries = _.omit(queries, 'pa')
+            query = queryString.stringify(queries)
+
+
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
         }
+
         else {
-            _.remove(this.Flights.PAInput, (f) => {
-                return f === code;
+
+            queries.pa = this.Flights.PAInput;
+   
+            query = queryString.stringify(queries)
+
+            query = query.replace(/%2C/g, ",")
+
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
             })
 
         }
@@ -272,6 +363,7 @@ let queries = {}
 
     // Room Amnities handel event
     handleRACheck(code, key) {
+        let query;
         resetButtonRAFlg = true;
 
         var a = this.state.filterRA
@@ -281,10 +373,41 @@ let queries = {}
             filterRA: a
         })
 
+        //Conditon to push data to Appstate
+        this.Flights.RAInput = []
+        this.state.filterRA.forEach(d => {
+            if (d.selected === true) {
+               return this.Flights.RAInput.push(d.code);
+            }
+        })  
+
+         //condition for querystring
+         if (this.Flights.RAInput.length === this.state.filterRA.length || this.Flights.RAInput.length === 0) {
+            queries = _.omit(queries, 'd')
+            query = queryString.stringify(queries)
+
+
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
+        }
+
+        else {
+
+            queries.d = this.Flights.RAInput;
+   
+            query = queryString.stringify(queries)
+
+            query = query.replace(/%2C/g, ",")
+
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
+
+        }
     }
-
-
-
     handleDivHide(e) {
 
         var x = document.getElementById(e);
@@ -344,9 +467,6 @@ let queries = {}
         })
         _.remove(filterInput)
 
-
-        console.log(btnRef)
-
         switch (btnRef) {
             case "starRating":
                 resetButtonStrFlg = false;
@@ -391,20 +511,15 @@ let queries = {}
     }
     // Sorting Ends
 
-    Values() {
-
-
-
-    }
-
-
-
     render() {
+
+        
 
         indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
 
         currentHotels = _.slice(this.Flights.SearchFilter, indexOfFirstHotel, indexOfLastHotel);
+
         return (
             <div>
 

@@ -20,6 +20,8 @@ class Flights {
 
 
     @computed get SearchFilter() {
+
+        
         
         let SortedData = _.sortBy(this.filteredData, (a) => {
 
@@ -68,24 +70,33 @@ class Flights {
                 }) 
                 &&
 
-                this.districtInput.every((c, i) => {
+                this.districtInput.some((c, i) => {
                         // eslint-disable-next-line
-                    return data.meta.districtId !== c
+                    return data.meta.districtId == c || data.meta.districtId == null ||  data.meta.districtId == 0
 
                 })
                 &&
 
-                this.chainInput.every((c, i) => {
-                    return data.meta.chainId !== c
+                this.chainInput.some((c, i) => {
+                            // eslint-disable-next-line
+                    return data.meta.chainId == c || data.meta.chainId == 0
 
                 })
 
+                // &&
+                // this.PAInput.every((c, i) => {
+
+                //     return _.some((data.meta.amenities.propertyAmenity), d => {
+
+                //         return d.code !== c;
+                //     })
+                // })
+
                 &&
-                this.PAInput.every((c, i) => {
-
-                    return _.some((data.meta.amenities.propertyAmenity), d => {
-
-                        return d.code !== c;
+                this.RAInput.some((c) => {
+                    return _.some((data.meta.amenities.roomAmenity), d => {
+                              // eslint-disable-next-line
+                        return d.code == c ;
                     })
                 })
         })
