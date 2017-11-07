@@ -54,7 +54,6 @@ let queries = {}
                     hotel_data: response.data
                 })
                 this.Flights.filteredData = _.clone(this.state.hotel_data)
-                
 
                 this.state.hotel_data.forEach(d => {
 
@@ -62,27 +61,14 @@ let queries = {}
                     this.Flights.chainInput.push(d.meta.chainId)
                       d.meta.amenities.roomAmenity.forEach( d2 => {
                         this.Flights.RAInput.push(d2.code)
-                     
-
                       })
-                 
                 })
                 
-
                 this.state.filterStar.forEach(d => {
-                   
                         this.Flights.ratingInput.push(d.code);
-                   
                 })
 
-
-
-
-               
-              
-
-             
-
+                this.values();
             }).catch((error) => {
                 console.log(error)
             })
@@ -107,7 +93,13 @@ let queries = {}
                 console.log(error)
             })
 
-            this.Flights.searchInput = new URLSearchParams(this.props.location.search).get('h');
+          
+    }
+
+    values(){
+        console.log( new URLSearchParams(this.props.location.search));
+
+
     }
 
 
@@ -123,8 +115,6 @@ let queries = {}
     // hotelName handel event
     handleSearchClick(input) {
         let query
-
-
 
         this.Flights.searchInput = this.refs.searchInput.value
 
@@ -149,10 +139,6 @@ let queries = {}
                 search: query
             })
         }
-
-
-
-                console.log(this.props.location.search)
     }
 
 
@@ -176,8 +162,8 @@ let queries = {}
              
             }
         })
-    
-       
+
+
         //condition for querystring
         if (this.Flights.ratingInput.length === this.state.filterStar.length || this.Flights.ratingInput.length === 0) {
             queries = _.omit(queries, 's')
@@ -204,7 +190,10 @@ let queries = {}
             })
 
         }
+
     }
+
+    
 
 
     // District handel event
@@ -519,6 +508,8 @@ let queries = {}
         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
 
         currentHotels = _.slice(this.Flights.SearchFilter, indexOfFirstHotel, indexOfLastHotel);
+
+        
 
         return (
             <div>
