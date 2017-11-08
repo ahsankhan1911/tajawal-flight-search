@@ -44,10 +44,10 @@ let queries = {}
 
     }
 
-    
 
-  componentDidMount() {
-         axios.get("http://192.168.10.5:5000/flight/hotels")
+
+    componentDidMount() {
+        axios.get("http://localhost:5000/flight/hotels")
             .then((response) => {
 
                 this.setState({
@@ -59,21 +59,26 @@ let queries = {}
 
                     this.Flights.districtInput.push(d.meta.districtId);
                     this.Flights.chainInput.push(d.meta.chainId)
-                      d.meta.amenities.roomAmenity.forEach( d2 => {
+                    d.meta.amenities.roomAmenity.forEach(d2 => {
                         this.Flights.RAInput.push(d2.code)
-                      })
-                })
-                
-                this.state.filterStar.forEach(d => {
-                        this.Flights.ratingInput.push(d.code);
+                    })
                 })
 
-                this.values();
+                this.state.filterStar.forEach(d => {
+                    this.Flights.ratingInput.push(d.code);
+                })
+
+                //catching the error of null values and ignoring the values using try catch here 
+                this.values()
+
+
             }).catch((error) => {
-                console.log(error)
+
+                console.log(error);
             })
 
-        axios.get("http://192.168.10.5:5000/flight/hotels/resources")
+
+        axios.get("http://localhost:5000/flight/hotels/resources")
             .then((response) => {
 
                 this.setState({
@@ -89,16 +94,52 @@ let queries = {}
                     max: response.data[2].value.max
                 })
 
+
             }).catch((error) => {
                 console.log(error)
             })
 
-          
+
     }
 
-    values(){
-        console.log( new URLSearchParams(this.props.location.search));
+    values() {
 
+        let h = new URLSearchParams(this.props.location.search).get('h');
+        let s = new URLSearchParams(this.props.location.search).get('s');
+
+
+
+
+        if (s !== null) {
+            //starinput value converting to array to filter from starRating
+            // handling the selected check value
+            s = s.split(',')
+            this.Flights.ratingInput = s;
+
+
+            let index = _.findIndex(this.state.filterStar, d => {
+
+                for (let i = 0; i <= s.length; i++)
+                    return d.code !== s[i];
+            })
+
+            console.log(index)
+
+            let a = this.state.filterStar;
+            a[index].selected = false;
+            this.setState({
+                filterStar: a
+            })
+         
+        }
+
+
+        // handling for empty searchinput
+
+        if (h !== null) {
+            this.Flights.searchInput = h
+            this.refs.searchInput.value = h
+        }
 
     }
 
@@ -113,7 +154,7 @@ let queries = {}
 
 
     // hotelName handel event
-    handleSearchClick(input) {
+    handleSearchClick() {
         let query
 
         this.Flights.searchInput = this.refs.searchInput.value
@@ -133,7 +174,7 @@ let queries = {}
             queries.h = this.refs.searchInput.value
 
             query = queryString.stringify(queries)
-            query = query.replace(/%2C/g, ",")
+            // query = query.replace(/%2C/g, ",")
             this.props.history.push({
                 pathname: '/flight-search',
                 search: query
@@ -159,9 +200,10 @@ let queries = {}
         this.state.filterStar.forEach(d => {
             if (d.selected === true) {
                 this.Flights.ratingInput.push(d.code);
-             
+
             }
         })
+
 
 
         //condition for querystring
@@ -190,10 +232,9 @@ let queries = {}
             })
 
         }
-
     }
 
-    
+
 
 
     // District handel event
@@ -215,12 +256,12 @@ let queries = {}
         this.Flights.districtInput = []
         this.state.filterDist.forEach(d => {
             if (d.selected === true) {
-               return this.Flights.districtInput.push(d.code);
+                return this.Flights.districtInput.push(d.code);
             }
         })
 
-         //condition for querystring
-         if (this.Flights.districtInput.length === this.state.filterDist.length || this.Flights.districtInput.length === 0) {
+        //condition for querystring
+        if (this.Flights.districtInput.length === this.state.filterDist.length || this.Flights.districtInput.length === 0) {
             queries = _.omit(queries, 'd')
             query = queryString.stringify(queries)
 
@@ -234,7 +275,7 @@ let queries = {}
         else {
 
             queries.d = this.Flights.districtInput;
-   
+
             query = queryString.stringify(queries)
 
             query = query.replace(/%2C/g, ",")
@@ -260,16 +301,16 @@ let queries = {}
             filterChain: a
         })
 
-         //Conditon to push data to Appstate
-         this.Flights.chainInput = []
-         this.state.filterChain.forEach(d => {
-             if (d.selected === true) {
+        //Conditon to push data to Appstate
+        this.Flights.chainInput = []
+        this.state.filterChain.forEach(d => {
+            if (d.selected === true) {
                 return this.Flights.chainInput.push(d.code);
-             }
-         })
+            }
+        })
 
-          //condition for querystring
-          if (this.Flights.chainInput.length === this.state.filterChain.length || this.Flights.chainInput.length === 0) {
+        //condition for querystring
+        if (this.Flights.chainInput.length === this.state.filterChain.length || this.Flights.chainInput.length === 0) {
             queries = _.omit(queries, 'c')
             query = queryString.stringify(queries)
 
@@ -283,7 +324,7 @@ let queries = {}
         else {
 
             queries.c = this.Flights.chainInput;
-   
+
             query = queryString.stringify(queries)
 
             query = query.replace(/%2C/g, ",")
@@ -295,7 +336,7 @@ let queries = {}
 
         }
 
-     
+
 
     }
 
@@ -316,12 +357,12 @@ let queries = {}
         this.Flights.RAInput = []
         this.state.filterRA.forEach(d => {
             if (d.selected === true) {
-               return this.Flights.RAInput.push(d.code);
+                return this.Flights.RAInput.push(d.code);
             }
-        })  
+        })
 
-         //condition for querystring
-         if (this.Flights.PAInput.length === this.state.filterPA.length || this.Flights.PAInput.length === 0) {
+        //condition for querystring
+        if (this.Flights.PAInput.length === this.state.filterPA.length || this.Flights.PAInput.length === 0) {
             queries = _.omit(queries, 'pa')
             query = queryString.stringify(queries)
 
@@ -335,7 +376,7 @@ let queries = {}
         else {
 
             queries.pa = this.Flights.PAInput;
-   
+
             query = queryString.stringify(queries)
 
             query = query.replace(/%2C/g, ",")
@@ -366,12 +407,12 @@ let queries = {}
         this.Flights.RAInput = []
         this.state.filterRA.forEach(d => {
             if (d.selected === true) {
-               return this.Flights.RAInput.push(d.code);
+                return this.Flights.RAInput.push(d.code);
             }
-        })  
+        })
 
-         //condition for querystring
-         if (this.Flights.RAInput.length === this.state.filterRA.length || this.Flights.RAInput.length === 0) {
+        //condition for querystring
+        if (this.Flights.RAInput.length === this.state.filterRA.length || this.Flights.RAInput.length === 0) {
             queries = _.omit(queries, 'd')
             query = queryString.stringify(queries)
 
@@ -385,7 +426,7 @@ let queries = {}
         else {
 
             queries.d = this.Flights.RAInput;
-   
+
             query = queryString.stringify(queries)
 
             query = query.replace(/%2C/g, ",")
@@ -502,14 +543,14 @@ let queries = {}
 
     render() {
 
-        
+
 
         indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
 
         currentHotels = _.slice(this.Flights.SearchFilter, indexOfFirstHotel, indexOfLastHotel);
 
-        
+
 
         return (
             <div>
