@@ -107,30 +107,30 @@ let queries = {}
         let h = new URLSearchParams(this.props.location.search).get('h');
         let s = new URLSearchParams(this.props.location.search).get('s');
 
-
-
+        queries = queryString.parse(this.props.location.search)
 
         if (s !== null) {
+
             //starinput value converting to array to filter from starRating
             // handling the selected check value
             s = s.split(',')
             this.Flights.ratingInput = s;
 
 
-            let index = _.findIndex(this.state.filterStar, d => {
 
-                for (let i = 0; i <= s.length; i++)
-                    return d.code !== s[i];
-            })
-
-            console.log(index)
-
-            let a = this.state.filterStar;
-            a[index].selected = false;
             this.setState({
-                filterStar: a
+                filterStar: this.state.filterStar.map(d => {
+                    d.selected = false
+    
+                    s.map(star => {
+                        if (star === d.code)
+                            d.selected = true
+                            
+                    })
+                    return d
+                })
             })
-         
+
         }
 
 
@@ -174,7 +174,7 @@ let queries = {}
             queries.h = this.refs.searchInput.value
 
             query = queryString.stringify(queries)
-            // query = query.replace(/%2C/g, ",")
+            query = query.replace(/%2C/g, ",")
             this.props.history.push({
                 pathname: '/flight-search',
                 search: query
@@ -191,9 +191,13 @@ let queries = {}
         var a = this.state.filterStar
         a[key].selected = !a[key].selected
 
+        console.log("from heer")
+
         this.setState({
             filterStar: a
         })
+
+
 
         //Conditon to push data to Appstate
         this.Flights.ratingInput = []
