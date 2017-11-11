@@ -62,6 +62,9 @@ let queries = {}
                     d.meta.amenities.roomAmenity.forEach(d2 => {
                         this.Flights.RAInput.push(d2.code)
                     })
+                    d.meta.amenities.propertyAmenity.forEach(d2 => {
+                        this.Flights.PAInput.push(d2.code)
+                    })
                 })
 
                 this.state.filterStar.forEach(d => {
@@ -121,7 +124,7 @@ let queries = {}
             this.setState({
                 filterStar: this.state.filterStar.map(d => {
                     d.selected = false
-    
+     // eslint-disable-next-line
                     s.map(star => {
                         if (star === d.code)
                             d.selected = true
@@ -344,9 +347,9 @@ let queries = {}
 
     }
 
-    // Prop Amnities handel event
+    // Prop Amnities handle event
     handlePACheck(code, key) {
-        let query;
+        // let query;
         resetButtonPAFlg = true
 
         var a = this.state.filterPA
@@ -358,39 +361,41 @@ let queries = {}
 
 
         //Conditon to push data to Appstate
-        this.Flights.RAInput = []
-        this.state.filterRA.forEach(d => {
+        this.Flights.PAInput = []
+        this.state.filterPA.forEach(d => {
             if (d.selected === true) {
-                return this.Flights.RAInput.push(d.code);
+                return this.Flights.PAInput.push(d.code);
             }
         })
 
-        //condition for querystring
-        if (this.Flights.PAInput.length === this.state.filterPA.length || this.Flights.PAInput.length === 0) {
-            queries = _.omit(queries, 'pa')
-            query = queryString.stringify(queries)
+        console.log(this.Flights.PAInput)
+
+        // condition for querystring
+        // if (this.Flights.PAInput.length === this.state.filterPA.length || this.Flights.PAInput.length === 0) {
+        //     queries = _.omit(queries, 'pa')
+        //     query = queryString.stringify(queries)
 
 
-            this.props.history.push({
-                pathname: '/flight-search',
-                search: query
-            })
-        }
+        //     this.props.history.push({
+        //         pathname: '/flight-search',
+        //         search: query
+        //     })
+        // }
 
-        else {
+        // else {
 
-            queries.pa = this.Flights.PAInput;
+        //     queries.pa = this.Flights.PAInput;
 
-            query = queryString.stringify(queries)
+        //     query = queryString.stringify(queries)
 
-            query = query.replace(/%2C/g, ",")
+        //     query = query.replace(/%2C/g, ",")
 
-            this.props.history.push({
-                pathname: '/flight-search',
-                search: query
-            })
+        //     this.props.history.push({
+        //         pathname: '/flight-search',
+        //         search: query
+        //     })
 
-        }
+        // }
 
 
     }
@@ -441,6 +446,7 @@ let queries = {}
             })
 
         }
+        console.log(this.Flights.RAInput);1
     }
     handleDivHide(e) {
 
@@ -531,16 +537,19 @@ let queries = {}
         this.Flights.Sort = Anchor
 
         if (document.getElementById(Span).className === "" || document.getElementById(Span).className === "glyphicon glyphicon-arrow-down") {
-            this.Flights.SortDir = null
+           
+        
             $(".nav li").removeClass("active");
-            $(".nav li span").removeClass("glyphicon glyphicon-arrow-up");
-            document.getElementById(Span).className = "glyphicon glyphicon-arrow-up";
-            document.getElementById(LI).className = "active";
+            $(".nav li span").removeClass("glyphicon glyphicon-arrow-down");
+
+            // document.getElementById(Span).className = "glyphicon glyphicon-arrow-down";
+            // this.Flights.SortDir = 'DESC';
+            // document.getElementById(LI).className = "active";
         }
 
         else {
             document.getElementById(Span).className = "glyphicon glyphicon-arrow-down";
-            this.Flights.SortDir = 'DESC'
+            this.Flights.SortDir = null
         }
     }
     // Sorting Ends
@@ -727,7 +736,7 @@ let queries = {}
 
                         <div className="col-md-9">
                             <ul className="nav nav-pills" ref="ul">
-                                <li id="popularLi" ref="popularLiRef" className="active"><a onClick={() => this.OnSort(this.refs.popularLiRef.id, this.refs.popularAnchor.id, this.refs.popularArrowRef.id)} id="popularID" ref="popularAnchor" >Popular <span id="popularArrow" ref="popularArrowRef" className="glyphicon glyphicon-arrow-up" ></span></a></li>
+                                <li id="popularLi" ref="popularLiRef" className="active"><a onClick={() => this.OnSort(this.refs.popularLiRef.id, this.refs.popularAnchor.id, this.refs.popularArrowRef.id)} id="popularID" ref="popularAnchor" >Popular <span id="popularArrow" ref="popularArrowRef" className="glyphicon glyphicon-arrow-down" ></span></a></li>
                                 <li id="priceLi" ref="priceLiRef"><a onClick={() => this.OnSort(this.refs.priceLiRef.id, this.refs.priceAnchor.id, this.refs.priceArrowRef.id)} id="priceID" ref="priceAnchor" >Price <span id="priceArrow" ref="priceArrowRef" ></span></a></li>
                                 <li id="distLi" ref="distLiRef" ><a onClick={() => this.OnSort(this.refs.distLiRef.id, this.refs.distAnchor.id, this.refs.distArrowRef.id)} id="distID" ref="distAnchor"  >Distance <span id="distArrow" ref="distArrowRef"></span></a></li>
                                 <li id="nameLi" ref="nameLiRef"><a onClick={() => this.OnSort(this.refs.nameLiRef.id, this.refs.nameAnchor.id, this.refs.nameArrowRef.id)} id="nameID" ref="nameAnchor"  >Name <span id="nameArrow" ref="nameArrowRef"></span></a></li>

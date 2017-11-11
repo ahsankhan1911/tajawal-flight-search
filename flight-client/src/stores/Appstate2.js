@@ -46,6 +46,7 @@ class Flights {
                         })
                     }
                 default:
+                     return a.summary.priority;
             }
 
         })
@@ -83,14 +84,14 @@ class Flights {
 
                 })
 
-                // &&
-                // this.PAInput.every((c, i) => {
+                    &&
+                    this.PAInput.some((c, i) => {
 
-                //     return _.some((data.meta.amenities.propertyAmenity), d => {
-
-                //         return d.code !== c;
-                //     })
-                // })
+                        return _.some((data.meta.amenities.propertyAmenity), d => {
+                           // eslint-disable-next-line
+                            return d.code == c;
+                        })
+                    })
 
                 &&
                 this.RAInput.some((c) => {
