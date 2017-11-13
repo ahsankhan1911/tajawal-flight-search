@@ -40,11 +40,7 @@ let queries = {}
             filterPrice: [],
             values: [],
         };
-
-
     }
-
-
 
     componentDidMount() {
         axios.get("http://localhost:5000/flight/hotels")
@@ -178,6 +174,7 @@ let queries = {}
 
             query = queryString.stringify(queries)
             query = query.replace(/%2C/g, ",")
+           
             this.props.history.push({
                 pathname: '/flight-search',
                 search: query
@@ -194,13 +191,9 @@ let queries = {}
         var a = this.state.filterStar
         a[key].selected = !a[key].selected
 
-        console.log("from heer")
-
         this.setState({
             filterStar: a
         })
-
-
 
         //Conditon to push data to Appstate
         this.Flights.ratingInput = []
@@ -211,14 +204,12 @@ let queries = {}
             }
         })
 
-
-
         //condition for querystring
         if (this.Flights.ratingInput.length === this.state.filterStar.length || this.Flights.ratingInput.length === 0) {
             queries = _.omit(queries, 's')
             query = queryString.stringify(queries)
-
-
+            query = query.replace(/%2C/g, ",")
+        
             this.props.history.push({
                 pathname: '/flight-search',
                 search: query
@@ -228,11 +219,11 @@ let queries = {}
         else {
 
             queries.s = this.Flights.ratingInput;
-
             query = queryString.stringify(queries)
-
             query = query.replace(/%2C/g, ",")
+                         .replace("p=",/%2C/, "-")
 
+            
             this.props.history.push({
                 pathname: '/flight-search',
                 search: query
@@ -241,19 +232,13 @@ let queries = {}
         }
     }
 
-
-
-
     // District handel event
     handleDistCheck(code, key) {
 
         let query;
-
         resetButtonDistFlg = true;
         var a = this.state.filterDist
         a[key].selected = !a[key].selected
-
-
 
         this.setState({
             filterDist: a
@@ -271,7 +256,7 @@ let queries = {}
         if (this.Flights.districtInput.length === this.state.filterDist.length || this.Flights.districtInput.length === 0) {
             queries = _.omit(queries, 'd')
             query = queryString.stringify(queries)
-
+            query = query.replace(/%2C/g, ",")
 
             this.props.history.push({
                 pathname: '/flight-search',
@@ -282,18 +267,13 @@ let queries = {}
         else {
 
             queries.d = this.Flights.districtInput;
-
             query = queryString.stringify(queries)
-
             query = query.replace(/%2C/g, ",")
-
             this.props.history.push({
                 pathname: '/flight-search',
                 search: query
             })
-
         }
-
     }
 
     // Chain handel event
@@ -320,7 +300,7 @@ let queries = {}
         if (this.Flights.chainInput.length === this.state.filterChain.length || this.Flights.chainInput.length === 0) {
             queries = _.omit(queries, 'c')
             query = queryString.stringify(queries)
-
+            query = query.replace(/%2C/g, ",")
 
             this.props.history.push({
                 pathname: '/flight-search',
@@ -331,9 +311,7 @@ let queries = {}
         else {
 
             queries.c = this.Flights.chainInput;
-
             query = queryString.stringify(queries)
-
             query = query.replace(/%2C/g, ",")
 
             this.props.history.push({
@@ -342,14 +320,11 @@ let queries = {}
             })
 
         }
-
-
-
     }
 
     // Prop Amnities handle event
     handlePACheck(code, key) {
-        // let query;
+         let query;
         resetButtonPAFlg = true
 
         var a = this.state.filterPA
@@ -359,7 +334,6 @@ let queries = {}
             filterPA: a
         })
 
-
         //Conditon to push data to Appstate
         this.Flights.PAInput = []
         this.state.filterPA.forEach(d => {
@@ -368,34 +342,30 @@ let queries = {}
             }
         })
 
-        console.log(this.Flights.PAInput)
 
         // condition for querystring
-        // if (this.Flights.PAInput.length === this.state.filterPA.length || this.Flights.PAInput.length === 0) {
-        //     queries = _.omit(queries, 'pa')
-        //     query = queryString.stringify(queries)
+        if (this.Flights.PAInput.length === this.state.filterPA.length || this.Flights.PAInput.length === 0) {
+            queries = _.omit(queries, 'pa')
+            query = queryString.stringify(queries)
+            query = query.replace(/%2C/g, ",")
 
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
+        }
 
-        //     this.props.history.push({
-        //         pathname: '/flight-search',
-        //         search: query
-        //     })
-        // }
+        else {
 
-        // else {
+            queries.pa = this.Flights.PAInput;
+            query = queryString.stringify(queries)
+            query = query.replace(/%2C/g, ",")
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
 
-        //     queries.pa = this.Flights.PAInput;
-
-        //     query = queryString.stringify(queries)
-
-        //     query = query.replace(/%2C/g, ",")
-
-        //     this.props.history.push({
-        //         pathname: '/flight-search',
-        //         search: query
-        //     })
-
-        // }
+        }
 
 
     }
@@ -422,9 +392,9 @@ let queries = {}
 
         //condition for querystring
         if (this.Flights.RAInput.length === this.state.filterRA.length || this.Flights.RAInput.length === 0) {
-            queries = _.omit(queries, 'd')
+            queries = _.omit(queries, 'ra')
             query = queryString.stringify(queries)
-
+            query = query.replace(/%2C/g, ",")
 
             this.props.history.push({
                 pathname: '/flight-search',
@@ -434,10 +404,8 @@ let queries = {}
 
         else {
 
-            queries.d = this.Flights.RAInput;
-
+            queries.ra = this.Flights.RAInput;
             query = queryString.stringify(queries)
-
             query = query.replace(/%2C/g, ",")
 
             this.props.history.push({
@@ -446,8 +414,9 @@ let queries = {}
             })
 
         }
-        console.log(this.Flights.RAInput);1
     }
+
+    //Div hide and sholw
     handleDivHide(e) {
 
         var x = document.getElementById(e);
@@ -460,12 +429,9 @@ let queries = {}
         }
     }
 
-
-    // Rheostate functionalities
-
-    //Price ranger handler
+    // Rheostate functionalities Price ranger handler
     updatePriceRanger(sliderState) {
-
+        let query;
         _.remove(this.Flights.PriceInput)
 
         this.setState({
@@ -475,11 +441,34 @@ let queries = {}
         _.forEach(sliderState.values, (d) => {
             this.Flights.PriceInput.push(d)
         })
+
+        //condition for querystring
+        if (this.Flights.PriceInput[0] === this.state.min && this.Flights.PriceInput[1] === this.state.max) {
+            queries = _.omit(queries, 'p')
+            query = queryString.stringify(queries)
+            query = query.replace(/%2C/g, "-")
+
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
+        }
+
+        else {
+            queries.p = this.Flights.PriceInput;
+            query = queryString.stringify(queries)
+            query = query.replace(/%2C/g, "-")
+   
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
+ 
+          
+        }
+
     }
     // Rheostate ends
-
-
-
 
     handleOnly(value, filter, Input) {
         _.remove(Input)
@@ -542,9 +531,9 @@ let queries = {}
             $(".nav li").removeClass("active");
             $(".nav li span").removeClass("glyphicon glyphicon-arrow-down");
 
-            // document.getElementById(Span).className = "glyphicon glyphicon-arrow-down";
-            // this.Flights.SortDir = 'DESC';
-            // document.getElementById(LI).className = "active";
+            document.getElementById(Span).className = "glyphicon glyphicon-arrow-up";
+            this.Flights.SortDir = 'DESC';
+            document.getElementById(LI).className = "active";
         }
 
         else {
@@ -555,16 +544,9 @@ let queries = {}
     // Sorting Ends
 
     render() {
-
-
-
         indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
-
         currentHotels = _.slice(this.Flights.SearchFilter, indexOfFirstHotel, indexOfLastHotel);
-
-
-
         return (
             <div>
 
@@ -731,9 +713,6 @@ let queries = {}
                             </div>
                         </div>
 
-
-
-
                         <div className="col-md-9">
                             <ul className="nav nav-pills" ref="ul">
                                 <li id="popularLi" ref="popularLiRef" className="active"><a onClick={() => this.OnSort(this.refs.popularLiRef.id, this.refs.popularAnchor.id, this.refs.popularArrowRef.id)} id="popularID" ref="popularAnchor" >Popular <span id="popularArrow" ref="popularArrowRef" className="glyphicon glyphicon-arrow-down" ></span></a></li>
@@ -794,7 +773,4 @@ let queries = {}
         )
     }
 }
-
-// https://github.com/airbnb/rheostat
-
 export default Flights;
