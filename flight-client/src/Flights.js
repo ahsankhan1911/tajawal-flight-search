@@ -14,8 +14,8 @@ require("bootstrap/less/bootstrap.less");
 
 let currentHotels, indexOfLastHotel, indexOfFirstHotel;
 // eslint-disable-next-line
-let resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButtonRA;
-let resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg = false, resetButtonPAFlg = false, resetButtonRAFlg = false;
+let resetButtonPrice,resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButtonRA;
+let resetButtonPriceFlg = false, resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg = false, resetButtonPAFlg = false, resetButtonRAFlg = false;
 let queries = {}
 
 @inject('Flights')
@@ -67,7 +67,7 @@ let queries = {}
                     this.Flights.ratingInput.push(d.code);
                 })
 
-                //catching the error of null values and ignoring the values using try catch here 
+            
                 this.values()
 
 
@@ -93,6 +93,8 @@ let queries = {}
                     max: response.data[2].value.max
                 })
 
+                this.Flights.PriceInput = [this.state.min, this.state.max]
+
 
             }).catch((error) => {
                 console.log(error)
@@ -104,27 +106,44 @@ let queries = {}
     values() {
 
         let h = new URLSearchParams(this.props.location.search).get('h');
+        let p = new URLSearchParams(this.props.location.search).get('p');
         let s = new URLSearchParams(this.props.location.search).get('s');
+        let d = new URLSearchParams(this.props.location.search).get('d');
+        let c = new URLSearchParams(this.props.location.search).get('c');
+        let pa = new URLSearchParams(this.props.location.search).get('pa');
+        let ra = new URLSearchParams(this.props.location.search).get('ra');
 
-        queries = queryString.parse(this.props.location.search)
 
-        if (s !== null) {
+         // handling for empty searchinput
+        if (h != null) {
+            this.Flights.searchInput = h
+            this.refs.searchInput.value = h
+        }
+
+        // handling for empty priceinput
+        if (p != null) {
+            p = p.split('-');
+            this.Flights.PriceInput = p;
+            this.setState({
+                values: p
+            })
+        }
+
+
+        if (s != null) {
 
             //starinput value converting to array to filter from starRating
             // handling the selected check value
             s = s.split(',')
             this.Flights.ratingInput = s;
-
-
-
             this.setState({
                 filterStar: this.state.filterStar.map(d => {
                     d.selected = false
-     // eslint-disable-next-line
+                    // eslint-disable-next-line
                     s.map(star => {
                         if (star === d.code)
                             d.selected = true
-                            
+
                     })
                     return d
                 })
@@ -132,12 +151,97 @@ let queries = {}
 
         }
 
+        if (d != null) {
+            // starinput value converting to array to filter from starRating
+            // handling the selected check value
+            d = d.split(',')
+            this.Flights.districtInput = d;
 
-        // handling for empty searchinput
+                this.setState({
+                    filterDist: this.state.filterDist.map(d2 => {
+                        d2.selected = false
+                    // eslint-disable-next-line
+                   d.map(dist => {
+              
+                        // eslint-disable-next-line
+                   if (d2.code == dist ){
+                        d2.selected = true
+                     }
+                    })
+                    return d2;
+                })
+            })
 
-        if (h !== null) {
-            this.Flights.searchInput = h
-            this.refs.searchInput.value = h
+        }
+
+
+        if (c != null) {
+            //cstarinput value converting to array to filter from starRating
+            // handling the selected check value
+            c = c.split(',')
+            this.Flights.chainInput = c;
+
+            this.setState({
+                filterChain: this.state.filterChain.map(d2 => {
+                    d2.selected = false
+                    // eslint-disable-next-line
+                    c.map(chain => {
+
+                        // eslint-disable-next-line
+                        if (d2.code == chain) {
+                            d2.selected = true
+                        }
+                    })
+                    return d2;
+                })
+            })
+        }
+
+
+        if (pa != null) {
+            // starinput value converting to array to filter from starRating
+            // handling the selected check value
+            pa = pa.split(',')
+            this.Flights.PAInput = pa;
+
+            this.setState({
+                filterPA: this.state.filterPA.map(d2 => {
+                    d2.selected = false
+                    // eslint-disable-next-line
+                    pa.map(PA => {
+
+                        // eslint-disable-next-line
+                        if (d2.code == PA) {
+                            d2.selected = true
+                        }
+                    })
+                    return d2;
+                })
+            })
+
+        }
+
+        if (ra != null) {
+            // starinput value converting to array to filter from starRating
+            // handling the selected check value
+            ra = ra.split(',')
+            this.Flights.RAInput = ra;
+
+            this.setState({
+                filterRA: this.state.filterRA.map(d2 => {
+                    d2.selected = false
+                    // eslint-disable-next-line
+                    ra.map(RA => {
+
+                        // eslint-disable-next-line
+                        if (d2.code == RA) {
+                            d2.selected = true
+                        }
+                    })
+                    return d2;
+                })
+            })
+
         }
 
     }
@@ -174,7 +278,7 @@ let queries = {}
 
             query = queryString.stringify(queries)
             query = query.replace(/%2C/g, ",")
-           
+
             this.props.history.push({
                 pathname: '/flight-search',
                 search: query
@@ -209,7 +313,7 @@ let queries = {}
             queries = _.omit(queries, 's')
             query = queryString.stringify(queries)
             query = query.replace(/%2C/g, ",")
-        
+
             this.props.history.push({
                 pathname: '/flight-search',
                 search: query
@@ -221,9 +325,8 @@ let queries = {}
             queries.s = this.Flights.ratingInput;
             query = queryString.stringify(queries)
             query = query.replace(/%2C/g, ",")
-                         .replace("p=",/%2C/, "-")
 
-            
+
             this.props.history.push({
                 pathname: '/flight-search',
                 search: query
@@ -324,7 +427,7 @@ let queries = {}
 
     // Prop Amnities handle event
     handlePACheck(code, key) {
-         let query;
+        let query;
         resetButtonPAFlg = true
 
         var a = this.state.filterPA
@@ -431,6 +534,7 @@ let queries = {}
 
     // Rheostate functionalities Price ranger handler
     updatePriceRanger(sliderState) {
+        resetButtonPriceFlg = true;
         let query;
         _.remove(this.Flights.PriceInput)
 
@@ -446,7 +550,7 @@ let queries = {}
         if (this.Flights.PriceInput[0] === this.state.min && this.Flights.PriceInput[1] === this.state.max) {
             queries = _.omit(queries, 'p')
             query = queryString.stringify(queries)
-            query = query.replace(/%2C/g, "-")
+            query = query.replace(/%2C/g, ",")
 
             this.props.history.push({
                 pathname: '/flight-search',
@@ -455,23 +559,24 @@ let queries = {}
         }
 
         else {
-            queries.p = this.Flights.PriceInput;
+            queries.p = JSON.stringify(this.Flights.PriceInput);
+            queries.p = queries.p.replace(",", "-").replace("[", "").replace("]", "")
             query = queryString.stringify(queries)
-            query = query.replace(/%2C/g, "-")
-   
+            query = query.replace(/%2C/g, ",")
+
             this.props.history.push({
                 pathname: '/flight-search',
                 search: query
             })
- 
-          
+
+
         }
 
     }
     // Rheostate ends
 
     handleOnly(value, filter, Input) {
-        _.remove(Input)
+        // _.remove(Input)
         this.setState({
             filter: _.forEach(filter, d => {
                 d.selected = false;
@@ -480,7 +585,7 @@ let queries = {}
                 }
 
                 if (d.selected === false) {
-                    Input.push(d.code);
+                    _.pull(Input, d.code);
                 }
             })
         })
@@ -526,8 +631,8 @@ let queries = {}
         this.Flights.Sort = Anchor
 
         if (document.getElementById(Span).className === "" || document.getElementById(Span).className === "glyphicon glyphicon-arrow-down") {
-           
-        
+
+
             $(".nav li").removeClass("active");
             $(".nav li span").removeClass("glyphicon glyphicon-arrow-down");
 
@@ -570,7 +675,8 @@ let queries = {}
 
 
                             <div>
-                                <h4>Price <span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.price.id)}>^</button></span></h4>
+                                <h4>Price <span>{resetButtonPrice = resetButtonPriceFlg ? <button ref="priceR" name="Price" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
+                                    onClick={() => this.handleReset(this.state.filterPrice, this.Flights.PAInput, this.refs.priceR.name,    )}>reset</button> : null}</span><span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.price.id)}>^</button></span></h4>
                             </div>
                             <div id="Price" ref="price">
 
