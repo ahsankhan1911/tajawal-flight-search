@@ -54,7 +54,7 @@ let queries = {}
                 this.state.hotel_data.forEach(d => {
 
                     this.Flights.districtInput.push(d.meta.districtId);
-                    this.Flights.chainInput.push(d.meta.chainId)
+                    this.Flights.chainInput.push(d.meta.chainId);
                     d.meta.amenities.roomAmenity.forEach(d2 => {
                         this.Flights.RAInput.push(d2.code)
                     })
@@ -576,7 +576,6 @@ let queries = {}
     // Rheostate ends
 
     handleOnly(value, filter, Input) {
-        // _.remove(Input)
         this.setState({
             filter: _.forEach(filter, d => {
                 d.selected = false;
@@ -597,9 +596,12 @@ let queries = {}
         this.setState({
             filter: _.forEach(filterData, d => {
                 d.selected = true;
+
+                filterInput.push(d);
             })
         })
-        _.remove(filterInput)
+        console.log(filterInput)
+        // _.remove(filterInput)
 
         switch (btnRef) {
             case "starRating":
