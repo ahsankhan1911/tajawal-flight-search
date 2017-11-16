@@ -575,19 +575,48 @@ let queries = {}
     }
     // Rheostate ends
 
-    handleOnly(value, filter, Input) {
+    handleOnly(value, filter, Input, resetBtnref, queriesKey) {
+        switch (resetBtnref) {
+            case "starRating":
+                resetButtonStrFlg = true;
+                break;
+            case "dist":
+                resetButtonDistFlg = true;
+                break;
+            case "chain":
+                resetButtonChainFlg = true;
+                break;
+            case "PA":
+                resetButtonPAFlg = true;
+                break;
+            case "RA":
+                resetButtonRAFlg = true;
+                break;
+            default:
+                console.log("No refs")
+        }
+      let query;
         this.setState({
             filter: _.forEach(filter, d => {
                 d.selected = false;
                 if (d.code === value.code) {
-                    d.selected = true
+                d.selected = true
                 }
 
                 if (d.selected === false) {
-                    _.pull(Input, d.code);
+                    _.pull(Input, d.code,null , 0);
                 }
             })
         })
+    
+      queries[queriesKey] = Input;
+        query = queryString.stringify(queries)
+        query = query.replace(/%2C/g, ",")
+        this.props.history.push({
+            pathname: '/flight-search',
+            search: query
+        })
+   
     }
 
 
@@ -600,9 +629,7 @@ let queries = {}
                 filterInput.push(d);
             })
         })
-        console.log(filterInput)
-        // _.remove(filterInput)
-
+    
         switch (btnRef) {
             case "starRating":
                 resetButtonStrFlg = false;
@@ -718,7 +745,7 @@ let queries = {}
                                                 <Rater total={5} rating={v.code} interactive={false} />
 
                                             </label>
-                                            <a onClick={() => { this.handleOnly(v, this.state.filterStar, this.Flights.ratingInput) }}> only </a>
+                                            <a onClick={() => { this.handleOnly(v, this.state.filterStar, this.Flights.ratingInput, this.refs.starR.id, "s") }}> only </a>
                                         </div>)
                                 })}
 
@@ -735,15 +762,15 @@ let queries = {}
                                     return (
                                         <div key={key}>
                                             <label>
-                                                <input type="checkbox" checked={v.selected}
-                                                    onClick={() => this.handleDistCheck(v.code, key)} />
+                                                <input type="checkbox" checked={v.selected} ref="distR"
+                                                    onClick={() => this.handleDistCheck(v.code, key)} id="dist" />
 
                                             </label>
                                             <label>
                                                 <p>{v.label}</p>
 
                                             </label>
-                                            <a onClick={() => { this.handleOnly(v, this.state.filterDist, this.Flights.districtInput) }}> only </a>
+                                            <a onClick={() => { this.handleOnly(v, this.state.filterDist, this.Flights.districtInput, this.refs.distR.id, "d") }}> only </a>
                                         </div>)
                                 })}
 
@@ -753,20 +780,20 @@ let queries = {}
                                 <h4>Chain     <span>{resetButtonChain = resetButtonChainFlg ? <button className="btn btn-primary" ref="chainRes" name="chain" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
                                     onClick={() => this.handleReset(this.state.filterChain, this.Flights.chainInput, this.refs.chainRes.name)}>reset</button> : null}</span> <span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.chain.id)}>^</button></span></h4>
                             </div>
-                            <div className="filterStyles" id="Chain" ref="chain">
+                            <div className="filterStyles" id="Chain" ref="chain">name="chain"
 
 
                                 {this.state.filterChain.map((v, key) => {
                                     return (
                                         <div key={key}>
                                             <label>
-                                                <input type="checkbox" checked={v.selected}
-                                                    onClick={() => this.handleChainCheck(v.code, key)} />
+                                                <input type="checkbox" checked={v.selected} ref="chainR"
+                                                    onClick={() => this.handleChainCheck(v.code, key)} id="chain"/>
                                             </label>
                                             <label>
                                                 <p>{v.label}</p>
                                             </label>
-                                            <a onClick={() => { this.handleOnly(v, this.state.filterChain, this.Flights.chainInput) }}> only </a>
+                                            <a onClick={() => { this.handleOnly(v, this.state.filterChain, this.Flights.chainInput, this.refs.chainR.id, "c") }}> only </a>
                                         </div>)
                                 })}
 
@@ -784,13 +811,13 @@ let queries = {}
                                     return (
                                         <div key={key}>
                                             <label>
-                                                <input type="checkbox" value="asdasd" checked={v.selected}
-                                                    onClick={() => this.handlePACheck(v.code, key)} />
-                                            </label>
+                                                <input type="checkbox" value="asdasd" checked={v.selected} ref="paR"
+                                                    onClick={() => this.handlePACheck(v.code, key)}  id="PA"/>
+                                            </label>name="PA"
                                             <label>
                                                 <p>{v.label}</p>
                                             </label>
-                                            <a onClick={() => { this.handleOnly(v, this.state.filterPA, this.Flights.PAInput) }}> only </a>
+                                            <a onClick={() => { this.handleOnly(v, this.state.filterPA, this.Flights.PAInput, this.refs.paR.id, "pa") }}> only </a>
                                         </div>)
                                 })}
 
@@ -808,8 +835,8 @@ let queries = {}
                                     return (
                                         <div key={key}>
                                             <label>
-                                                <input type="checkbox" value="asdasd" checked={v.selected}
-                                                    onClick={() => this.handleRACheck(v.code, key)} />
+                                                <input type="checkbox" checked={v.selected} ref="raR"
+                                                    onClick={() => this.handleRACheck(v.code, key)} id="RA"/>
                                             </label>
                                             <label>
                                                 <p>{v.label}</p>
@@ -832,6 +859,7 @@ let queries = {}
                             </ul>
 
                             {currentHotels.map((data, key) => {
+                             
                                 return (
 
 
@@ -866,6 +894,7 @@ let queries = {}
                                         </div>
                                     </div>
                                 )
+                           
                             })}
                         </div>
                     </div>
