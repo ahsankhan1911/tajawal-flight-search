@@ -14,7 +14,7 @@ require("bootstrap/less/bootstrap.less");
 
 let currentHotels, indexOfLastHotel, indexOfFirstHotel;
 // eslint-disable-next-line
-let resetButtonPrice,resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButtonRA;
+let resetButtonPrice, resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButtonRA;
 let resetButtonPriceFlg = false, resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg = false, resetButtonPAFlg = false, resetButtonRAFlg = false;
 let queries = {}
 
@@ -67,7 +67,7 @@ let queries = {}
                     this.Flights.ratingInput.push(d.code);
                 })
 
-            
+
                 this.values()
 
 
@@ -114,7 +114,7 @@ let queries = {}
         let ra = new URLSearchParams(this.props.location.search).get('ra');
 
 
-         // handling for empty searchinput
+        // handling for empty searchinput
         if (h != null) {
             this.Flights.searchInput = h
             this.refs.searchInput.value = h
@@ -127,6 +127,7 @@ let queries = {}
             this.setState({
                 values: p
             })
+           
         }
 
 
@@ -157,16 +158,16 @@ let queries = {}
             d = d.split(',')
             this.Flights.districtInput = d;
 
-                this.setState({
-                    filterDist: this.state.filterDist.map(d2 => {
-                        d2.selected = false
+            this.setState({
+                filterDist: this.state.filterDist.map(d2 => {
+                    d2.selected = false
                     // eslint-disable-next-line
-                   d.map(dist => {
-              
+                    d.map(dist => {
+
                         // eslint-disable-next-line
-                   if (d2.code == dist ){
-                        d2.selected = true
-                     }
+                        if (d2.code == dist) {
+                            d2.selected = true
+                        }
                     })
                     return d2;
                 })
@@ -576,6 +577,52 @@ let queries = {}
     // Rheostate ends
 
     handleOnly(value, filter, Input, resetBtnref, queriesKey) {
+
+        if (Input.length == 1 || Input.length == 0) {
+            switch (resetBtnref) {
+
+                case "starRating":
+                    this.state.filterStar.forEach(d => {
+                        this.Flights.ratingInput.push(d.code);
+
+                    })
+
+                    break;
+                case "dist":
+                    this.state.hotel_data.forEach(d => {
+
+                        this.Flights.districtInput.push(d.meta.districtId);
+                    });
+                    break;
+                case "chain":
+                    this.state.hotel_data.forEach(d => {
+
+                        this.Flights.chainInput.push(d.meta.chainId);
+                    });
+                    break;
+                case "PA":
+                    this.state.hotel_data.forEach(d => {
+
+                        d.meta.amenities.propertyAmenity.forEach(d2 => {
+                            this.Flights.PAInput.push(d2.code)
+                        })
+                    });
+                    break;
+                case "RA":
+                    this.state.hotel_data.forEach(d => {
+
+
+
+                        d.meta.amenities.roomAmenity.forEach(d2 => {
+                            this.Flights.RAInput.push(d2.code)
+                        })
+                    });
+                    break;
+                default:
+                    console.log("No refs")
+            }
+
+        }
         switch (resetBtnref) {
             case "starRating":
                 resetButtonStrFlg = true;
@@ -595,56 +642,130 @@ let queries = {}
             default:
                 console.log("No refs")
         }
-      let query;
+        let query;
         this.setState({
             filter: _.forEach(filter, d => {
                 d.selected = false;
                 if (d.code === value.code) {
-                d.selected = true
+                    d.selected = true
                 }
 
                 if (d.selected === false) {
-                    _.pull(Input, d.code,null , 0);
+                    _.pull(Input, d.code, null, 0);
+
                 }
             })
         })
-    
-      queries[queriesKey] = Input;
+
+        queries[queriesKey] = Input;
+        queries[queriesKey] = _.uniq(Input)
         query = queryString.stringify(queries)
         query = query.replace(/%2C/g, ",")
         this.props.history.push({
             pathname: '/flight-search',
             search: query
         })
-   
+
     }
 
 
     //filter Reset 
-    handleReset(filterData, filterInput, btnRef) {
-        this.setState({
-            filter: _.forEach(filterData, d => {
-                d.selected = true;
+    handleReset(filterData, filterInput, btnRef, queriesKey) {
+        let query;
+        if (btnRef === "Price") {
 
-                filterInput.push(d);
+            this.Flights.PriceInput = [this.state.min, this.state.max]
+
+            this.setState({
+                values: [this.state.min, this.state.max]
             })
-        })
-    
+            resetButtonPriceFlg = false
+
+            delete queries[queriesKey]
+            query = queryString.stringify(queries)
+            this.props.history.push({
+                pathname: '/flight-search',
+                search: query
+            })
+        }
+        else {
+            this.setState({
+                filter: _.forEach(filterData, d => {
+                    d.selected = true;
+                })
+            })
+        }
         switch (btnRef) {
+
             case "starRating":
+                this.state.filterStar.forEach(d => {
+                    this.Flights.ratingInput.push(d.code);
+
+                })
                 resetButtonStrFlg = false;
+
+                delete queries[queriesKey]
+                query = queryString.stringify(queries)
+                this.props.history.push({
+                    pathname: '/flight-search',
+                    search: query
+                })
                 break;
             case "dist":
+                this.state.hotel_data.forEach(d => {
+
+                    this.Flights.districtInput.push(d.meta.districtId);
+                });
                 resetButtonDistFlg = false;
+                delete queries[queriesKey]
+                query = queryString.stringify(queries)
+                this.props.history.push({
+                    pathname: '/flight-search',
+                    search: query
+                })
                 break;
             case "chain":
+                this.state.hotel_data.forEach(d => {
+
+                    this.Flights.chainInput.push(d.meta.chainId);
+                });
                 resetButtonChainFlg = false;
+                delete queries[queriesKey]
+                query = queryString.stringify(queries)
+                this.props.history.push({
+                    pathname: '/flight-search',
+                    search: query
+                })
                 break;
             case "PA":
+                this.state.hotel_data.forEach(d => {
+
+                    d.meta.amenities.propertyAmenity.forEach(d2 => {
+                        this.Flights.PAInput.push(d2.code)
+                    })
+                });
                 resetButtonPAFlg = false;
+                delete queries[queriesKey]
+                query = queryString.stringify(queries)
+                this.props.history.push({
+                    pathname: '/flight-search',
+                    search: query
+                })
                 break;
             case "RA":
+                this.state.hotel_data.forEach(d => {
+                    d.meta.amenities.roomAmenity.forEach(d2 => {
+                        this.Flights.RAInput.push(d2.code)
+                    })
+                });
+
                 resetButtonRAFlg = false;
+                delete queries[queriesKey]
+                query = queryString.stringify(queries)
+                this.props.history.push({
+                    pathname: '/flight-search',
+                    search: query
+                })
                 break;
             default:
                 console.log("No refs")
@@ -678,9 +799,12 @@ let queries = {}
     // Sorting Ends
 
     render() {
+
         indexOfLastHotel = this.state.activePage * this.state.itemsCountPerPage;
         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
         currentHotels = _.slice(this.Flights.SearchFilter, indexOfFirstHotel, indexOfLastHotel);
+
+        console.log(currentHotels.length)
         return (
             <div>
 
@@ -705,7 +829,7 @@ let queries = {}
 
                             <div>
                                 <h4>Price <span>{resetButtonPrice = resetButtonPriceFlg ? <button ref="priceR" name="Price" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
-                                    onClick={() => this.handleReset(this.state.filterPrice, this.Flights.PAInput, this.refs.priceR.name,    )}>reset</button> : null}</span><span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.price.id)}>^</button></span></h4>
+                                    onClick={() => this.handleReset(this.state.filterPrice, this.Flights.PAInput, this.refs.priceR.name, "p")}>reset</button> : null}</span><span><button className="btn btn-default" onClick={() => this.handleDivHide(this.refs.price.id)}>^</button></span></h4>
                             </div>
                             <div id="Price" ref="price">
 
@@ -719,7 +843,7 @@ let queries = {}
 
                                     />
 
-                                    <span>SAR {this.state.values[0]}</span> <span>SAR {this.state.values[1]}</span>
+                                    <span>SAR {Math.round(this.state.values[0])}</span> <span>SAR {Math.round(this.state.values[1])}</span>
                                 </form>
 
 
@@ -727,7 +851,7 @@ let queries = {}
                             </div>
                             <div>
                                 <h4>Star Rating <span>{resetButtonStr = resetButtonStrFlg ? <button ref="starR" name="starRating" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
-                                    onClick={() => this.handleReset(this.state.filterStar, this.Flights.ratingInput, this.refs.starR.name)}>reset</button> : null}</span> <span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.star.id)}>^</button></span></h4>
+                                    onClick={() => this.handleReset(this.state.filterStar, this.Flights.ratingInput, this.refs.starR.name, "s")}>reset</button> : null}</span> <span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.star.id)}>^</button></span></h4>
                             </div>
                             <div id="StarRating" ref="star">
 
@@ -737,15 +861,15 @@ let queries = {}
                                     return (
                                         <div key={key}>
                                             <label>
-                                                <input type="checkbox" checked={v.selected} ref="starR"
-                                                    onClick={() => this.handleStarCheck({ code: v.code, selected: v.selected }, key)} id="starRating" />
+                                                <input type="checkbox" checked={v.selected} ref="starRef"
+                                                    onClick={() => this.handleStarCheck({ code: v.code, selected: v.selected }, key)} name="starRating" />
 
                                             </label>
                                             <label>
                                                 <Rater total={5} rating={v.code} interactive={false} />
 
                                             </label>
-                                            <a onClick={() => { this.handleOnly(v, this.state.filterStar, this.Flights.ratingInput, this.refs.starR.id, "s") }}> only </a>
+                                            <a onClick={() => { this.handleOnly(v, this.state.filterStar, this.Flights.ratingInput, this.refs.starRef.name, "s") }}> only </a>
                                         </div>)
                                 })}
 
@@ -754,7 +878,7 @@ let queries = {}
                             <hr />
                             <div>
                                 <h4>District <span>{resetButtonDist = resetButtonDistFlg ? <button ref="distRes" name="dist" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
-                                    onClick={() => this.handleReset(this.state.filterDist, this.Flights.districtInput, this.refs.distRes.name)}>reset</button> : null}</span><span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.dist.id)}>^</button></span></h4>
+                                    onClick={() => this.handleReset(this.state.filterDist, this.Flights.districtInput, this.refs.distRes.name, "d")}>reset</button> : null}</span><span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.dist.id)}>^</button></span></h4>
                             </div>
                             <div className="filterStyles" id="District" ref="dist">
 
@@ -762,15 +886,15 @@ let queries = {}
                                     return (
                                         <div key={key}>
                                             <label>
-                                                <input type="checkbox" checked={v.selected} ref="distR"
-                                                    onClick={() => this.handleDistCheck(v.code, key)} id="dist" />
+                                                <input type="checkbox" checked={v.selected} ref="distRef"
+                                                    onClick={() => this.handleDistCheck(v.code, key)} name="dist" />
 
                                             </label>
                                             <label>
                                                 <p>{v.label}</p>
 
                                             </label>
-                                            <a onClick={() => { this.handleOnly(v, this.state.filterDist, this.Flights.districtInput, this.refs.distR.id, "d") }}> only </a>
+                                            <a onClick={() => { this.handleOnly(v, this.state.filterDist, this.Flights.districtInput, this.refs.distRef.name, "d") }}> only </a>
                                         </div>)
                                 })}
 
@@ -778,22 +902,22 @@ let queries = {}
                             <hr />
                             <div>
                                 <h4>Chain     <span>{resetButtonChain = resetButtonChainFlg ? <button className="btn btn-primary" ref="chainRes" name="chain" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
-                                    onClick={() => this.handleReset(this.state.filterChain, this.Flights.chainInput, this.refs.chainRes.name)}>reset</button> : null}</span> <span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.chain.id)}>^</button></span></h4>
+                                    onClick={() => this.handleReset(this.state.filterChain, this.Flights.chainInput, this.refs.chainRes.name, "c")}>reset</button> : null}</span> <span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.chain.id)}>^</button></span></h4>
                             </div>
-                            <div className="filterStyles" id="Chain" ref="chain">name="chain"
+                            <div className="filterStyles" id="Chain" ref="chain">
 
 
                                 {this.state.filterChain.map((v, key) => {
                                     return (
                                         <div key={key}>
                                             <label>
-                                                <input type="checkbox" checked={v.selected} ref="chainR"
-                                                    onClick={() => this.handleChainCheck(v.code, key)} id="chain"/>
+                                                <input type="checkbox" checked={v.selected} ref="chainRef"
+                                                    onClick={() => this.handleChainCheck(v.code, key)} name="chain" />
                                             </label>
                                             <label>
                                                 <p>{v.label}</p>
                                             </label>
-                                            <a onClick={() => { this.handleOnly(v, this.state.filterChain, this.Flights.chainInput, this.refs.chainR.id, "c") }}> only </a>
+                                            <a onClick={() => { this.handleOnly(v, this.state.filterChain, this.Flights.chainInput, this.refs.chainRef.name, "c") }}> only </a>
                                         </div>)
                                 })}
 
@@ -801,7 +925,7 @@ let queries = {}
                             <hr />
                             <div>
                                 <h4>Property Amenities <span>{resetButtonPA = resetButtonPAFlg ? <button ref="PARes" name="PA" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
-                                    onClick={() => this.handleReset(this.state.filterPA, this.Flights.PAInput, this.refs.PARes.name)}>reset</button> : null}</span><span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.pa.id)}>^</button></span></h4>
+                                    onClick={() => this.handleReset(this.state.filterPA, this.Flights.PAInput, this.refs.PARes.name, "pa")}>reset</button> : null}</span><span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.pa.id)}>^</button></span></h4>
                             </div>
                             <div className="filterStyles" id="PropertyAmenities" ref="pa">
 
@@ -811,13 +935,13 @@ let queries = {}
                                     return (
                                         <div key={key}>
                                             <label>
-                                                <input type="checkbox" value="asdasd" checked={v.selected} ref="paR"
-                                                    onClick={() => this.handlePACheck(v.code, key)}  id="PA"/>
-                                            </label>name="PA"
+                                                <input type="checkbox" value="asdasd" checked={v.selected} ref="paRef"
+                                                    onClick={() => this.handlePACheck(v.code, key)} name="PA" />
+                                            </label>
                                             <label>
                                                 <p>{v.label}</p>
                                             </label>
-                                            <a onClick={() => { this.handleOnly(v, this.state.filterPA, this.Flights.PAInput, this.refs.paR.id, "pa") }}> only </a>
+                                            <a onClick={() => { this.handleOnly(v, this.state.filterPA, this.Flights.PAInput, this.refs.paRef.name, "pa") }}> only </a>
                                         </div>)
                                 })}
 
@@ -825,7 +949,7 @@ let queries = {}
                             <hr />
                             <div>
                                 <h4>Room Amenities <span>{resetButtonRA = resetButtonRAFlg ? <button ref="RARes" name="RA" className="btn btn-primary" style={{ height: "20px", width: "40px", padding: "0px 0px" }}
-                                    onClick={() => this.handleReset(this.state.filterRA, this.Flights.RAInput, this.refs.RARes.name)}>reset</button> : null}</span><span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.ra.id)}>^</button></span></h4>
+                                    onClick={() => this.handleReset(this.state.filterRA, this.Flights.RAInput, this.refs.RARes.name, "ra")}>reset</button> : null}</span><span><button className="btn btn-default hide-btn" onClick={() => this.handleDivHide(this.refs.ra.id)}>^</button></span></h4>
                             </div>
                             <div className="filterStyles" id="RoomAmenities" ref="ra">
 
@@ -835,13 +959,13 @@ let queries = {}
                                     return (
                                         <div key={key}>
                                             <label>
-                                                <input type="checkbox" checked={v.selected} ref="raR"
-                                                    onClick={() => this.handleRACheck(v.code, key)} id="RA"/>
+                                                <input type="checkbox" checked={v.selected} ref="raRef"
+                                                    onClick={() => this.handleRACheck(v.code, key)} name="RA" />
                                             </label>
                                             <label>
                                                 <p>{v.label}</p>
                                             </label>
-                                            <a onClick={() => { this.handleOnly(v, this.state.filterRA, this.Flights.RAInput) }}> only </a>
+                                            <a onClick={() => { this.handleOnly(v, this.state.filterRA, this.Flights.RAInput, this.refs.raRef.name, "ra") }}> only </a>
                                         </div>)
                                 })}
 
@@ -858,44 +982,50 @@ let queries = {}
                                 <span className="properties"> {this.Flights.SearchFilter.length} properties found </span>
                             </ul>
 
-                            {currentHotels.map((data, key) => {
-                             
-                                return (
+                            {
+                                currentHotels.length === 0 ?
+
+                                    <div className="alert alert-danger">
+                                        <strong>Ops!</strong> No hotels available for your search!
+                              </div> :
+                                    currentHotels.map((data, key) => {
+
+                                        return (
 
 
-                                    <div className="col-sm-6 col-md-6" key={key}>
-                                        <div className="thumbnail" >
-                                            <div className="img-div">
-                                                <img src={data.image.map(img => { return img.url; })} className="img-responsive" alt="Tajawal images" />
+                                            <div className="col-sm-6 col-md-6" key={key}>
+                                                <div className="thumbnail" >
+                                                    <div className="img-div">
+                                                        <img src={data.image.map(img => { return img.url; })} className="img-responsive" alt="Tajawal images" />
+                                                    </div>
+                                                    <div className="caption">
+                                                        <Rater total={5} rating={data.rating.map(rating => { return rating.value })} interactive={false} />
+                                                        <div className="row">
+                                                            <div className="col-md-6 col-xs-6 hotelName-div">
+                                                                <h4>{data.summary.hotelName}</h4>
+                                                            </div>
+                                                            <div className="col-md-6 col-xs-6 price">
+
+                                                            </div>
+                                                        </div>
+                                                        <div className="address-div">
+                                                            <p>{data.location.address}</p>
+                                                        </div>
+                                                        <div className="row">
+                                                            <div className="col-md-6">
+                                                                <h3> <label>{Math.floor(data.summary.lowRate)}</label> SAR</h3>
+                                                            </div>
+                                                            <div className="col-md-12">
+                                                                <a className="btn btn-warning btn-product"> Select</a></div>
+                                                        </div>
+
+                                                        <p> </p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="caption">
-                                                <Rater total={5} rating={data.rating.map(rating => { return rating.value })} interactive={false} />
-                                                <div className="row">
-                                                    <div className="col-md-6 col-xs-6 hotelName-div">
-                                                        <h4>{data.summary.hotelName}</h4>
-                                                    </div>
-                                                    <div className="col-md-6 col-xs-6 price">
+                                        )
 
-                                                    </div>
-                                                </div>
-                                                <div className="address-div">
-                                                    <p>{data.location.address}</p>
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-md-6">
-                                                        <h3> <label>{Math.floor(data.summary.lowRate)}</label> SAR</h3>
-                                                    </div>
-                                                    <div className="col-md-12">
-                                                        <a className="btn btn-warning btn-product"> Select</a></div>
-                                                </div>
-
-                                                <p> </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                           
-                            })}
+                                    })}
                         </div>
                     </div>
                 </div>
