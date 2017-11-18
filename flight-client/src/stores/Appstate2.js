@@ -26,20 +26,20 @@ class Flights {
         let SortedData = _.sortBy(this.filteredData, (a) => {
 
             switch (this.Sort) {
-                case "priceID":
+                case "price":
                     {
                         return a.summary.lowRate
                     }
-                case "distID":
+                case "dist":
                     {
                         return a.summary.distance
                     }
-                case "nameID":
+                case "name":
                     {
                         return a.summary.hotelName
 
                     }
-                case "ratingID":
+                case "rating":
                     {
                         return a.rating.map(d => {
                             return d.value

@@ -67,15 +67,12 @@ let queries = {}
                     this.Flights.ratingInput.push(d.code);
                 })
 
-
                 this.values()
-
 
             }).catch((error) => {
 
                 console.log(error);
             })
-
 
         axios.get("http://localhost:5000/flight/hotels/resources")
             .then((response) => {
@@ -95,12 +92,9 @@ let queries = {}
 
                 this.Flights.PriceInput = [this.state.min, this.state.max]
 
-
             }).catch((error) => {
                 console.log(error)
             })
-
-
     }
 
     values() {
@@ -112,8 +106,14 @@ let queries = {}
         let c = new URLSearchParams(this.props.location.search).get('c');
         let pa = new URLSearchParams(this.props.location.search).get('pa');
         let ra = new URLSearchParams(this.props.location.search).get('ra');
+        let sort = new URLSearchParams(this.props.location.search).get('sort');
+        //let sortDir = new URLSearchParams(this.props.location.search).get('sortDir');
 
-
+        // handling for empty searchinput
+        if (sort != null) {
+            this.Flights.Sort = sort
+        }
+      
         // handling for empty searchinput
         if (h != null) {
             this.Flights.searchInput = h
@@ -127,9 +127,7 @@ let queries = {}
             this.setState({
                 values: p
             })
-           
         }
-
 
         if (s != null) {
 
@@ -172,9 +170,7 @@ let queries = {}
                     return d2;
                 })
             })
-
         }
-
 
         if (c != null) {
             //cstarinput value converting to array to filter from starRating
@@ -244,10 +240,61 @@ let queries = {}
             })
 
         }
-
     }
 
+    //Sorting Functionality
+    OnSort(LI, Anchor, Span) {
+        this.Flights.Sort = Anchor
+        let query;
 
+        switch (document.getElementById(Span).className) {
+
+            //DOWN Arrow Handling
+            case "glyphicon glyphicon-arrow-down":
+                $(".nav li").removeClass();
+                $(".nav li span").removeClass();
+                document.getElementById(Span).className = "glyphicon glyphicon-arrow-up";
+                document.getElementById(LI).className = "active";
+                this.Flights.SortDir = null
+                break;
+
+            //UP Arrow Handling
+            case "glyphicon glyphicon-arrow-up":
+                $(".nav li").removeClass();
+                $(".nav li span").removeClass();
+                document.getElementById(Span).className = "glyphicon glyphicon-arrow-down";
+                document.getElementById(LI).className = "active";
+                this.Flights.SortDir = 'DESC';
+                break;
+
+            //when diffrent sort button clicked
+            default:
+                $(".nav li").removeClass();
+                $(".nav li span").removeClass();
+
+                document.getElementById(Span).className = "glyphicon glyphicon-arrow-up";
+                document.getElementById(LI).className = "active";
+                this.Flights.SortDir = null
+        }
+
+        if(this.Flights.SortDir === 'DESC')
+        {
+            queries.sortDir = this.Flights.SortDir;
+        }
+        else{
+            delete queries["sortDir"]
+        }
+
+        queries.sort = Anchor
+        query = queryString.stringify(queries)
+        query = query.replace(/%2C/g, ",")
+        this.props.history.push({
+            pathname: '/flight-search',
+            search: query
+        })
+
+    }
+    // Sorting Ends
     handlePageChange = (pageNumber) => {
 
         this.setState({ activePage: pageNumber });
@@ -682,6 +729,7 @@ let queries = {}
             resetButtonPriceFlg = false
 
             delete queries[queriesKey]
+            
             query = queryString.stringify(queries)
             this.props.history.push({
                 pathname: '/flight-search',
@@ -705,7 +753,10 @@ let queries = {}
                 resetButtonStrFlg = false;
 
                 delete queries[queriesKey]
+              
+
                 query = queryString.stringify(queries)
+                query = query.replace(/%2C/g, ",")
                 this.props.history.push({
                     pathname: '/flight-search',
                     search: query
@@ -718,7 +769,9 @@ let queries = {}
                 });
                 resetButtonDistFlg = false;
                 delete queries[queriesKey]
+           
                 query = queryString.stringify(queries)
+                query = query.replace(/%2C/g, ",")
                 this.props.history.push({
                     pathname: '/flight-search',
                     search: query
@@ -731,7 +784,9 @@ let queries = {}
                 });
                 resetButtonChainFlg = false;
                 delete queries[queriesKey]
+               
                 query = queryString.stringify(queries)
+                query = query.replace(/%2C/g, ",")
                 this.props.history.push({
                     pathname: '/flight-search',
                     search: query
@@ -746,7 +801,9 @@ let queries = {}
                 });
                 resetButtonPAFlg = false;
                 delete queries[queriesKey]
+               
                 query = queryString.stringify(queries)
+                query = query.replace(/%2C/g, ",")
                 this.props.history.push({
                     pathname: '/flight-search',
                     search: query
@@ -761,7 +818,9 @@ let queries = {}
 
                 resetButtonRAFlg = false;
                 delete queries[queriesKey]
+            
                 query = queryString.stringify(queries)
+                query = query.replace(/%2C/g, ",")
                 this.props.history.push({
                     pathname: '/flight-search',
                     search: query
@@ -770,38 +829,9 @@ let queries = {}
             default:
                 console.log("No refs")
         }
-
-
     }
 
 
-
-    //Sorting Functionality
-    OnSort(LI, Anchor, Span) {
-        this.Flights.Sort = Anchor
-        if (document.getElementById(Span).className === "glyphicon glyphicon-arrow-up") {
-
-
-            document.getElementById(Span).className = "glyphicon glyphicon-arrow-down";
-            this.Flights.SortDir = 'DESC';
-
-        }
-        if (document.getElementById(Span).className === "") {
-            $(".nav li").removeClass("active");
-            $(".nav li span").removeClass("glyphicon glyphicon-arrow-up");
-
-            document.getElementById(Span).className = "glyphicon glyphicon-arrow-up";
-            document.getElementById(LI).className = "active";
-            this.Flights.SortDir = null
-        }
-      
-
-        // else {
-        //     document.getElementById(Span).className = "glyphicon glyphicon-arrow-up";
-           
-        // }
-    }
-    // Sorting Ends
 
     render() {
 
@@ -809,7 +839,6 @@ let queries = {}
         indexOfFirstHotel = indexOfLastHotel - this.state.itemsCountPerPage;
         currentHotels = _.slice(this.Flights.SearchFilter, indexOfFirstHotel, indexOfLastHotel);
 
-        console.log(currentHotels.length)
         return (
             <div>
 
@@ -979,11 +1008,11 @@ let queries = {}
 
                         <div className="col-md-9">
                             <ul className="nav nav-pills" ref="ul">
-                                <li id="popularLi" ref="popularLiRef" className="active"><a onClick={() => this.OnSort(this.refs.popularLiRef.id, this.refs.popularAnchor.id, this.refs.popularArrowRef.id)} id="popularID" ref="popularAnchor" >Popular <span id="popularArrow" ref="popularArrowRef" className="glyphicon glyphicon-arrow-up" ></span></a></li>
-                                <li id="priceLi" ref="priceLiRef"><a onClick={() => this.OnSort(this.refs.priceLiRef.id, this.refs.priceAnchor.id, this.refs.priceArrowRef.id)} id="priceID" ref="priceAnchor" >Price <span id="priceArrow" ref="priceArrowRef" ></span></a></li>
-                                <li id="distLi" ref="distLiRef" ><a onClick={() => this.OnSort(this.refs.distLiRef.id, this.refs.distAnchor.id, this.refs.distArrowRef.id)} id="distID" ref="distAnchor"  >Distance <span id="distArrow" ref="distArrowRef"></span></a></li>
-                                <li id="nameLi" ref="nameLiRef"><a onClick={() => this.OnSort(this.refs.nameLiRef.id, this.refs.nameAnchor.id, this.refs.nameArrowRef.id)} id="nameID" ref="nameAnchor"  >Name <span id="nameArrow" ref="nameArrowRef"></span></a></li>
-                                <li id="ratingLi" ref="ratingLiRef"> <a onClick={() => this.OnSort(this.refs.ratingLiRef.id, this.refs.ratingAnchor.id, this.refs.ratingArrowRef.id)} id="ratingID" ref="ratingAnchor"  >Rating <span id="ratingArrow" ref="ratingArrowRef" ></span></a></li>
+                                <li id="popularLi" ref="popularLiRef" className="active"><a onClick={() => this.OnSort(this.refs.popularLiRef.id, this.refs.popularAnchor.id, this.refs.popularArrowRef.id)} id="popular" ref="popularAnchor" >Popular <span id="popularArrow" ref="popularArrowRef" className="glyphicon glyphicon-arrow-up" ></span></a></li>
+                                <li id="priceLi" ref="priceLiRef"><a onClick={() => this.OnSort(this.refs.priceLiRef.id, this.refs.priceAnchor.id, this.refs.priceArrowRef.id)} id="price" ref="priceAnchor" >Price <span id="priceArrow" ref="priceArrowRef" ></span></a></li>
+                                <li id="distLi" ref="distLiRef" ><a onClick={() => this.OnSort(this.refs.distLiRef.id, this.refs.distAnchor.id, this.refs.distArrowRef.id)} id="dist" ref="distAnchor"  >Distance <span id="distArrow" ref="distArrowRef"></span></a></li>
+                                <li id="nameLi" ref="nameLiRef"><a onClick={() => this.OnSort(this.refs.nameLiRef.id, this.refs.nameAnchor.id, this.refs.nameArrowRef.id)} id="name" ref="nameAnchor"  >Name <span id="nameArrow" ref="nameArrowRef"></span></a></li>
+                                <li id="ratingLi" ref="ratingLiRef"> <a onClick={() => this.OnSort(this.refs.ratingLiRef.id, this.refs.ratingAnchor.id, this.refs.ratingArrowRef.id)} id="rating" ref="ratingAnchor"  >Rating <span id="ratingArrow" ref="ratingArrowRef" ></span></a></li>
                                 <span className="properties"> {this.Flights.SearchFilter.length} properties found </span>
                             </ul>
 
@@ -991,7 +1020,7 @@ let queries = {}
                                 currentHotels.length === 0 ?
 
                                     <div>
-                                        <strong className="hotelerror">(;-;)</strong> <br/>
+                                        <strong className="hotelerror">(;-;)</strong> <br />
                                         No hotels available for your search!
                               </div> :
                                     currentHotels.map((data, key) => {
