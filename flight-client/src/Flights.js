@@ -779,22 +779,27 @@ let queries = {}
     //Sorting Functionality
     OnSort(LI, Anchor, Span) {
         this.Flights.Sort = Anchor
+        if (document.getElementById(Span).className === "glyphicon glyphicon-arrow-up") {
 
-        if (document.getElementById(Span).className === "" || document.getElementById(Span).className === "glyphicon glyphicon-arrow-down") {
 
+            document.getElementById(Span).className = "glyphicon glyphicon-arrow-down";
+            this.Flights.SortDir = 'DESC';
 
+        }
+        if (document.getElementById(Span).className === "") {
             $(".nav li").removeClass("active");
-            $(".nav li span").removeClass("glyphicon glyphicon-arrow-down");
+            $(".nav li span").removeClass("glyphicon glyphicon-arrow-up");
 
             document.getElementById(Span).className = "glyphicon glyphicon-arrow-up";
-            this.Flights.SortDir = 'DESC';
             document.getElementById(LI).className = "active";
-        }
-
-        else {
-            document.getElementById(Span).className = "glyphicon glyphicon-arrow-down";
             this.Flights.SortDir = null
         }
+      
+
+        // else {
+        //     document.getElementById(Span).className = "glyphicon glyphicon-arrow-up";
+           
+        // }
     }
     // Sorting Ends
 
@@ -974,7 +979,7 @@ let queries = {}
 
                         <div className="col-md-9">
                             <ul className="nav nav-pills" ref="ul">
-                                <li id="popularLi" ref="popularLiRef" className="active"><a onClick={() => this.OnSort(this.refs.popularLiRef.id, this.refs.popularAnchor.id, this.refs.popularArrowRef.id)} id="popularID" ref="popularAnchor" >Popular <span id="popularArrow" ref="popularArrowRef" className="glyphicon glyphicon-arrow-down" ></span></a></li>
+                                <li id="popularLi" ref="popularLiRef" className="active"><a onClick={() => this.OnSort(this.refs.popularLiRef.id, this.refs.popularAnchor.id, this.refs.popularArrowRef.id)} id="popularID" ref="popularAnchor" >Popular <span id="popularArrow" ref="popularArrowRef" className="glyphicon glyphicon-arrow-up" ></span></a></li>
                                 <li id="priceLi" ref="priceLiRef"><a onClick={() => this.OnSort(this.refs.priceLiRef.id, this.refs.priceAnchor.id, this.refs.priceArrowRef.id)} id="priceID" ref="priceAnchor" >Price <span id="priceArrow" ref="priceArrowRef" ></span></a></li>
                                 <li id="distLi" ref="distLiRef" ><a onClick={() => this.OnSort(this.refs.distLiRef.id, this.refs.distAnchor.id, this.refs.distArrowRef.id)} id="distID" ref="distAnchor"  >Distance <span id="distArrow" ref="distArrowRef"></span></a></li>
                                 <li id="nameLi" ref="nameLiRef"><a onClick={() => this.OnSort(this.refs.nameLiRef.id, this.refs.nameAnchor.id, this.refs.nameArrowRef.id)} id="nameID" ref="nameAnchor"  >Name <span id="nameArrow" ref="nameArrowRef"></span></a></li>
@@ -985,8 +990,9 @@ let queries = {}
                             {
                                 currentHotels.length === 0 ?
 
-                                    <div className="alert alert-danger">
-                                        <strong>Ops!</strong> No hotels available for your search!
+                                    <div>
+                                        <strong className="hotelerror">(;-;)</strong> <br/>
+                                        No hotels available for your search!
                               </div> :
                                     currentHotels.map((data, key) => {
 
