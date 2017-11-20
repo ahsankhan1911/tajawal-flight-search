@@ -29,7 +29,7 @@ let queries = {}
     ra = new URLSearchParams(this.props.location.search).get('ra');
     sort = new URLSearchParams(this.props.location.search).get('sort');
     sortDir = new URLSearchParams(this.props.location.search).get('sortDir');
-    
+
 
     constructor(props) {
         super(props);
@@ -52,9 +52,11 @@ let queries = {}
         };
     }
     componentWillMount() {
-        // handling for empty priceinput
+       
         if (this.p != null) {
-          resetButtonPriceFlg = true;
+
+
+            resetButtonPriceFlg = true;
         }
 
         if (this.s != null) {
@@ -81,6 +83,7 @@ let queries = {}
         }
     }
     componentDidMount() {
+        console.log(this.refs.searchInput)
         axios.get("http://localhost:5000/flight/hotels")
             .then((response) => {
 
@@ -105,7 +108,7 @@ let queries = {}
                     this.Flights.ratingInput.push(d.code);
                 })
 
-                  this.values()
+                this.values()
 
             }).catch((error) => {
 
@@ -137,19 +140,59 @@ let queries = {}
 
     values() {
 
-       
 
         // handling for empty searchinput
         if (this.sort != null) {
+            console.log(this.sortDir)
             this.Flights.Sort = this.sort
-            this.Flights.SortDir = this.sortDir
+            this.Flights.SortDir = this.sortDir;
+            console.log(this.sortDir)
+
+            $(".nav li").removeClass();
+            $(".nav li span").removeClass();
+
+            switch(this.sort) {
+
+                case "price":
+                document.getElementById(this.refs.priceArrowRef.id).className = "glyphicon glyphicon-arrow-up";
+                document.getElementById(this.refs.priceLiRef.id).className = "active";
+                if(this.sortDir === "DESC") {
+                    document.getElementById(this.refs.priceArrowRef.id).className = "glyphicon glyphicon-arrow-down";
+                }
+                break;
+
+                case "distance":
+                document.getElementById(this.refs.distArrowRef.id).className = "glyphicon glyphicon-arrow-up";
+                document.getElementById(this.refs.distLiRef.id).className = "active";
+                if(this.sortDir === "DESC") {
+                    document.getElementById(this.refs.distArrowRef.id).className = "glyphicon glyphicon-arrow-down";
+                }
+                break;
+                case "name":
+                document.getElementById(this.refs.nameArrowRef.id).className = "glyphicon glyphicon-arrow-up";
+                document.getElementById(this.refs.nameLiRef.id).className = "active";
+                if(this.sortDir === "DESC") {
+                    document.getElementById(this.refs.nameArrowRef.id).className = "glyphicon glyphicon-arrow-down";
+                }
+                break;
+                case "rating":
+                document.getElementById(this.refs.ratingArrowRef.id).className = "glyphicon glyphicon-arrow-up";
+                document.getElementById(this.refs.ratingLiRef.id).className = "active";
+                if(this.sortDir === "DESC") {
+                    document.getElementById(this.refs.ratingArrowRef.id).className = "glyphicon glyphicon-arrow-down";
+                }
+                break;
+
+                default:
+                return null;
+            }
+     
         }
-      
+
         // handling for empty searchinput
         if (this.h != null) {
             this.Flights.searchInput = this.h
             this.refs.searchInput.value = this.h
-        
         }
 
         // handling for empty priceinput
@@ -160,8 +203,7 @@ let queries = {}
                 values: this.p
             })
 
-            resetButtonPriceFlg =true;
-            console.log(resetButtonPriceFlg)
+            resetButtonPriceFlg = true;
         }
 
         if (this.s != null) {
@@ -312,11 +354,10 @@ let queries = {}
                 this.Flights.SortDir = null
         }
 
-        if(this.Flights.SortDir === 'DESC')
-        {
+        if (this.Flights.SortDir === 'DESC') {
             queries.sortDir = this.Flights.SortDir;
         }
-        else{
+        else {
             delete queries["sortDir"]
         }
 
@@ -330,6 +371,8 @@ let queries = {}
 
     }
     // Sorting Ends
+
+    //Handler for Pice Range
     handlePageChange = (pageNumber) => {
 
         this.setState({ activePage: pageNumber });
@@ -764,7 +807,7 @@ let queries = {}
             resetButtonPriceFlg = false
 
             delete queries[queriesKey]
-            
+
             query = queryString.stringify(queries)
             this.props.history.push({
                 pathname: '/flight-search',
@@ -788,7 +831,7 @@ let queries = {}
                 resetButtonStrFlg = false;
 
                 delete queries[queriesKey]
-              
+
 
                 query = queryString.stringify(queries)
                 query = query.replace(/%2C/g, ",")
@@ -804,7 +847,7 @@ let queries = {}
                 });
                 resetButtonDistFlg = false;
                 delete queries[queriesKey]
-           
+
                 query = queryString.stringify(queries)
                 query = query.replace(/%2C/g, ",")
                 this.props.history.push({
@@ -819,7 +862,7 @@ let queries = {}
                 });
                 resetButtonChainFlg = false;
                 delete queries[queriesKey]
-               
+
                 query = queryString.stringify(queries)
                 query = query.replace(/%2C/g, ",")
                 this.props.history.push({
@@ -836,7 +879,7 @@ let queries = {}
                 });
                 resetButtonPAFlg = false;
                 delete queries[queriesKey]
-               
+
                 query = queryString.stringify(queries)
                 query = query.replace(/%2C/g, ",")
                 this.props.history.push({
@@ -853,7 +896,7 @@ let queries = {}
 
                 resetButtonRAFlg = false;
                 delete queries[queriesKey]
-            
+
                 query = queryString.stringify(queries)
                 query = query.replace(/%2C/g, ",")
                 this.props.history.push({
@@ -1045,7 +1088,7 @@ let queries = {}
                             <ul className="nav nav-pills" ref="ul">
                                 <li id="popularLi" ref="popularLiRef" className="active"><a onClick={() => this.OnSort(this.refs.popularLiRef.id, this.refs.popularAnchor.id, this.refs.popularArrowRef.id)} id="popular" ref="popularAnchor" >Popular <span id="popularArrow" ref="popularArrowRef" className="glyphicon glyphicon-arrow-up" ></span></a></li>
                                 <li id="priceLi" ref="priceLiRef"><a onClick={() => this.OnSort(this.refs.priceLiRef.id, this.refs.priceAnchor.id, this.refs.priceArrowRef.id)} id="price" ref="priceAnchor" >Price <span id="priceArrow" ref="priceArrowRef" ></span></a></li>
-                                <li id="distLi" ref="distLiRef" ><a onClick={() => this.OnSort(this.refs.distLiRef.id, this.refs.distAnchor.id, this.refs.distArrowRef.id)} id="dist" ref="distAnchor"  >Distance <span id="distArrow" ref="distArrowRef"></span></a></li>
+                                <li id="distLi" ref="distLiRef" ><a onClick={() => this.OnSort(this.refs.distLiRef.id, this.refs.distAnchor.id, this.refs.distArrowRef.id)} id="distance" ref="distAnchor"  >Distance <span id="distArrow" ref="distArrowRef"></span></a></li>
                                 <li id="nameLi" ref="nameLiRef"><a onClick={() => this.OnSort(this.refs.nameLiRef.id, this.refs.nameAnchor.id, this.refs.nameArrowRef.id)} id="name" ref="nameAnchor"  >Name <span id="nameArrow" ref="nameArrowRef"></span></a></li>
                                 <li id="ratingLi" ref="ratingLiRef"> <a onClick={() => this.OnSort(this.refs.ratingLiRef.id, this.refs.ratingAnchor.id, this.refs.ratingArrowRef.id)} id="rating" ref="ratingAnchor"  >Rating <span id="ratingArrow" ref="ratingArrowRef" ></span></a></li>
                                 <span className="properties"> {this.Flights.SearchFilter.length} properties found </span>
