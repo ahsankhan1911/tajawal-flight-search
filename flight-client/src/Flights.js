@@ -17,9 +17,19 @@ let currentHotels, indexOfLastHotel, indexOfFirstHotel;
 let resetButtonPrice, resetButtonStr, resetButtonDist, resetButtonChain, resetButtonPA, resetButtonRA;
 let resetButtonPriceFlg = false, resetButtonStrFlg = false, resetButtonDistFlg = false, resetButtonChainFlg = false, resetButtonPAFlg = false, resetButtonRAFlg = false;
 let queries = {}
-
 @inject('Flights')
 @observer class Flights extends Component {
+
+    h = new URLSearchParams(this.props.location.search).get('h');
+    p = new URLSearchParams(this.props.location.search).get('p');
+    s = new URLSearchParams(this.props.location.search).get('s');
+    d = new URLSearchParams(this.props.location.search).get('d');
+    c = new URLSearchParams(this.props.location.search).get('c');
+    pa = new URLSearchParams(this.props.location.search).get('pa');
+    ra = new URLSearchParams(this.props.location.search).get('ra');
+    sort = new URLSearchParams(this.props.location.search).get('sort');
+    sortDir = new URLSearchParams(this.props.location.search).get('sortDir');
+    
 
     constructor(props) {
         super(props);
@@ -41,7 +51,35 @@ let queries = {}
             values: [],
         };
     }
+    componentWillMount() {
+        // handling for empty priceinput
+        if (this.p != null) {
+          resetButtonPriceFlg = true;
+        }
 
+        if (this.s != null) {
+
+            resetButtonStrFlg = true;
+        }
+
+        if (this.d != null) {
+            resetButtonDistFlg = true;
+        }
+
+        if (this.c != null) {
+            resetButtonChainFlg = true;
+        }
+
+
+        if (this.pa != null) {
+            resetButtonPAFlg = true;
+        }
+
+        if (this.ra != null) {
+            resetButtonRAFlg = true;
+
+        }
+    }
     componentDidMount() {
         axios.get("http://localhost:5000/flight/hotels")
             .then((response) => {
@@ -67,7 +105,7 @@ let queries = {}
                     this.Flights.ratingInput.push(d.code);
                 })
 
-                this.values()
+                  this.values()
 
             }).catch((error) => {
 
@@ -99,47 +137,44 @@ let queries = {}
 
     values() {
 
-        let h = new URLSearchParams(this.props.location.search).get('h');
-        let p = new URLSearchParams(this.props.location.search).get('p');
-        let s = new URLSearchParams(this.props.location.search).get('s');
-        let d = new URLSearchParams(this.props.location.search).get('d');
-        let c = new URLSearchParams(this.props.location.search).get('c');
-        let pa = new URLSearchParams(this.props.location.search).get('pa');
-        let ra = new URLSearchParams(this.props.location.search).get('ra');
-        let sort = new URLSearchParams(this.props.location.search).get('sort');
-        //let sortDir = new URLSearchParams(this.props.location.search).get('sortDir');
+       
 
         // handling for empty searchinput
-        if (sort != null) {
-            this.Flights.Sort = sort
+        if (this.sort != null) {
+            this.Flights.Sort = this.sort
+            this.Flights.SortDir = this.sortDir
         }
       
         // handling for empty searchinput
-        if (h != null) {
-            this.Flights.searchInput = h
-            this.refs.searchInput.value = h
+        if (this.h != null) {
+            this.Flights.searchInput = this.h
+            this.refs.searchInput.value = this.h
+        
         }
 
         // handling for empty priceinput
-        if (p != null) {
-            p = p.split('-');
-            this.Flights.PriceInput = p;
+        if (this.p != null) {
+            this.p = this.p.split('-');
+            this.Flights.PriceInput = this.p;
             this.setState({
-                values: p
+                values: this.p
             })
+
+            resetButtonPriceFlg =true;
+            console.log(resetButtonPriceFlg)
         }
 
-        if (s != null) {
+        if (this.s != null) {
 
             //starinput value converting to array to filter from starRating
             // handling the selected check value
-            s = s.split(',')
-            this.Flights.ratingInput = s;
+            this.s = this.s.split(',')
+            this.Flights.ratingInput = this.s;
             this.setState({
                 filterStar: this.state.filterStar.map(d => {
                     d.selected = false
                     // eslint-disable-next-line
-                    s.map(star => {
+                    this.s.map(star => {
                         if (star === d.code)
                             d.selected = true
 
@@ -150,17 +185,17 @@ let queries = {}
 
         }
 
-        if (d != null) {
+        if (this.d != null) {
             // starinput value converting to array to filter from starRating
             // handling the selected check value
-            d = d.split(',')
-            this.Flights.districtInput = d;
+            this.d = this.d.split(',')
+            this.Flights.districtInput = this.d;
 
             this.setState({
                 filterDist: this.state.filterDist.map(d2 => {
                     d2.selected = false
                     // eslint-disable-next-line
-                    d.map(dist => {
+                    this.d.map(dist => {
 
                         // eslint-disable-next-line
                         if (d2.code == dist) {
@@ -172,17 +207,17 @@ let queries = {}
             })
         }
 
-        if (c != null) {
+        if (this.c != null) {
             //cstarinput value converting to array to filter from starRating
             // handling the selected check value
-            c = c.split(',')
-            this.Flights.chainInput = c;
+            this.c = this.c.split(',')
+            this.Flights.chainInput = this.c;
 
             this.setState({
                 filterChain: this.state.filterChain.map(d2 => {
                     d2.selected = false
                     // eslint-disable-next-line
-                    c.map(chain => {
+                    this.c.map(chain => {
 
                         // eslint-disable-next-line
                         if (d2.code == chain) {
@@ -195,17 +230,17 @@ let queries = {}
         }
 
 
-        if (pa != null) {
+        if (this.pa != null) {
             // starinput value converting to array to filter from starRating
             // handling the selected check value
-            pa = pa.split(',')
-            this.Flights.PAInput = pa;
+            this.pa = this.pa.split(',')
+            this.Flights.PAInput = this.pa;
 
             this.setState({
                 filterPA: this.state.filterPA.map(d2 => {
                     d2.selected = false
                     // eslint-disable-next-line
-                    pa.map(PA => {
+                    this.pa.map(PA => {
 
                         // eslint-disable-next-line
                         if (d2.code == PA) {
@@ -218,17 +253,17 @@ let queries = {}
 
         }
 
-        if (ra != null) {
+        if (this.ra != null) {
             // starinput value converting to array to filter from starRating
             // handling the selected check value
-            ra = ra.split(',')
-            this.Flights.RAInput = ra;
+            this.ra = this.ra.split(',')
+            this.Flights.RAInput = this.ra;
 
             this.setState({
                 filterRA: this.state.filterRA.map(d2 => {
                     d2.selected = false
                     // eslint-disable-next-line
-                    ra.map(RA => {
+                    this.ra.map(RA => {
 
                         // eslint-disable-next-line
                         if (d2.code == RA) {
